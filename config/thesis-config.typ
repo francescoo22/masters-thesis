@@ -1,7 +1,7 @@
 #let config(
     myAuthor: "Nome cognome",
     myTitle: "Titolo",
-    myLang: "it",
+    myLang: "en",
     myNumbering: "1.",
     body
 ) = {
@@ -10,7 +10,7 @@
     show math.equation: set text(weight: 400)
 
     // LaTeX look (secondo la doc di Typst)
-    set page(margin: 1.75in, numbering: myNumbering, number-align: center)
+    set page(margin: 1.25in, numbering: myNumbering, number-align: center)
     // set par(leading: 0.55em, first-line-indent: 1.8em, justify: true)
     set par(leading: 0.55em, justify: true)
     set text(font: "New Computer Modern", size: 10pt, lang: myLang)
@@ -24,9 +24,9 @@
         stack(
             spacing: 2em,
             if it.numbering != none {
-                text(size: 1.5em)[Capitolo #counter(heading).display()]
+                text(size: 1em)[Chapter #counter(heading).display()]
             },
-            text(size:2em,it.body),
+            text(size:1.5em,it.body),
             []
         )
     }

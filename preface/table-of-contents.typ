@@ -16,14 +16,14 @@
 #v(8em)
 
 #outline(
-  title: "Elenco delle figure",
+  title: "Figures list",
   target: figure.where(kind: image)
 )
 
 #v(8em)
 
 #outline(
-    title: "Elenco delle tabelle",
+    title: "Tables list",
     target: figure.where(kind: table),
     indent: auto
 )

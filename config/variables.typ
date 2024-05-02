@@ -1,7 +1,7 @@
 // All reusable variables here
-#let myName = "Nome Cognome"
+#let myName = "Francesco Protopapa"
 #let myMatricola = "42"
-#let myTitle = "Titolo della tesi"
+#let myTitle = "Using uniqueness annotations to formally verify Kotlin code with Viper"
 #let myDegree = "Tesi di laurea"
 #let myUni = "Università degli studi di Padova"
 #let myDepartment = "Dipartimento di Matematica ''Tullio Levi-Civita''"

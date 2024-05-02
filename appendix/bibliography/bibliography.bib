@@ -4,3 +4,22 @@
     publisher = {Libreria Progetto},
     year = {2012}
 }
+
+@article{GenevaConvention,
+author = {Hogg, John and Lea, Doug and Wills, Alan and deChampeaux, Dennis and Holt, Richard},
+title = {The Geneva convention on the treatment of object aliasing},
+year = {1992},
+issue_date = {April 1992},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {3},
+number = {2},
+issn = {1055-6400},
+url = {https://doi.org/10.1145/130943.130947},
+doi = {10.1145/130943.130947},
+abstract = {Aliasing has been a problem in both formal verification and practical programming for a number of years. To the formalist, it can be annoyingly difficult to prove the simple Hoare formula {x = true} y := false {x = true}. If x and y refer to the same boolean variable, i.e., x and y are aliased, then the formula will not be valid, and proving that aliasing cannot occur is not always straightforward. To the practicing programmer, aliases can result in mysterious bugs as variables change their values seemingly on their own. A classic example is the matrix multiply routine mult(left, right, result) which puts the product of its first two parameters into the third. This works perfectly well until the day some unsuspecting programmer writes the very reasonable statement mult(a, b, a). If the implementor of the routine did not consider the possibility that an argument may be aliased with the result, disaster is inevitable.},
+journal = {SIGPLAN OOPS Mess.},
+month = {apr},
+pages = {11–16},
+numpages = {6}
+}

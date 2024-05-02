@@ -3,7 +3,7 @@
 #include "./preface/firstpage.typ"
 #include "./preface/copyright.typ"
 #include "./preface/dedication.typ"
-#include "./preface/summary.typ"
+#include "./preface/abstract.typ"
 #include "./preface/acknowledgements.typ"
 #include "./preface/table-of-contents.typ"
 
@@ -11,12 +11,14 @@
 
 #counter(page).update(1)
 
-#include "./chapters/introduction.typ"
-#include "./chapters/process.typ"
-#include "./chapters/stage-description.typ"
-#include "./chapters/requirements.typ"
-#include "./chapters/product-design.typ"
-#include "./chapters/product-testing.typ"
+// 1. Introduction to the aliasing problem
+#include "./chapters/introduction-aliasing.typ"
+#include "./chapters/introduction-viper.typ"
+#include "./chapters/annotations-overview.typ"
+#include "./chapters/annotations-rules.typ"
+#include "./chapters/encoding.typ"
+#include "./chapters/future-work.typ"
+#include "./chapters/related-work.typ"
 #include "./chapters/conclusion.typ"
 
 // // Appendix
