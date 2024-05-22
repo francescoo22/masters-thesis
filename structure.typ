@@ -13,6 +13,7 @@
 
 // 1. Introduction to the aliasing problem
 #include "./chapters/introduction-aliasing.typ"
+#include "./chapters/aliasing-kotlin.typ"
 #include "./chapters/introduction-viper.typ"
 #include "./chapters/annotations-overview.typ"
 #include "./chapters/annotations-rules.typ"
