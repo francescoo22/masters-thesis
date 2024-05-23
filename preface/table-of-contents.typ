@@ -16,14 +16,24 @@
 #v(8em)
 
 #outline(
-  title: "Figures list",
+  title: "List of Figures",
   target: figure.where(kind: image)
 )
 
 #v(8em)
 
 #outline(
-    title: "Tables list",
+    title: "List of Tables",
     target: figure.where(kind: table),
+    indent: auto
+)
+
+// TODO: decide whether to include listings here, along figures or not to include them at all
+
+#v(8em)
+
+#outline(
+    title: "List of listings",
+    target: figure.where(kind: raw),
     indent: auto
 )

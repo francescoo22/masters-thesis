@@ -4,7 +4,7 @@
 #show: config.with(
   myAuthor: myName,
   myTitle: myTitle,
-  myNumbering: "1.",
+  myNumbering: "1.1",
   myLang: "en"
 )
 
