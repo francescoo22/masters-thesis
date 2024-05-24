@@ -5,7 +5,7 @@
   myAuthor: myName,
   myTitle: myTitle,
   myNumbering: "1.1",
-  myLang: "en"
+  myLang: myLang
 )
 
 #include "structure.typ"

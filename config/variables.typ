@@ -1,4 +1,5 @@
 // All reusable variables here
+#let myLang = "en"
 #let myName = "Francesco Protopapa"
 #let myMatricola = "2079466"
 #let myTitle = "Using uniqueness annotations to formally verify Kotlin code with Viper"

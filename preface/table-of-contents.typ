@@ -1,3 +1,4 @@
+#import "../config/constants.typ": figuresList, tablesList
 #set page(numbering: "i")
 
 #[
@@ -16,24 +17,24 @@
 #v(8em)
 
 #outline(
-  title: "List of Figures",
+  title: figuresList,
   target: figure.where(kind: image)
 )
 
 #v(8em)
 
 #outline(
-    title: "List of Tables",
+    title: tablesList,
     target: figure.where(kind: table),
     indent: auto
 )
 
 // TODO: decide whether to include listings here, along figures or not to include them at all
 
-#v(8em)
+// #v(8em)
 
-#outline(
-    title: "List of listings",
-    target: figure.where(kind: raw),
-    indent: auto
-)
+// #outline(
+//     title: "List of Listings",
+//     target: figure.where(kind: raw),
+//     indent: auto
+// )
