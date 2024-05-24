@@ -2,19 +2,46 @@
 
 = Introduction to aliasing
 
+// TODO: Read better these summaries and modify them (AIG)
+
 == Aliasing overview
+
+// TODO: cite book aliasing
 
 Aliasing refers to the situation where a data location in memory can be accessed through different symbolic names in the program. Thus, changing the data through one name inherently leads to a change when accessed through the other name as well. This can happen due to several reasons such as pointers, references, multiple arrays pointing to the same memory location etc.
 
 In contrast, uniqueness ensures that a particular data location is accessed through only one symbolic name at any point in time. This means that no two variables or references point to the same memory location, thus preventing unintended side effects when data is modified. Uniqueness is particularly important in concurrent programming and in functional programming paradigms, where the goal is often to avoid mutable shared state to ensure predictability and maintainability of the code. By enforcing uniqueness, programmers can guarantee that data modifications are localized and do not inadvertently affect other parts of the program, making reasoning about program behavior and correctness more straightforward.
-// TODO: elaborate
+
+@aliasing shows the concept of aliasing and uniqueness practically with a Kotlin @Kotlin example.
+The function starts by declaring and initializing variable `y` with `x`, resulting in `x` and `y` being aliased.
+Following that, variable `z` is initialized with a newly-created object in the function's second line. Therefore, at this stage in the program, `z` can be referred to as "unique", signifying that it is the only reference pointing to that particular object.
+
+#figure(
+  caption: "Aliasing, an example",
+```kt
+class T()
+
+fun f(x: T) {
+    val y = x // 'x' and 'y' are now aliased
+    val z = T() // here 'z' is unique
+}
+```
+)<aliasing>
 
 == Problems caused by aliasing
 
-Aliasing is a topic that has been studied for decades in Computer Science. Although aliasing is essential in object-oriented programming as it allows programmers to implement designs involving sharing, as described in The Geneva Convention @GenevaConvention, aliasing can be a problem in both formal veriﬁcation and practical programming.
+Aliasing is a topic that has been studied for decades in Computer Science. 
+Although aliasing is essential in object-oriented programming as it allows programmers to implement designs involving sharing, as described in The Geneva Convention @GenevaConvention, aliasing can be a problem in both formal veriﬁcation and practical programming.
 
-// TODO: examples: proving, bugs, concurrency
+The example in @alias-verification illustrates how aliasing between references can complicate the formal verification process. In the given example, a class `A` is declared with a boolean field `x`, followed by the function `f` which accepts two arguments `a1` and `a2` of type `A`. The function assigns `true` to `a1.x`, `false` to `a2.x`, and finally returns `a1.x`. Despite the function being straightforward, we cannot assert that the function will always return `true`. The reason for this uncertainty is the potential aliasing of `a1` and `a2`, as the second assignment might change the value of `a1.x` as well.
+
+Modern programming languages frequently utilize a high degree of concurrency, which can further complicate the verification process. As showed in @alias-verification-concurrent, even a simpler function than its counterpart in @alias-verification does not permit to assert that it will always return `true`. In this instance, the function only takes a single argument `a` of type `A`, assigns `true` to `a.x` and eventually retruns it. However, within a concurrent context there may exist another thread with access to a variable aliasing `a` that can modify `a.x` to `false` prior to the function's return, thus challenging the verification process.
+
+Finally, @alias-bug presents a contrived example to illustrate how aliasing can lead to mysterious bugs. Function `f` takes two lists `xs` and `ys` as arguments.If both lists are not empty, the function removes the last element from each. One might assume this function will never raise an `IndexOutOfBoundsException`. However, if `xs` and `ys` are aliased and have a size of one, this exception will occur.
+
 // TODO: decide whether to use pseudo code or kotlin code here
+// TODO: put @alias-verification and @alias-verification-concurrency on the same line
+// TODO: decide whether to write in the caption that the examples are written in Kotlin
 
 #figure(
   caption: "Problems caused by aliasing in formal verification",
@@ -28,6 +55,18 @@ fun f(a1: A, a2: A): Boolean {
 }
 ```
 )<alias-verification>
+
+#figure(
+  caption: "Problems caused by aliasing in formal verification within a concurrent context",
+```kt
+class A(var x: Boolean)
+
+fun f(a: A): Boolean {
+   a.x = true
+   return a.x
+}
+```
+)<alias-verification-concurrent>
 
 #figure(
   caption: "Problems caused by aliasing in practical programming",
@@ -47,8 +86,6 @@ fun main() {
 )<alias-bug>
 
 == How to deal with aliasing
-
-// TODO: Read better these summaries and modify them (AIG)
 
 The Geneva Convention @GenevaConvention has established four primary methods to manage aliasing: Detection, Advertisement, Prevention, and Control. These methods aim to provide systematic approaches to identify, communicate, prevent, and manage aliasing in software systems.
 
@@ -83,6 +120,18 @@ Aliasing prevention alone is insufficient because aliasing is unavoidable in con
 
 == Existing systems
 
-// Talk about systems that enables to control alisasing
+In recent decades, extensive research has been conducted to address the issue of aliasing. The book "Aliasing in Object-Oriented Programming" @Aliasing-OOP provides a comprehensive survey of the latest techniques for managing aliasing in object-oriented programming. The following subsections will discuss the most relevant techniques for this work in detail.
 
-// Alias Burying, LATTE, An entante cordiale, RUST, Swift
+=== Alias Burying
+@boyland2001alias
+
+=== LATTE
+@zimmerman2023latte
+
+=== aliasJava
+@aldrich2002alias
+
+=== An entante cordiale
+@An-Entente-Cordiale
+
+=== RUST, Swift
