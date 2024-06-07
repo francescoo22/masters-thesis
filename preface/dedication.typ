@@ -5,7 +5,7 @@
 #align(center, [
     Dice l'uomo ragno...
     #v(6pt)
-    #sym.dash#sym.dash#sym.dash Tullio Vardanega
+    #sym.dash#sym.dash#sym.dash T. V.
 ])
 
 #v(2cm)

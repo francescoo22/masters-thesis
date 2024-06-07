@@ -7,7 +7,7 @@
 #align(right, [
     #text(style: "italic", "Tieni l'infinito per ciò che lo merita...")
     #v(6pt)
-    #sym.dash#sym.dash#sym.dash Tullio Vardanega
+    #sym.dash#sym.dash#sym.dash T. V.
 ])
 
 #v(10em)
