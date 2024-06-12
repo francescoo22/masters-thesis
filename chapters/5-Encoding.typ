@@ -1,3 +1,2 @@
 #pagebreak(to:"odd")
-
-= Related work
+= Encoding in Viper

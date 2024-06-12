@@ -11,16 +11,12 @@
 
 #counter(page).update(1)
 
-// 1. Introduction to the aliasing problem
-#include "./chapters/1-introduction-aliasing.typ"
-#include "./chapters/2-aliasing-kotlin.typ"
-#include "./chapters/3-introduction-viper.typ"
-#include "./chapters/4-annotations-overview.typ"
-#include "./chapters/5-annotations-rules.typ"
-#include "./chapters/6-encoding.typ"
-#include "./chapters/7-future-work.typ"
-#include "./chapters/8-related-work.typ"
-#include "./chapters/9-conclusion.typ"
+#include "./chapters/1-Introduction.typ"
+#include "./chapters/2-Background.typ"
+#include "./chapters/3-Related-Work.typ"
+#include "./chapters/4-Annotation-System.typ"
+#include "./chapters/5-Encoding.typ"
+#include "./chapters/6-Conclusion.typ"
 
 // // Appendix
 
