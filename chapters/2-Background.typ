@@ -1,9 +1,69 @@
 #pagebreak(to:"odd")
 = Background
 
+// TODO: simboli per codice che compila vs codice che non compila
+
 == Kotlin
 
-// Object oriented, Null Safety, Smart Cast, Contracts
+// TODO: scriverlo per davvero
+
+Kotlin is a statically-typed, versatile programming language that was developed by JetBrains in 2011. Built with the aim to enhance productivity and satisfaction of developers, it offers a unique blend of object-oriented and functional programming features capable of gracing any application with simplicity, clarity, and excellent interoperability. Kotlin is primarily used for Android app development and is officially recommended by Google. Its efficiency, conciseness, and safety to prevent common programming errors make it a rather compelling choice for developers worldwide.
+
+Only Kotlin's features that are relevant for this work will be discussed in detail.
+
+=== Mutable and immutable variables
+
+=== Functional & Object oriented
+
+=== Null Safety
+
+=== Smart Casts
+
+=== Contracts
+
+Kotlin contracts are an experimental feature introduced in Kotlin 1.3 designed to provide additional guarantees about code behavior, helping the compiler in performing more precise analysis and optimizations. Contracts are defined using a special contract block within a function, describing the relationship between input parameters and the function's effects. This can include conditions such as whether a lambda is invoked or if a function returns under certain conditions. By specifying these relationships, contracts help the compiler understand the function's logic more deeply, enabling advanced features like smart casting and better null-safety checks.
+
+It is important to point out that currently contracts correctness is not statically verified. The compiler trusts contracts unconditionally meaning that the programmer is responsible for writing correct and sound contracts.
+
+In @contract-1 it is possible to see how contracts allow the initialization of immutable variables within the body of a lambda, doing this is not possible without using a contract (@contract-2).
+
+#figure(
+  caption: "Example of contract declaration and usage",
+  ```kt
+  public inline fun <R> run(block: () -> R): R {
+      contract {
+          callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+      }
+      return block()
+  }
+
+  fun main() {
+    val b: Boolean
+    run {
+        b = true
+    }
+    println(b)
+  }
+  ```
+)<contract-1>
+
+#figure(
+  caption: "TODO",
+  ```kt
+  fun <R> runWithoutContract(block: () -> R): R {
+      return block()
+  }
+
+  fun main() {
+      val b: Boolean
+      runWithoutContract { b = true }
+  /*                       ^^^^^^^^
+      Captured values initialization is forbidden 
+      due to possible reassignment       
+  */
+  }  
+  ```
+)<contract-2>
 
 == Aliasing
 
@@ -23,14 +83,14 @@ Following that, variable `z` is initialized with a newly-created object in the f
 
 #figure(
   caption: "Aliasing, an example",
-```kt
-class T()
+  ```kt
+  class T()
 
-fun f(x: T) {
-    val y = x // 'x' and 'y' are now aliased
-    val z = T() // here 'z' is unique
-}
-```
+  fun f(x: T) {
+      val y = x // 'x' and 'y' are now aliased
+      val z = T() // here 'z' is unique
+  }
+  ```
 )<aliasing>
 
 === Problems caused by aliasing
@@ -50,44 +110,44 @@ Finally, @alias-bug presents a contrived example to illustrate how aliasing can 
 
 #figure(
   caption: "Problems caused by aliasing in formal verification",
-```kt
-class A(var x: Boolean)
+  ```kt
+  class A(var x: Boolean)
 
-fun f(a1: A, a2: A): Boolean {
-   a1.x = true
-   a2.x = false
-   return a1.x
-}
-```
+  fun f(a1: A, a2: A): Boolean {
+    a1.x = true
+    a2.x = false
+    return a1.x
+  }
+  ```
 )<alias-verification>
 
 #figure(
   caption: "Problems caused by aliasing in formal verification within a concurrent context",
-```kt
-class A(var x: Boolean)
+  ```kt
+  class A(var x: Boolean)
 
-fun f(a: A): Boolean {
-   a.x = true
-   return a.x
-}
-```
+  fun f(a: A): Boolean {
+    a.x = true
+    return a.x
+  }
+  ```
 )<alias-verification-concurrent>
 
 #figure(
   caption: "Problems caused by aliasing in practical programming",
-```kt
-fun f(xs: MutableList<Int>, ys: MutableList<Int>) {
-    if (xs.isNotEmpty() && ys.isNotEmpty()) {
-        xs.removeLast()
-        ys.removeLast()
-    }
-}
+  ```kt
+  fun f(xs: MutableList<Int>, ys: MutableList<Int>) {
+      if (xs.isNotEmpty() && ys.isNotEmpty()) {
+          xs.removeLast()
+          ys.removeLast()
+      }
+  }
 
-fun main() {
-    val xs = mutableListOf(1)
-    f(xs, xs)
-}
-```
+  fun main() {
+      val xs = mutableListOf(1)
+      f(xs, xs)
+  }
+  ```
 )<alias-bug>
 
 === How to deal with aliasing
