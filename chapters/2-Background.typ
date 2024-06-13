@@ -69,8 +69,6 @@ In @contract-1 it is possible to see how contracts allow the initialization of i
 
 // TODO: Read better these summaries and modify them (AIG)
 
-=== Aliasing overview
-
 // TODO: cite book aliasing
 
 Aliasing refers to the situation where a data location in memory can be accessed through different symbolic names in the program. Thus, changing the data through one name inherently leads to a change when accessed through the other name as well. This can happen due to several reasons such as pointers, references, multiple arrays pointing to the same memory location etc.
@@ -104,7 +102,6 @@ Modern programming languages frequently utilize a high degree of concurrency, wh
 
 Finally, @alias-bug presents a contrived example to illustrate how aliasing can lead to mysterious bugs. Function `f` takes two lists `xs` and `ys` as arguments.If both lists are not empty, the function removes the last element from each. One might assume this function will never raise an `IndexOutOfBoundsException`. However, if `xs` and `ys` are aliased and have a size of one, this exception will occur.
 
-// TODO: decide whether to use pseudo code or kotlin code here
 // TODO: put @alias-verification and @alias-verification-concurrency on the same line
 // TODO: decide whether to write in the caption that the examples are written in Kotlin
 
@@ -183,6 +180,40 @@ A more radical approach replaces the traditional assignment operator with a swap
 
 Aliasing prevention alone is insufficient because aliasing is unavoidable in conventional object-oriented programming. Aliasing control is necessary to ensure the system does not reach a state with unexpected aliasing, which requires analysis of the runtime state.
 
-== Separation Logic
-== Viper
-Viper: @MuellerSchwerhoffSummers16
+== Viper and Separation Logic
+
+=== Separation Logic
+In Computer Science, separation logic @1029817 is an extension of Hoare logic, a way of reasoning about programs.
+
+Separation logic facilitates reasoning about:
+- Programs that manipulate pointer data structures including information hiding in the presence of pointers.
+- Managing "transfer of ownership" principles.
+- Virtual separation (modular reasoning) between concurrent modules.
+
+$
+angle.l "assert" angle.r &::= \
+&| "emp" &&& "empty heap" \
+&| angle.l "exp" angle.r |-> angle.l "exp" angle.r &&& "singleton heap" \
+&| angle.l "assert" angle.r * angle.l "assert" angle.r &&& "separating conjunction" \
+&| angle.l "assert" angle.r "−∗" angle.l "assert" angle.r #h(5em) &&& "separating implication" \
+$
+
+=== Viper
+
+// TODO: use different words (this is just copy pasted)
+
+Viper @MuellerSchwerhoffSummers16 (Verification Infrastructure for Permission-based Reasoning) is a language and suite of tools, providing an architecture on which new verification tools and prototypes can be developed simply and quickly. Viper is being developed at ETH Zurich in close collaboration with the team of Alex Summers at UBC.
+
+Viper comprises a novel intermediate verification language, also named Viper, and automatic verifiers for the language, as well as example front-end tools. The Viper toolset can be used to implement verification techniques for front-end programming languages via translations into the Viper language.
+
+The Viper toolchain is designed to make it easy to implement verification techniques for sequential and concurrent programs with mutable state. It provides native support for reasoning about the program state using permissions or ownership, e.g. in the style of separation logic. New verification techniques can be implemented directly as translations to the Viper language, using either of the verifiers provided. The Viper language is also useful to encode verification problems manually, for instance, while prototyping new verification techniques.
+
+/* TODO: add
+* website reference for the image
+* examples of viper code explaining most useful feature and their relation with separation logic
+*/
+
+#figure(
+  caption: "The Viper verification infrastructure",
+  image("../images/viper.png", width: 80%)
+)
