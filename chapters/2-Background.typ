@@ -7,17 +7,43 @@
 
 // TODO: scriverlo per davvero
 
-Kotlin is a statically-typed, versatile programming language that was developed by JetBrains in 2011. Built with the aim to enhance productivity and satisfaction of developers, it offers a unique blend of object-oriented and functional programming features capable of gracing any application with simplicity, clarity, and excellent interoperability. Kotlin is primarily used for Android app development and is officially recommended by Google. Its efficiency, conciseness, and safety to prevent common programming errors make it a rather compelling choice for developers worldwide.
+Kotlin @Kotlin is a statically-typed, versatile programming language that was developed by JetBrains in 2011. Built with the aim to enhance productivity and satisfaction of developers, it offers a unique blend of object-oriented and functional programming features capable of gracing any application with simplicity, clarity, and excellent interoperability. Kotlin is primarily used for Android app development and is officially recommended by Google. Its efficiency, conciseness, and safety to prevent common programming errors make it a rather compelling choice for developers worldwide.
 
 Only Kotlin's features that are relevant for this work will be discussed in detail.
 
 === Mutable and immutable variables
 
-=== Functional & Object oriented
+// AIG
+// sistema i blocchi di codice che vanno a capo
 
-=== Null Safety
+In Kotlin, mutability refers to the capability to alter the value of a variable after it has been initialized. Variables in Kotlin are either mutable, defined using the `var` keyword, or immutable, defined using the `val` keyword. Mutable variables, once assigned, can have their value changed during the execution of the program, while immutable variables, once assigned a value, cannot be altered subsequently. For instance, `var x = 5` allows you to change the value of x later in the program, while `val y = 5` maintains y at a value of 5 throughout the program. Mutability is a fundamental principle in programming, and Kotlin's clear distinction between `val` and `var` enhances code readability and aids in maintaining data consistency, especially in a multithreaded environment.
 
 === Smart Casts
+
+// AIG un po' rivisto
+
+In Kotlin, smart casts refer to a feature of the language that automatically handles explicit typecasting, reducing the need for manual intervention. A smart cast occurs when the compiler tracks conditions inside conditional expressions and automatically casts types if possible, eliminating the necessity for explicit casting in many scenarios. This considerably simplifies the syntax and increases readability. For example, if we perform a type check on a variable in an `if` condition, we can use that variable in its checked type within the `if` block without the requirement to explicitly cast it. An example of smart cast can be found in @smart-cast
+
+#figure(
+  caption: "",
+  ```kt
+  open class A()
+  class B : A() {
+      fun f() = println("B")
+  }
+
+  fun callIfIsB(a: A) {
+      if (a is B) {
+          a.f()
+  //      ^^^^^
+  //  Smart cast to B 
+      }
+  }
+  ```
+)<smart-cast>
+
+
+=== Null Safety
 
 === Contracts
 
@@ -75,7 +101,7 @@ Aliasing refers to the situation where a data location in memory can be accessed
 
 In contrast, uniqueness ensures that a particular data location is accessed through only one symbolic name at any point in time. This means that no two variables or references point to the same memory location, thus preventing unintended side effects when data is modified. Uniqueness is particularly important in concurrent programming and in functional programming paradigms, where the goal is often to avoid mutable shared state to ensure predictability and maintainability of the code. By enforcing uniqueness, programmers can guarantee that data modifications are localized and do not inadvertently affect other parts of the program, making reasoning about program behavior and correctness more straightforward.
 
-@aliasing shows the concept of aliasing and uniqueness practically with a Kotlin @Kotlin example.
+@aliasing shows the concept of aliasing and uniqueness practically with a Kotlin example.
 The function starts by declaring and initializing variable `y` with `x`, resulting in `x` and `y` being aliased.
 Following that, variable `z` is initialized with a newly-created object in the function's second line. Therefore, at this stage in the program, `z` can be referred to as "unique", signifying that it is the only reference pointing to that particular object.
 
