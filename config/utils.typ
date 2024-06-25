@@ -78,9 +78,12 @@
 }
 
 #let frame-box = it => {
-  box(
-    inset: 8pt,
-    stroke: black,
-    it
+  align(
+    center,
+    box(
+      inset: 8pt,
+      stroke: black,
+      it
+    )
   )
 }
