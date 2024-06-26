@@ -140,8 +140,6 @@ If $p_1 subset.sq p_2$ holds, we say that
   - The annotation of variables contained in the unfication is the least upper bound of the annotation in $Delta_1$ and $Delta_2$.
 
 #display-rules(
-  // U-Empty, U-Sym,
-  // U-Local, U-Rec,
   Ctx-Lub-Empty, Ctx-Lub-Sym,
   Ctx-Lub-1, "",
   Ctx-Lub-2, "",
@@ -182,9 +180,7 @@ fun use_f(x: unique) {
   Assign-Borrowed-Field, "",
   Assign-Call, "",
   Call, "",
-  // Return-Null, "",
   Return-p, "",
-  // Return-m, "",
 )
 
 *Note:* Since they can be easily desugared, there are no rules for returnning `null` or a method call.
