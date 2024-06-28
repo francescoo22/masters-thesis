@@ -9,6 +9,7 @@
 #let af = $alpha_f$
 #let ret = "return"
 #let var = "var"
+#let this = "this"
 #let null = "null"
 #let fi = "if"
 #let then = "then"
@@ -78,6 +79,7 @@
 }
 
 #let frame-box = it => {
+  v(1em)
   align(
     center,
     box(

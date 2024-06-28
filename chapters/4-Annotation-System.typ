@@ -18,14 +18,14 @@ A unique design goal of this system is to improve the verification process with 
 
 == Grammar
 
-@Featherweight-Java
+In order to define the rules of this annotation system, a grammar representing a substet of the Kotlin language is used. The grammar uses a notation similar to Featherweight Java @Featherweight-Java.
 
 #frame-box(
   $
     CL &::= class C(overline(f\: alpha_f)) \
+    M &::= m(overline(af beta space x)): af {begin_m; overline(s); ret_m e} \
     af &::= unique | shared \
     beta &::= dot | borrowed \
-    M &::= m(overline(af beta space x)): af {begin_m; overline(s); ret_m e} \
     p &::= x | p.f \
     e &::= null | p | m(overline(p)) \
     s &::= var x | p = e |  fi p_1 == p_2 then overline(s_1) els overline(s_2) | m(overline(p))
@@ -33,15 +33,20 @@ A unique design goal of this system is to improve the verification process with 
   $
 )
 
+=== Class and Method declaration
+- Primitive fields are not considered
+- `this` can be seen as a parameter
+- constructors can be seen as functions returning a `unique` value
+=== Annotations
+// TODO: create a definition function??
 - Only *fields*, *method parameters*, and *return values* have to be annotated.
 - A reference annotated as `unique` may either be `null` or point to an object, and it is the sole *accessible* reference pointing to that object.
 - A reference marked as `shared` can point to an object without being the exclusive reference to that object.
 - `T` is an annotation that can only be inferred and means that the reference is *not accessible*.
-- $borrowed$ (borrowed) indicates that the function receiving the reference won't create extra aliases to it, and on return, its fields will maintain at least the permissions stated in the class declaration. 
+- $borrowed$ (borrowed) indicates that the function receiving the reference won't create extra aliases to it, and on return, its fields will maintain at least the permissions stated in the class declaration.
 - Annotations on fields indicate only the default permissions, in order to understand the real permissions of a fields it is necessary to look at the context. This concept is formalized by rules in /*@cap:paths*/ and shown in /*@field-annotations.*/
-- Primitive fields are not considered
-- `this` can be seen as a parameter
-- constructors can be seen as functions returning a `unique` value
+=== Expressions
+=== Statements
 
 == Context
 
@@ -56,7 +61,8 @@ A unique design goal of this system is to improve the verification process with 
 == General
 
 #display-rules(
-  M-Type, M-Args
+  M-Type, "",
+  M-Args, "",
 )
 
 == Context
@@ -169,6 +175,45 @@ fun use_f(x: unique) {
 )
 
 == Statements
+
+=== Begin
+
+#display-rules(Begin, "")
+
+This rule is used to initialize the context at the beginning of a method. The initial context will contain only the method's arguments with the declared uniqueness annotations.
+
+// TODO: scrivere da qualche parte che i tipi sono a cazzo
+```kt
+fun @receiver:Unique T.f(
+    @Unique @Borrowed x: T,
+    @Borrowed y: T,
+    z: T
+) {
+    // Δ = this: unique, x: unique ♭, y: shared ♭, z: shared
+    // ...
+}
+```
+
+// TODO: derivation?
+
+$ f(unique this, unique borrowed space x, shared borrowed space y, shared z){begin_f; ...} $
+
+=== Variable Declaration
+
+#display-rules(Decl, "")
+
+After declaring a variable, it is unaccessible until its initialization and so the varaible will be in the context with $top$ annotation.
+Note that this rule only allows to declare variables if they are not in the context while Kotlin allows to shadow variables declared in outer scopes. Kotlin code using shadowing is not currently supported by this system.
+
+```kt
+fun f(){
+    // Δ = ∅
+    var x: C
+    // Δ = x: T
+    // ...
+}
+```
+$ f(){begin_f; var x; ...} $
 
 #display-rules(
   Begin, "",
