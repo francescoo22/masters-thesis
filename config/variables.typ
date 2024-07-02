@@ -2,7 +2,7 @@
 #let myLang = "en"
 #let myName = "Francesco Protopapa"
 #let myMatricola = "2079466"
-#let myTitle = "Using uniqueness annotations to formally verify Kotlin code with Viper"
+#let myTitle = "Controlling uniqueness to formally verify Kotlin code with Viper"
 #let myDegree = "Master's Thesis"
 #let myUni = "Università degli studi di Padova"
 #let myDepartment = "Department of Mathematics ''Tullio Levi-Civita''"

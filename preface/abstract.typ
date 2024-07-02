@@ -13,8 +13,8 @@ In Computer Science, aliasing refers to the situation where two or more referenc
 On the one hand, aliasing can be useful in object-oriented programming, allowing programmers to implement designs involving sharing.
 On the other hand, aliasing poses significant challenges for formal verification since changing a reference can modify the data that other references also point to, making tracking values of references and predicting program behavior more difficult.
 
-Developed by JetBrains, Kotlin is an open-source, statically typed programming language that gained popularity in the recent years especially in the Android software development. However, unlike other programming languages, there are not many ad-hoc tools for performing formal verification in Kotlin. Moreover, Kotlin does not have a way to control aliasing, making formal verification a hard task for the language.
+Developed by JetBrains, Kotlin is an open-source, statically typed programming language that gained popularity in recent years especially in the Android software development field. However, unlike other programming languages, there are not many ad-hoc tools for performing formal verification in Kotlin. Moreover, Kotlin does not provide any guarantee on aliasing, making formal verification a hard task for the language.
 
-This work introduces an annotation system for Kotlin designed to control the uniqueness of references. After presenting and formalizing the annotation system, the thesis shows how to use these annotations for performing formal verification of Kotlin by encoding it into Viper, a language and suite of tools developed by ETH Zurich, providing an architecture for the development of new verification tools.
+This work introduces an annotation system for Kotlin designed to provide some guarantees on the uniqueness of references. After presenting and formalizing the annotation system, the thesis shows how to use these annotations for performing formal verification of Kotlin by encoding it into Viper, a language and suite of tools developed by ETH Zurich, providing an architecture for the development of new verification tools.
 
 #v(1fr)
