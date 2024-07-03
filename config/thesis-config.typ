@@ -1,13 +1,5 @@
 #import "../config/constants.typ": chapter
-
-#let frame-box = it => {
-    v(1em)
-    box(
-        inset: 8pt,
-        stroke: black,
-        it
-    )
-}
+#import "../config/utils.typ": frame-box
 
 #let config(
     myAuthor: "Nome cognome",
