@@ -174,7 +174,9 @@ fun use_f(x: unique) {
   N-Rec, ""
 )
 
-== Statements
+== Statements Typing
+
+TODO: How to read typing rules
 
 === Begin
 
@@ -214,6 +216,35 @@ fun f(){
 }
 ```
 $ f(){begin_f; var x; ...} $
+
+=== Assigning null
+
+#display-rules(Assign-Null, "")
+
+The definition of unique tells us that a reference is unique when it is `null` or is the sole accessible reference pointing to the object that is pointing. Given that, we can safely consider unique a path $p$ after assigning `null` to it. Moreover, all sup-paths of $p$ are removed from the context after the assignment.
+
+```kt
+class B(@property:Unique var t: T)
+
+fun f() {
+    var b: B?
+    // Δ = b: T
+    // ...
+    // Δ = b: shared, b.t: T
+    b = null
+    // Δ = b: unique
+    // ...
+}
+```
+
+$ 
+class B(t:unique) \
+f(){begin_f; var b; ...; b = null; ...}
+$
+
+=== Sequence of statements
+
+#line(length: 100%)
 
 #display-rules(
   Begin, "",
