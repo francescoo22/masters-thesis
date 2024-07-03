@@ -244,6 +244,12 @@ $
 
 === Sequence of statements
 
+#display-rules(Seq-Base, Seq-Rec)
+
+// TODO: anche begin e return dovrebbero essere statement. Sarebbe da creare una entry nella grammatica che li includa.
+
+These rules are straightforward, but necessary to define how to type a sequence of statements. In a sequence, statements are typed in the order that they appear. After a statement is typed, the resulting context is used to type the following one.
+
 #line(length: 100%)
 
 #display-rules(
