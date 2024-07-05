@@ -7,6 +7,7 @@
 #pagebreak(to:"odd")
 // TODO: coerenza nei nomi delle regole (nel modo in cui abbrevio unique, shared e borrowed)
 // call, if ecc. in corsivo
+// unique, shared, borrowed in corsivo
 = Annotation System
 
 This chapter describes an annotation system for controlling aliasing within a subset of the Kotlin language.
@@ -284,9 +285,29 @@ After defining how to type a _call_, it is easy to formilize the typing of a _ca
 
 #display-rules(Assign-Unique, "")
 
+In order to type an assignment $p = p'$ in which $p'$ is _unique_, the following conditions must hold:
+- The root of $p$ must be in context.
+- $p'$ must be _unique_ in the context.
+- Assignments in which $p' subset.eq.sq p$, like $p.f = p$, are not allowed.
+
+The resulting context is built in the following way:
+- Starting from the initial context $Delta$, a context $Delta_1$ is obtained by replacing ($|->$) the annotation of $p'$ with $top$.
+- The context $Delta_1$ is used to obtain a context $Delta'$ by replacing ($|->$) the annotation of $p$ with _unique_.
+- Finally, to obtain the resulting context, all the paths that were originally rooted in $p'$ are rooted in $p$ with the same annotation and added to $Delta'$.
+
+// TODO: esempio
+
 === Assign shared
 
 #display-rules(Assign-Shared, "")
+
+Typing an assignment $p = p'$ in which $p'$ is _shared_ is similar to the case where $p'$ is _unique_, but with some differences:
+- $p$ cannot be _borrowed_. This is necessary to guarantee the soundness of the system when a _unique_ variable is passed to a function expecting a _shared borrowed_ argument.
+- Obviously $p'$ must be _shared_ in the context.
+
+Also the resulting context is constructed in a similar way to the previous case. The only difference is that in this case it is not needed to replace ($|->$) the annotation of $p'$.
+
+// TODO: esempio
 
 === Assign boorowed field
 
@@ -297,6 +318,10 @@ After defining how to type a _call_, it is easy to formilize the typing of a _ca
 #display-rules(If, "")
 
 Once the unification function is defined, typing an _if_ statement is straightforward. First it is necessary to be sure that paths appearing in the guard are accessible in the initial context. The _then_ and the _else_ branches are typed separately and their resulting contexts are unified to get the resulting context of the whole statement.
+
+Note that the system does not allow to have _null_ or a _method call_ in the guard of an _if_ statement because they are easy to be desugared, as it is shown in the following examples:
+$ fi (p == null) ... equiv var "fresh" ; "fresh" = null ; fi(p == "fresh") ... $
+$ fi (p == m(...)) ... equiv var "fresh" ; "fresh" = m(...) ; fi(p == "fresh") ... $
 
 ```kt
 class A(@property:Unique var t: T)
