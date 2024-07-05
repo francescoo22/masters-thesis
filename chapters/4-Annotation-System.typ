@@ -47,6 +47,7 @@ In order to define the rules of this annotation system, a grammar representing a
 - Annotations on fields indicate only the default permissions, in order to understand the real permissions of a fields it is necessary to look at the context. This concept is formalized by rules in /*@cap:paths*/ and shown in /*@field-annotations.*/
 === Expressions
 === Statements
+- Since it is not too relevant for the purposes of the system, the guard of an if statement is kept as simple as possible.
 
 == Context
 
@@ -250,7 +251,68 @@ $
 
 These rules are straightforward, but necessary to define how to type a sequence of statements. In a sequence, statements are typed in the order that they appear. After a statement is typed, the resulting context is used to type the following one.
 
+=== Call
+
+#display-rules(Call)
+
+=== Assign unique
+
+#display-rules(Assign-Unique)
+
+=== Assign shared
+
+#display-rules(Assign-Shared)
+
+=== Assign boorowed field
+
+#display-rules(Assign-Borrowed-Field)
+
+=== Assign call
+
+#display-rules(Assign-Call)
+// regola per la call prima di assign call?
+
+=== If
+
+#display-rules(If, "")
+
+Once the unification function is defined, typing an _if_ statement is straightforward. First it is necessary to be sure that paths appearing in the guard are accessible in the initial context. The _then_ and the _else_ branches are typed separately and their resulting contexts are unified to get the resulting context of the whole statement.
+
+```kt
+class A(@property:Unique var t: T)
+
+fun consumeUnique(@Unique t: T) {}
+fun consumeShared(a: A) {}
+
+fun f(@Unique a: A, @Borrowed t: T) {
+    // Δ = a: unique, t: shared borrowed
+    if (a.t == t) {
+        consumeUnique(a.t)
+        // Δ1 = a: unique, a.f: T, t: shared borrowed
+    } else {
+        consumeShared(a)
+        // Δ2 = a: shared, t: shared borrowed
+    }
+    // unify(Δ; Δ1; Δ2) = a: LUB{ unique, shared }, a.f: LUB{ T, shared }, t: shared borrowed
+    // Δ = a: shared, a.f: T, t: shared borrowed
+}
+```
+$
+class A(t: unique) \
+"consumeUnique"(t: unique){} \
+"consumeShared"(a: shared){} \
+f(a: unique, t: shared borrowed){
+  fi(a.t == t) 
+    "consumeUnique"(a.t)
+   els 
+    "consumeShared"(a)
+}
+$
 #line(length: 100%)
+
+=== Return
+
+#display-rules(Return-p)
 
 #display-rules(
   Begin, "",
@@ -258,10 +320,10 @@ These rules are straightforward, but necessary to define how to type a sequence 
   Seq-Base, Seq-Rec,
   Assign-Unique, "",
   Assign-Shared, "",
-  If, "",
   Assign-Borrowed-Field, "",
   Assign-Call, "",
   Call, "",
+  If, "",
   Return-p, "",
 )
 
