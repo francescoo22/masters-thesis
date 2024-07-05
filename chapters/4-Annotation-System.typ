@@ -6,6 +6,7 @@
 
 #pagebreak(to:"odd")
 // TODO: coerenza nei nomi delle regole (nel modo in cui abbrevio unique, shared e borrowed)
+// call, if ecc. in corsivo
 = Annotation System
 
 This chapter describes an annotation system for controlling aliasing within a subset of the Kotlin language.
@@ -257,11 +258,27 @@ These rules are straightforward, but necessary to define how to type a sequence 
 
 === Call
 
+Typing a function call follows the logic presented in the "passing" ($~>$) rules while taking care of what can happen with function accepting multiple parameters.
+- All the roots of the paths passed to a function must be in the context (also guranteed by the language).
+- All the paths passed to a function must be in standard form of the expected annotation.
+- It is allowed to pass the same path twice to the same function, but only if it passed where a shared argument is expected.
+- ∀0 ≤ 𝑖, 𝑗 ≤ 𝑛 : 𝑝𝑖 ⊏ 𝑝𝑗 ⇒ (Δ(𝑝𝑗 ) = shared ∨ 𝑎𝑚𝑖 = 𝑎𝑗 = shared)
+- The resulting context is constructed in the following way:
+  - Paths passed to the function and their sup-paths are removed from the initial context.
+  - A list of annotated paths (in which a the same path may appear twice) in constructed by mapping passed paths according to the "passing" ($~>$) rules.
+  - The obtained list is normalized and added to the context.
+
 #display-rules(Call, "")
+
+// TODO: esempi
 
 === Assign call
 
 #display-rules(Assign-Call, "")
+
+After defining how to type a _call_, it is easy to formilize the typing of a _call_ assignment. Like all the other assignment rules, the root of the path on the left side of the assignment must be in the context. First of all, the _call_ is typed obtaining a new context $Delta_1$. Then, the annotation of the path on the left side of the assignment is replaced ($|->$) in $Delta_1$ with the annotation of the return value of the function.
+
+// TODO: esempio
 
 === Assign unique
 
@@ -311,11 +328,25 @@ f(a: unique, t: shared borrowed){
     "consumeShared"(a)
 }
 $
-#line(length: 100%)
 
 === Return
 
-#display-rules(Return-p)
+#display-rules(Return-p, "")
+
+By construction of the grammar, a _return_ statement will always be the last statement to execute. Therefore, it is not relevant to have a resulting context after typing the return statement. In order to be well-typed, a _return_ statement must satisfy the following conditions:
+- The annotation of the returned path must be lower or equal ($rel$) than the annotation of the return value of the method.
+- The returned path must be in the standard form of the returned type
+- All the parameters that are not unique must be in the standard form of their original.
+These conditions are essential for having a method modular system. // TODO: elaborate more?
+
+Note that the system does not allow to return _null_ or a _method call_ because they are easy to be desugared, as it is shown in the following examples:
+$ {...; ret null} equiv {...; var "fresh" ; "fresh" = null ; ret "fresh"} $
+$ {...; ret m(...)} equiv {...; var "fresh" ; "fresh" = m(...) ; ret "fresh"} $
+Where _fresh_ is a variable that has not been declared before.
+
+// TODO: examples
+
+#line(length: 100%)
 
 #display-rules(
   Begin, "",
@@ -331,8 +362,6 @@ $
 )
 
 *Note:* Since they can be easily desugared, there are no rules for returnning `null` or a method call.
-- `return null` $equiv$ `var fresh ; fresh = null ; return fresh`
-- `return m(...)` $equiv$ `var fresh ; fresh = m(...) ; return fresh`
 
 The same can be done for the guard of if statements:
 - `if (p1 == null) ...` $equiv$ `var p2 ; p2 = null ; if(p1 == p2) ...`
