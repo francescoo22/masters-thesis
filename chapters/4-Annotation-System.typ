@@ -5,6 +5,7 @@
 #import "rules/statements.typ": *
 
 #pagebreak(to:"odd")
+// TODO: coerenza nei nomi delle regole (nel modo in cui abbrevio unique, shared e borrowed)
 = Annotation System
 
 This chapter describes an annotation system for controlling aliasing within a subset of the Kotlin language.
@@ -220,6 +221,9 @@ $ f(){begin_f; var x; ...} $
 
 === Assigning null
 
+// TODO: precondizione per p in context???
+// basta essere coerenti, o sempre o mai
+
 #display-rules(Assign-Null, "")
 
 The definition of unique tells us that a reference is unique when it is `null` or is the sole accessible reference pointing to the object that is pointing. Given that, we can safely consider unique a path $p$ after assigning `null` to it. Moreover, all sup-paths of $p$ are removed from the context after the assignment.
@@ -253,24 +257,23 @@ These rules are straightforward, but necessary to define how to type a sequence 
 
 === Call
 
-#display-rules(Call)
-
-=== Assign unique
-
-#display-rules(Assign-Unique)
-
-=== Assign shared
-
-#display-rules(Assign-Shared)
-
-=== Assign boorowed field
-
-#display-rules(Assign-Borrowed-Field)
+#display-rules(Call, "")
 
 === Assign call
 
-#display-rules(Assign-Call)
-// regola per la call prima di assign call?
+#display-rules(Assign-Call, "")
+
+=== Assign unique
+
+#display-rules(Assign-Unique, "")
+
+=== Assign shared
+
+#display-rules(Assign-Shared, "")
+
+=== Assign boorowed field
+
+#display-rules(Assign-Borrowed-Field, "")
 
 === If
 

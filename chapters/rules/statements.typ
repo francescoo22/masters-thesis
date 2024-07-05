@@ -57,11 +57,10 @@
   
   prooftree(
     stacked-axiom(
-      (a0, a1, a2, a3, a4),
-      (a5, a6, a7)
+      (a0, a1, a2), (a3, a4, a5), (a6, a7)
     ),
     rule(
-      label: "Assign-Borrowed-Field",
+      label: $"Assign-"borrowed"-Field"$,
       $mid(p = p'.f)', p.overline(f_0) : alpha_0 beta_0, ..., p.overline(f_n) : alpha_n beta_n$
     )
   )
@@ -96,13 +95,17 @@
   )
 }
 
-#let Assign-Call = prooftree(
-  axiom($Delta(p) = alpha' beta'$),
-  axiom($Delta tr m(overline(p)) tl Delta_1$),
-  axiom($mtype(m) = alpha_0 beta_0, ..., alpha_n beta_n -> alpha$),
-  axiom($Delta_1[p |-> alpha] = Delta'$),
-  rule(n:4, label: "Assign-Call", $mid(p = m(overline(p)))'$)
-)
+#let Assign-Call = {
+  let a1 = $Delta(p) = alpha' beta'$
+  let a2 = $Delta tr m(overline(p)) tl Delta_1$
+  let a3 = $mtype(m) = alpha_0 beta_0, ..., alpha_n beta_n -> alpha$
+  let a4 = $Delta_1[p |-> alpha] = Delta'$
+  prooftree(
+    stacked-axiom((a1, a2), (a3, a4)),
+    rule(label: "Assign-Call", $mid(p = m(overline(p)))'$)
+  )
+}
+
 
 #let Call = {
   let a0 = $forall 0 <= i <= n : Delta(p_i) = alpha_i beta_i$
@@ -116,7 +119,7 @@
   let a7 = $norm(p_0 : alpha'_0 beta'_0, ..., p_n : alpha'_n beta'_n) = p'_0 : alpha''_0 beta''_0, ..., p'_m : alpha''_m beta''_m$
   prooftree(
     stacked-axiom(
-      (a0, a1), (a2, a3), (a4, a5), (a6, a7)
+      (a0,), (a1,), (a2,), (a3,), (a4,), (a5, a6), (a7,)
     ),
     rule(label: "Call", $mid(m(p_0, ..., p_n))', p'_0 : alpha''_0 beta''_0, ..., p'_m : alpha''_m beta''_m$)
   )
