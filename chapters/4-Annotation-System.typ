@@ -23,18 +23,20 @@ A unique design goal of this system is to improve the verification process with 
 
 In order to define the rules of this annotation system, a grammar representing a substet of the Kotlin language is used. The grammar uses a notation similar to Featherweight Java @Featherweight-Java.
 
-#frame-box(
-  $
-    CL &::= class C(overline(f\: alpha_f)) \
-    M &::= m(overline(af beta space x)): af {begin_m; overline(s); ret_m e} \
-    af &::= unique | shared \
-    beta &::= dot | borrowed \
-    p &::= x | p.f \
-    e &::= null | p | m(overline(p)) \
-    s &::= var x | p = e |  fi p_1 == p_2 then overline(s_1) els overline(s_2) | m(overline(p))
-    // \ &| loop p_1 == p_2 do overline(s)
-  $
-)
+#figure(
+  caption: "TODO",
+  frame-box(
+    $
+      CL &::= class C(overline(f\: alpha_f)) \
+      M &::= m(overline(af beta space x)): af {begin_m; overline(s); ret_m e} \
+      af &::= unique | shared \
+      beta &::= dot | borrowed \
+      p &::= x | p.f \
+      e &::= null | p | m(overline(p)) \
+      s &::= var x | p = e |  fi p_1 == p_2 then overline(s_1) els overline(s_2) | m(overline(p))
+      // \ &| loop p_1 == p_2 do overline(s)
+    $
+))
 
 === Class and Method declaration
 - Primitive fields are not considered
@@ -263,7 +265,9 @@ Typing a function call follows the logic presented in the "passing" ($~>$) rules
 - All the roots of the paths passed to a function must be in the context (also guranteed by the language).
 - All the paths passed to a function must be in standard form of the expected annotation.
 - It is allowed to pass the same path twice to the same function, but only if it passed where a shared argument is expected.
-- ∀0 ≤ 𝑖, 𝑗 ≤ 𝑛 : 𝑝𝑖 ⊏ 𝑝𝑗 ⇒ (Δ(𝑝𝑗 ) = shared ∨ 𝑎𝑚𝑖 = 𝑎𝑗 = shared)
+- It is allowed to pass two paths $p_i$ and $p_j$ such that $p_i subset.sq p_j$ when one of the following conditions is satisfied:
+  - $p_j$ is _shared_.
+  - The function that has been called expects _shared_ (possibly _borrowed_) arguments in positions $i$ and $j$.
 - The resulting context is constructed in the following way:
   - Paths passed to the function and their sup-paths are removed from the initial context.
   - A list of annotated paths (in which a the same path may appear twice) in constructed by mapping passed paths according to the "passing" ($~>$) rules.
