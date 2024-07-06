@@ -5,6 +5,7 @@
 #import "rules/statements.typ": *
 
 #pagebreak(to:"odd")
+// TODO: tutti gli esempi in una figure con la caption
 // TODO: coerenza nei nomi delle regole (nel modo in cui abbrevio unique, shared e borrowed)
 // call, if ecc. in corsivo
 // unique, shared, borrowed in corsivo
@@ -261,6 +262,9 @@ These rules are straightforward, but necessary to define how to type a sequence 
 
 === Call
 
+
+#display-rules(Call, "")
+
 Typing a function call follows the logic presented in the "passing" ($~>$) rules while taking care of what can happen with function accepting multiple parameters.
 - All the roots of the paths passed to a function must be in the context (also guranteed by the language).
 - All the paths passed to a function must be in standard form of the expected annotation.
@@ -273,9 +277,77 @@ Typing a function call follows the logic presented in the "passing" ($~>$) rules
   - A list of annotated paths (in which a the same path may appear twice) in constructed by mapping passed paths according to the "passing" ($~>$) rules.
   - The obtained list is normalized and added to the context.
 
-#display-rules(Call, "")
+@call-arg-twice shows the cases where it is possible to pass the same reference more than once.
+In @call-sup-ok-1 it is possible to call `f` by passing `x` and `x.f` since $Delta(x.f) = shared$.
+In @call-sup-wrong is not possible to call `g` by passing `b` and `b.f`, this is because `g`, in its body, expects `x.f` to be _unique_, but it would not be the case by passing `b` and `b.f`.
+Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and `x.f` since the function expects both of the arguments to be _shared_.
 
-// TODO: esempi
+
+#figure(
+  caption: "TODO",
+  ```kt
+  fun f(@Unique x: T, @Borrowed y: T) {}
+  fun g(@Borrowed x: T, @Borrowed y: T) {}
+  fun h(x: T, @Borrowed y: T) {}
+
+  fun use_f(@Unique x: T) {
+      // Δ = x: Unique
+      f(x, x) // error: 'x' is passed more than once but is also expected to be unique
+  }
+
+  fun use_g_h(@Unique x: T) {
+      // Δ = x: Unique
+      g(x, x) // ok, uniqueness is also preserved since both the args are borrowed
+      // Δ = x: Unique
+      h(x, x) // ok, but uniqueness is lost since one of the args is not borrowed
+      // Δ = x: Shared
+  }
+  ```
+)<call-arg-twice>
+
+#figure(
+  caption: "TODO",
+  ```kt
+  class A(var f: T)
+
+  fun f(@Unique x: A, y: T) {}
+  fun use_f(@Unique x: A) {
+      // Δ = x: Unique
+      f(x, x.f) // ok
+      // Δ = x: T, x.f: Shared
+      // Note that even if x.f is marked shared in the context,
+      // it is not accessible since Δ(x.f) = T
+  }
+  ```
+)<call-sup-ok-1>
+
+#figure(
+  caption: "TODO",
+  ```kt
+  class B(@Unique var f: T)
+
+  fun g(@Unique x: B, y: T) {}
+  fun use_g(@Unique b: B) {
+      // Δ = b: Unique
+      g(b, b.f) // error: 'b.f' cannot be passed since 'b' is passed as Unique and Δ(b.f) = Unique
+      // It is correct to raise an error since 'g' expects x.f to be unique
+  }
+  ```
+)<call-sup-wrong>
+
+#figure(
+  caption: "TODO",
+  ```kt
+  class B(@Unique var f: T)
+
+  fun h(x: B, y: T) {}
+  fun use_h(@Unique x: B) {
+      // Δ = x: Unique
+      h(x, x.f) // ok
+      // Δ = x: Shared, x.f: Shared
+  }
+  ```
+)<call-sup-ok-2>
 
 === Assign call
 
@@ -395,6 +467,8 @@ Where _fresh_ is a variable that has not been declared before.
 The same can be done for the guard of if statements:
 - `if (p1 == null) ...` $equiv$ `var p2 ; p2 = null ; if(p1 == p2) ...`
 - `if (p1 == m(...)) ...` $equiv$ `var p2 ; p2 = m(...) ; if(p1 == p2) ...`
+
+// TODO: Stack example + DERIVATION
 
 // TODO: put this in a separate chapter
 
