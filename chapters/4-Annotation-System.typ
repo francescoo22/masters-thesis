@@ -8,7 +8,7 @@
 // TODO: annotazioni nei commenti del codice a volte maiuscole e a volte minuscole
 // TODO: tutti gli esempi in una figure con la caption
 // TODO: coerenza nei nomi delle regole (nel modo in cui abbrevio unique, shared e borrowed)
-// TODO: decidere cosa fare con gli esempi scritti anche con la notazione della grammatica. Anche capire se ha senso dare un nome al subset del linguaggio
+// TODO: decidere cosa fare con gli esempi scritti anche con la notazione della grammatica (da rivedere tutti in ogni caso (nomi classi T vs C)). Anche capire se ha senso dare un nome al subset del linguaggio
 // call, if ecc. in corsivo
 // unique, shared, borrowed in corsivo
 = Annotation System
@@ -21,6 +21,10 @@ It is also specifically made for being as lightweight as possible and gradually 
 // TODO: borrowed unique / borrowed shared distinction here?
 
 A unique design goal of this system is to improve the verification process with Viper by establishing a link between separation logic and the absence of aliasing control in Kotlin.
+
+== Annotations in Kotlin
+
+How the annotation system looks like in Kotlin
 
 == Grammar
 
@@ -187,18 +191,26 @@ fun use_f(x: unique) {
 
 TODO: How to read typing rules
 
+$"Program" ::= overline(CL) times overline(M)$
+where:
+- $overline(CL) in 2^CL$
+- $overline(M) in 2^M$
+
+A program is well-typed iff $forall m equiv m(...){overline(s)} in overline(M) . space dot tr overline(s) tr dot$ is derivable.
+
 === Begin
 
 #display-rules(Begin, "")
 
 This rule is used to initialize the context at the beginning of a method. The initial context will contain only the method's arguments with the declared uniqueness annotations.
 
-// TODO: scrivere da qualche parte che i tipi sono a cazzo
 ```kt
-fun @receiver:Unique T.f(
-    @Unique @Borrowed x: T,
-    @Borrowed y: T,
-    z: T
+class C
+
+fun @receiver:Unique C.f(
+    @Unique @Borrowed x: C,
+    @Borrowed y: C,
+    z: C
 ) {
     // Δ = this: unique, x: unique ♭, y: shared ♭, z: shared
     // ...
@@ -217,6 +229,8 @@ After declaring a variable, it is unaccessible until its initialization and so t
 Note that this rule only allows to declare variables if they are not in the context while Kotlin allows to shadow variables declared in outer scopes. Kotlin code using shadowing is not currently supported by this system.
 
 ```kt
+class C
+
 fun f(){
     // Δ = ∅
     var x: C
@@ -236,7 +250,8 @@ $ f(){begin_f; var x; ...} $
 The definition of unique tells us that a reference is unique when it is `null` or is the sole accessible reference pointing to the object that is pointing. Given that, we can safely consider unique a path $p$ after assigning `null` to it. Moreover, all sup-paths of $p$ are removed from the context after the assignment.
 
 ```kt
-class B(@property:Unique var t: T)
+class C
+class B(@property:Unique var t: C)
 
 fun f() {
     var b: B?
@@ -288,16 +303,20 @@ Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and 
 #figure(
   caption: "TODO",
   ```kt
-  fun f(@Unique x: T, @Borrowed y: T) {}
-  fun g(@Borrowed x: T, @Borrowed y: T) {}
-  fun h(x: T, @Borrowed y: T) {}
+  class C
 
-  fun use_f(@Unique x: T) {
+  fun f(@Unique x: C, @Borrowed y: C) {}
+
+  fun g(@Borrowed x: C, @Borrowed y: C) {}
+
+  fun h(x: C, @Borrowed y: C) {}
+
+  fun use_f(@Unique x: C) {
       // Δ = x: Unique
       f(x, x) // error: 'x' is passed more than once but is also expected to be unique
   }
 
-  fun use_g_h(@Unique x: T) {
+  fun use_g_h(@Unique x: C) {
       // Δ = x: Unique
       g(x, x) // ok, uniqueness is also preserved since both the args are borrowed
       // Δ = x: Unique
@@ -310,9 +329,11 @@ Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and 
 #figure(
   caption: "TODO",
   ```kt
-  class A(var f: T)
+  class C
+  class A(var f: C)
 
-  fun f(@Unique x: A, y: T) {}
+  fun f(@Unique x: A, y: C) {}
+
   fun use_f(@Unique x: A) {
       // Δ = x: Unique
       f(x, x.f) // ok
@@ -326,9 +347,11 @@ Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and 
 #figure(
   caption: "TODO",
   ```kt
-  class B(@Unique var f: T)
+  class C
+  class B(@Unique var f: C)
 
-  fun g(@Unique x: B, y: T) {}
+  fun g(@Unique x: B, y: C) {}
+
   fun use_g(@Unique b: B) {
       // Δ = b: Unique
       g(b, b.f) // error: 'b.f' cannot be passed since 'b' is passed as Unique and Δ(b.f) = Unique
@@ -340,9 +363,11 @@ Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and 
 #figure(
   caption: "TODO",
   ```kt
-  class B(@Unique var f: T)
+  class C
+  class B(@Unique var f: C)
 
-  fun h(x: B, y: T) {}
+  fun h(x: B, y: C) {}
+
   fun use_h(@Unique x: B) {
       // Δ = x: Unique
       h(x, x.f) // ok
@@ -358,16 +383,14 @@ Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and 
 After defining how to type a _call_, it is easy to formilize the typing of a _call_ assignment. Like all the other assignment rules, the root of the path on the left side of the assignment must be in the context. First of all, the _call_ is typed obtaining a new context $Delta_1$. Then, the annotation of the path on the left side of the assignment is replaced ($|->$) in $Delta_1$ with the annotation of the return value of the function.
 
 ```kt
+class C
+
 @Unique
-fun get_unique(): T {
-    // ...
-}
+fun get_unique(): C { /* ... */ }
 
-fun get_shared(): T {
-    // ...
-}
+fun get_shared(): C { /* ... */ }
 
-fun f(){
+fun f() {
     // Δ = ∅
     val x = get_unique()
     // Δ = x: Unique
@@ -391,8 +414,8 @@ The resulting context is built in the following way:
 - Finally, to obtain the resulting context, all the paths that were originally rooted in $p'$ are rooted in $p$ with the same annotation and added to $Delta'$.
 
 ```kt
-class T
-class B(@property:Unique var t: T)
+class C
+class B(@property:Unique var t: C)
 class A(@property:Unique var b: B)
 
 fun f(@Unique x: A, @Unique y: B){
@@ -414,7 +437,16 @@ Typing an assignment $p = p'$ in which $p'$ is _shared_ is similar to the case w
 
 Also the resulting context is constructed in a similar way to the previous case. The only difference is that in this case it is not needed to replace ($|->$) the annotation of $p'$.
 
-// TODO: esempio
+```kt
+class C
+class B(@property:Unique var t: C)
+
+fun f(@Unique x: B, y: C){
+    // Δ = x: Unique, y: Shared
+    x.t = y
+    // Δ = x: Unique, y: Shared, x.t: Shared
+}
+```
 
 === Assign boorowed field
 
@@ -434,15 +466,17 @@ $ fi (p == null) ... equiv var "fresh" ; "fresh" = null ; fi(p == "fresh") ... $
 $ fi (p == m(...)) ... equiv var "fresh" ; "fresh" = m(...) ; fi(p == "fresh") ... $
 
 ```kt
-class A(@property:Unique var t: T)
+class C
+class A(@property:Unique var c: C)
 
-fun consumeUnique(@Unique t: T) {}
+fun consumeUnique(@Unique c: C) {}
+
 fun consumeShared(a: A) {}
 
-fun f(@Unique a: A, @Borrowed t: T) {
+fun f(@Unique a: A, @Borrowed c: C) {
     // Δ = a: unique, t: shared borrowed
-    if (a.t == t) {
-        consumeUnique(a.t)
+    if (a.c == c) {
+        consumeUnique(a.c)
         // Δ1 = a: unique, a.f: T, t: shared borrowed
     } else {
         consumeShared(a)
@@ -453,12 +487,12 @@ fun f(@Unique a: A, @Borrowed t: T) {
 }
 ```
 $
-class A(t: unique) \
-"consumeUnique"(t: unique){} \
+class A(c: unique) \
+"consumeUnique"(c: unique){} \
 "consumeShared"(a: shared){} \
-f(a: unique, t: shared borrowed){
-  fi(a.t == t) 
-    "consumeUnique"(a.t)
+f(a: unique, c: shared borrowed){
+  fi(a.c == c) 
+    "consumeUnique"(a.c)
    els 
     "consumeShared"(a)
 }

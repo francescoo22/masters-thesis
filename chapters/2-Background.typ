@@ -91,6 +91,10 @@ In @contract-1 it is possible to see how contracts allow the initialization of i
   ```
 )<contract-2>
 
+=== Annotations?
+
+=== FIR?
+
 == Aliasing
 
 // TODO: Read better these summaries and modify them (AIG)
