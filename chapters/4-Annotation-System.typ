@@ -5,8 +5,10 @@
 #import "rules/statements.typ": *
 
 #pagebreak(to:"odd")
+// TODO: annotazioni nei commenti del codice a volte maiuscole e a volte minuscole
 // TODO: tutti gli esempi in una figure con la caption
 // TODO: coerenza nei nomi delle regole (nel modo in cui abbrevio unique, shared e borrowed)
+// TODO: decidere cosa fare con gli esempi scritti anche con la notazione della grammatica. Anche capire se ha senso dare un nome al subset del linguaggio
 // call, if ecc. in corsivo
 // unique, shared, borrowed in corsivo
 = Annotation System
@@ -355,7 +357,24 @@ Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and 
 
 After defining how to type a _call_, it is easy to formilize the typing of a _call_ assignment. Like all the other assignment rules, the root of the path on the left side of the assignment must be in the context. First of all, the _call_ is typed obtaining a new context $Delta_1$. Then, the annotation of the path on the left side of the assignment is replaced ($|->$) in $Delta_1$ with the annotation of the return value of the function.
 
-// TODO: esempio
+```kt
+@Unique
+fun get_unique(): T {
+    // ...
+}
+
+fun get_shared(): T {
+    // ...
+}
+
+fun f(){
+    // Δ = ∅
+    val x = get_unique()
+    // Δ = x: Unique
+    val y = get_shared()
+    // Δ = x: Unique, y: Shared
+}
+```
 
 === Assign unique
 
@@ -371,7 +390,19 @@ The resulting context is built in the following way:
 - The context $Delta_1$ is used to obtain a context $Delta'$ by replacing ($|->$) the annotation of $p$ with _unique_.
 - Finally, to obtain the resulting context, all the paths that were originally rooted in $p'$ are rooted in $p$ with the same annotation and added to $Delta'$.
 
-// TODO: esempio
+```kt
+class T
+class B(@property:Unique var t: T)
+class A(@property:Unique var b: B)
+
+fun f(@Unique x: A, @Unique y: B){
+    // Δ = x: Unique, y: Unique
+    y.t = x.b.t
+    // Δ = x: Unique, y: Unique, x.b.t: T, y.t: Unique
+    x.b = y
+    // Δ = x: Unique, y: T, x.b: Unique
+}
+```
 
 === Assign shared
 
@@ -388,6 +419,9 @@ Also the resulting context is constructed in a similar way to the previous case.
 === Assign boorowed field
 
 #display-rules(Assign-Borrowed-Field, "")
+
+// TODO: spiegazione
+// TODO: esempio
 
 === If
 
