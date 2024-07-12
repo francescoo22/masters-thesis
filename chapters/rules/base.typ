@@ -4,12 +4,12 @@
 // ****************** General ******************
 
 #let M-Type = prooftree(
-  axiom($m(alpha_0 beta_0 x_0, ..., alpha_n beta_n x_n): alpha {begin_m; overline(s); ret_m e}$),
+  axiom($m(x_0: alpha_0 beta_0, ..., x_n: alpha_n beta_n): alpha {begin_m; overline(s); ret_m e}$),
   rule(label: "M-Type", $mtype(m) = alpha_0 beta_0, ..., alpha_n beta_n -> alpha$),
 )
   
 #let M-Args = prooftree(
-  axiom($m(alpha_0 beta_0 x_0, ..., alpha_n beta_n x_n): alpha {begin_m; overline(s); ret_m e}$),
+  axiom($m(x_0: alpha_0 beta_0, ..., x_n: alpha_n beta_n): alpha {begin_m; overline(s); ret_m e}$),
   rule(label: "M-Args", $args(m) = x_0, ..., x_n$),
 )
 

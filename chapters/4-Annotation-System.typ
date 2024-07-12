@@ -28,14 +28,14 @@ How the annotation system looks like in Kotlin
 
 == Grammar
 
-In order to define the rules of this annotation system, a grammar representing a substet of the Kotlin language is used. The grammar uses a notation similar to Featherweight Java @Featherweight-Java.
+In order to define the rules of this annotation system, a grammar representing a substet of the Kotlin language is used.
 
 #figure(
   caption: "TODO",
   frame-box(
     $
       CL &::= class C(overline(f\: alpha_f)) \
-      M &::= m(overline(af beta space x)): af {begin_m; overline(s); ret_m e} \
+      M &::= m(overline(x\: af beta)): af {begin_m; overline(s); ret_m e} \
       af &::= unique | shared \
       beta &::= dot | borrowed \
       p &::= x | p.f \
@@ -57,9 +57,75 @@ In order to define the rules of this annotation system, a grammar representing a
 - `T` is an annotation that can only be inferred and means that the reference is *not accessible*.
 - $borrowed$ (borrowed) indicates that the function receiving the reference won't create extra aliases to it, and on return, its fields will maintain at least the permissions stated in the class declaration.
 - Annotations on fields indicate only the default permissions, in order to understand the real permissions of a fields it is necessary to look at the context. This concept is formalized by rules in /*@cap:paths*/ and shown in /*@field-annotations.*/
+
+#let grammar_annotations = ```
+class C(
+  f1: unique,
+  f2: shared
+)
+
+m1() : unique { 
+  ... 
+}
+
+
+m2(this: unique) : shared {
+  ... 
+}
+
+m3(
+  x1: unique,
+  x2: unique borrowed,
+  x3: shared,
+  x4: shared borrowed
+) {
+  ...
+}
+```
+
+#let kt_annotations = ```kt
+class C(
+    @Unique var f1: Any,
+    var f2: Any
+)
+
+@Unique
+fun m1(): Any {
+    /* ... */
+}
+
+fun @receiver:Unique Any.m2() {
+    /* ... */
+}
+
+fun m3(
+    @Unique x1: Any,
+    @Unique @Borrowed x2: Any,
+    x3: Any,
+    @Borrowed x4: Any
+) {
+    /* ... */
+}
+```
+
+#grid(
+  columns: (auto, auto),
+  column-gutter: 2em,
+  row-gutter: 1em,
+  [*Grammar*],[*Kotlin*],
+  grammar_annotations, kt_annotations
+)
+
 === Expressions
 === Statements
 - Since it is not too relevant for the purposes of the system, the guard of an if statement is kept as simple as possible.
+
+== General
+
+#display-rules(
+  M-Type, "",
+  M-Args, "",
+)
 
 == Context
 
@@ -70,15 +136,6 @@ In order to define the rules of this annotation system, a grammar representing a
     Delta &::= dot | p : alpha beta, Delta
   $
 )
-
-== General
-
-#display-rules(
-  M-Type, "",
-  M-Args, "",
-)
-
-== Context
 
 - The same variable/field cannot appear more than once in a context.
 - Contexts are always *finite*
@@ -219,7 +276,7 @@ fun @receiver:Unique C.f(
 
 // TODO: derivation?
 
-$ f(unique this, unique borrowed space x, shared borrowed space y, shared z){begin_f; ...} $
+$ f(this: unique, x: unique borrowed, y: shared borrowed, z: shared){begin_f; ...} $
 
 === Variable Declaration
 
@@ -529,12 +586,6 @@ Where _fresh_ is a variable that has not been declared before.
   If, "",
   Return-p, "",
 )
-
-*Note:* Since they can be easily desugared, there are no rules for returnning `null` or a method call.
-
-The same can be done for the guard of if statements:
-- `if (p1 == null) ...` $equiv$ `var p2 ; p2 = null ; if(p1 == p2) ...`
-- `if (p1 == m(...)) ...` $equiv$ `var p2 ; p2 = m(...) ; if(p1 == p2) ...`
 
 // TODO: Stack example + DERIVATION
 
