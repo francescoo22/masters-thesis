@@ -22,10 +22,6 @@ It is also specifically made for being as lightweight as possible and gradually 
 
 A unique design goal of this system is to improve the verification process with Viper by establishing a link between separation logic and the absence of aliasing control in Kotlin.
 
-== Annotations in Kotlin
-
-How the annotation system looks like in Kotlin
-
 == Grammar
 
 In order to define the rules of this annotation system, a grammar representing a substet of the Kotlin language is used.
@@ -137,19 +133,32 @@ fun m3(
   $
 )
 
-- The same variable/field cannot appear more than once in a context.
-- Contexts are always *finite*
-- If not present in the context, fields have a default annotation that is the one written in the class declaration
+#v(1em)
+
+A context is a list of paths associated with their annotations $alpha$ and $beta$. While $beta$ is defined in the same way of the grammar, $alpha$ is slightly different. Other than _unique_ and _shared_, in a context, an annotation $alpha$ can also be $top$. As will be better explained in the following sections, the annotation $top$ can only be inferred, so it is not possible for the user to write it. A path annotated with $top$ within a context is not accessible, meaning that the path needs to be re-assigned before beign read. The formal meaning of the annotation $top$ will be clearer while formilizing the statement typing rules. 
 
 #display-rules(
   Not-In-Base, Not-In-Rec,
   Ctx-Base, Ctx-Rec,
-  Root-Base, Root-Rec,
+)
+
+This first set of rules defines how a well-formed context is structured. The judgement $p in.not Delta$ is derivable when $p$ is not present in the context. If the judgement $Delta ctx$ is derivable, the context is well-formed. In order to be well-formed, a context must not contain duplicate paths and must be finite.
+
+#display-rules(
   Lookup-Base, Lookup-Rec,
   Lookup-Default, "",
+)
+
+*TODO*
+Importante specificare che look-up non restituisce il vero valore (lookup p = unique -/-> p e' unique)
+- If not present in the context, fields have a default annotation that is the one written in the class declaration
+
+#display-rules(
   Remove-Empty, Remove-Base,
   Remove-Rec, "",
 )
+
+*TODO* Spiega in breve cosa fa
 
 == SubPaths
 
@@ -197,6 +206,7 @@ If $p_1 subset.sq p_2$ holds, we say that
 - Note that in the rule "Std-Rec-2" the premise $(x : alpha beta) (p') = alpha'' beta''$ means that the evaluation of $p'$ in a context in which there is only $x : alpha beta$ is $alpha'' beta''$
 
 #display-rules(
+  Root-Base, Root-Rec,
   Get-Var, Get-Path,
   Std-Empty, Std-Rec-1,
   Std-Rec-2, "",
@@ -305,6 +315,8 @@ $ f(){begin_f; var x; ...} $
 #display-rules(Assign-Null, "")
 
 The definition of unique tells us that a reference is unique when it is `null` or is the sole accessible reference pointing to the object that is pointing. Given that, we can safely consider unique a path $p$ after assigning `null` to it. Moreover, all sup-paths of $p$ are removed from the context after the assignment.
+
+It is also important to note the presence of the premise "$Delta(p) = alpha beta$" ensuring that the root of the path $p$ is inside the context $Delta$.
 
 ```kt
 class C

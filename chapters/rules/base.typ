@@ -52,12 +52,16 @@
   rule(label: "Lookup-Base", $(p: alpha beta, Delta) inangle(p) = alpha beta$),
 )
 
-#let Lookup-Rec = prooftree(
-  axiom($(p: alpha beta, Delta) ctx$),
-  axiom($p != p'$),
-  axiom($Delta inangle(p') = alpha' beta'$),
-  rule(n:3, label: "Lookup-Rec", $(p: alpha beta, Delta) inangle(p') = alpha' beta'$),
-)
+#let Lookup-Rec = {
+  let a1 = $(p: alpha beta, Delta) ctx$
+  let a2 = $p != p'$
+  let a3 = $Delta inangle(p') = alpha' beta'$
+  prooftree(
+    stacked-axiom((a1,), (a2, a3)),
+    rule(label: "Lookup-Rec", $(p: alpha beta, Delta) inangle(p') = alpha' beta'$),
+  )
+}
+
 
 #let Lookup-Default = prooftree(
   axiom($type(p) = C$),
