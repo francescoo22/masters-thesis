@@ -25,15 +25,15 @@
 
 #v(3em)
 
-#text(style: "italic", "Innanzitutto, vorrei esprimere la mia gratitudine al " + profTitle + myProf + " relatore della mia tesi, per l'aiuto e il sostegno fornitomi durante la stesura del lavoro.")
+#text(style: "italic", "Acknlowledgement...")
 
 #linebreak()
 
-#text(style: "italic", "Desidero ringraziare con affetto i miei genitori per il sostegno, il grande aiuto e per essermi stati vicini in ogni momento durante gli anni di studio.")
+#text(style: "italic", "Acknlowledgement...")
 
 #linebreak()
 
-#text(style: "italic", "Ho desiderio di ringraziare poi i miei amici per tutti i bellissimi anni passati insieme e le mille avventure vissute.")
+#text(style: "italic", "Acknlowledgement...")
 
 #v(2em)
 

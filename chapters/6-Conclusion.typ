@@ -6,3 +6,4 @@
 === better tracking of known aliases
 === checking annotations
 === extending the language (loops, lambdas, ...)
+lambdas: @reachability-types
