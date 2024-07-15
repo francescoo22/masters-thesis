@@ -135,7 +135,9 @@ fun m3(
 
 #v(1em)
 
-A context is a list of paths associated with their annotations $alpha$ and $beta$. While $beta$ is defined in the same way of the grammar, $alpha$ is slightly different. Other than _unique_ and _shared_, in a context, an annotation $alpha$ can also be $top$. As will be better explained in the following sections, the annotation $top$ can only be inferred, so it is not possible for the user to write it. A path annotated with $top$ within a context is not accessible, meaning that the path needs to be re-assigned before beign read. The formal meaning of the annotation $top$ will be clearer while formilizing the statement typing rules. 
+A context is a list of paths associated with their annotations $alpha$ and $beta$. While $beta$ is defined in the same way of the grammar, $alpha$ is slightly different. Other than _unique_ and _shared_, in a context, an annotation $alpha$ can also be $top$. As will be better explained in the following sections, the annotation $top$ can only be inferred, so it is not possible for the user to write it. A path annotated with $top$ within a context is not accessible, meaning that the path needs to be re-assigned before beign read. The formal meaning of the annotation $top$ will be clearer while formilizing the statement typing rules.
+
+=== Well-formed context
 
 #display-rules(
   Not-In-Base, Not-In-Rec,
@@ -144,21 +146,35 @@ A context is a list of paths associated with their annotations $alpha$ and $beta
 
 This first set of rules defines how a well-formed context is structured. The judgement $p in.not Delta$ is derivable when $p$ is not present in the context. If the judgement $Delta ctx$ is derivable, the context is well-formed. In order to be well-formed, a context must not contain duplicate paths and must be finite.
 
+=== Lookup
+
 #display-rules(
   Lookup-Base, Lookup-Rec,
   Lookup-Default, "",
 )
 
-*TODO*
-Importante specificare che look-up non restituisce il vero valore (lookup p = unique -/-> p e' unique)
-- If not present in the context, fields have a default annotation that is the one written in the class declaration
+Lookup rules are used to define a (partial) function that returns the annotations of a path in a well-formed context.
+
+$ \_inangle(\_): Delta -> p -> alpha beta $
+
+The function will return the annotations declared in the class declaration in the case in which a path that is not a variable ($p.f$) is not explicitly contained inside the context. This concept, formalized by Lookup-Default, is fundamental because it allows contexts to be finite also when dealing with recursive classes. On the other hand, the lookup for variables ($x$) not contained in a context cannot be derived.
+
+It is also important to note that this function does not necessarily return the correct ownership of a path, but just the annotations contained within the context or those written in the class declaration. 
+Consider an example where the context is given as $ Delta = x : shared, x.f : unique $ In this case, the lookup is the following $ Delta inangle(x.f) = unique $ However, since $x$ is shared, there can be multiple references accessing $x$. This implies there can be multiple references accessing $x.f$, meaning that $x.f$ is also shared.
+This behaviour is intended and a function able to provide the correct ownership of a reference will be defined in the next sections.
+
+=== Remove
 
 #display-rules(
   Remove-Empty, Remove-Base,
   Remove-Rec, "",
 )
 
-*TODO* Spiega in breve cosa fa
+Remove rules are used to define a function taking a context and a path and returning a context.
+
+$ \_without\_ : Delta -> p -> Delta $
+
+Basically, the function will return the context without the specified path if the path is within the context, and it will return the original context if the path is not contained.
 
 == SubPaths
 
