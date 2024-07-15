@@ -247,3 +247,7 @@ The Viper toolchain is designed to make it easy to implement verification techni
   caption: "The Viper verification infrastructure",
   image("../images/viper.png", width: 80%)
 )
+
+==== language overview
+==== permissions
+==== predicates
