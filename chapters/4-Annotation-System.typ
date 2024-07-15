@@ -105,13 +105,15 @@ fun m3(
     /* ... */
 }
 ```
-
-#grid(
-  columns: (auto, auto),
-  column-gutter: 2em,
-  row-gutter: 1em,
-  [*Grammar*],[*Kotlin*],
-  grammar_annotations, kt_annotations
+#align(
+  center,
+  grid(
+    columns: (auto, auto),
+    column-gutter: 2em,
+    row-gutter: .5em,
+    [*Grammar*],[*Kotlin*],
+    grammar_annotations, kt_annotations
+  )
 )
 
 === Expressions
@@ -228,19 +230,33 @@ $ \_ tr sp(\_) : Delta -> p -> "List"(p : alpha beta) $
 
 == Annotations relations
 
-- $alpha beta rel alpha' beta'$ means that $alpha beta$ can be passed where $alpha' beta'$ is expected.
-
-- $alpha beta ~> alpha' beta' ~> alpha'' beta''$ means that after passing a reference annotated with $alpha beta$ as argument where $alpha' beta'$ is expected, the reference will be annotated with $alpha'' beta''$ right after the method call.
+=== Partial ordering
 
 #display-rules(
-  row-size: 3,
-  A-id, A-trans, A-bor-sh,
-  A-sh, A-bor-un, A-un-1,
-  A-un-2, Pass-Bor, Pass-Un,
-  Pass-Sh
+  A-id, A-trans,
+  A-bor-sh, A-sh,
+  A-bor-un, A-un-1,
+  A-un-2, "",
 )
 
-#figure(image(width: 25%, "../images/lattice.svg"), caption: [Lattice obtained by annotations relations rules])<annotation-lattice>
+*TODO* spiegare piu' ad alto livello il senso di tutto cio.
+Dire che non sono sufficienti per funzioni con piu' parametri.
+Esempi?????
+
+$alpha beta rel alpha' beta'$ means that $alpha beta$ can be passed where $alpha' beta'$ is expected.
+
+#v(1em)
+#figure(image(width: 35%, "../images/lattice.svg"), caption: [Lattice obtained by annotations relations rules])<annotation-lattice>
+
+=== Passing
+
+#display-rules(
+  Pass-Bor, Pass-Un,
+  Pass-Sh, ""
+)
+
+*TODO*
+$alpha beta ~> alpha' beta' ~> alpha'' beta''$ means that after passing a reference annotated with $alpha beta$ as argument where $alpha' beta'$ is expected, the reference will be annotated with $alpha'' beta''$ right after the method call.
 
 == Paths
 <cap:paths>
