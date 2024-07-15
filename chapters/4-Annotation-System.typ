@@ -9,8 +9,10 @@
 // TODO: tutti gli esempi in una figure con la caption
 // TODO: coerenza nei nomi delle regole (nel modo in cui abbrevio unique, shared e borrowed)
 // TODO: decidere cosa fare con gli esempi scritti anche con la notazione della grammatica (da rivedere tutti in ogni caso (nomi classi T vs C)). Anche capire se ha senso dare un nome al subset del linguaggio
-// call, if ecc. in corsivo
-// unique, shared, borrowed in corsivo
+// decidere se call, if ecc. in corsivo
+// decidere se unique, shared, borrowed in corsivo
+// decidere se nomi delle regole in corsivo
+
 = Annotation System
 
 This chapter describes an annotation system for controlling aliasing within a subset of the Kotlin language.
@@ -176,21 +178,53 @@ $ \_without\_ : Delta -> p -> Delta $
 
 Basically, the function will return the context without the specified path if the path is within the context, and it will return the original context if the path is not contained.
 
-== SubPaths
+== Sub-Paths and Sup-Paths
 
-If $p_1 subset.sq p_2$ holds, we say that 
-- $p_1$ is a *sub*-path of $p_2$
-- $p_2$ is a *sup*-path of $p_1$
+=== Definition
 
 #display-rules(
   SubPath-Base, SubPath-Rec,
   SubPath-Eq-1, SubPath-Eq-2,
-  Remove-SupPathsEq-Empty, Remove-SupPathsEq-Discard,
-  Remove-SupPathsEq-Keep, Replace,
+)
+
+The first set of rules is used to formally define sub-paths and sup-paths. 
+In particular, if $p_1 subset.sq p_2$ is derivable, we say that:
+- $p_1$ is a *sub*-path of $p_2$
+- $p_2$ is a *sup*-path of $p_1$
+
+=== Deep Remove
+
+#display-rules(
+  Remove-SupPathsEq-Empty, "",
+  Remove-SupPathsEq-Discard, "",
+  Remove-SupPathsEq-Keep, "",
+)
+
+Deep-Remove rules define a function similar to Remove ($without$) that in addiction to removing the given path from the context, also removes all the sup-paths of that path.
+
+$ \_minus.circle\_: Delta -> p -> Delta $
+
+=== Replace
+
+#display-rules(
+  Replace, "",
+)
+
+This rule gives the definition of a funtion that will be fundamental for typing statements. The function takes a context, a path $p$ and a set of annotations $alpha beta$ and returns a context in which all the sup-paths of $p$ have been removed and the annotation of $p$ becomes $alpha beta$.
+
+$ \_[\_|->\_] : Delta -> p -> alpha beta -> Delta $
+
+=== Get Sup-Paths
+
+#display-rules(
   Get-SupPaths-Empty, "",
   Get-SupPaths-Discard, "",
   Get-SupPaths-Keep, "",
 )
+
+Finally, Get-Sup-Paths rules are used to define a function that returns all the sup-paths of a give path within a context. Also this function will be used for statements typing rules.
+
+$ \_ tr sp(\_) : Delta -> p -> "List"(p : alpha beta) $
 
 == Annotations relations
 

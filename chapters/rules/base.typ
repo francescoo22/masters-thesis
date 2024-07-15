@@ -113,19 +113,19 @@
 
 #let Remove-SupPathsEq-Empty = prooftree(
   axiom(""),
-  rule(label: "Remove-SupPathsEq-Empty", $dot minus.circle p = dot$),
+  rule(label: "Deep-Remove-Empty", $dot minus.circle p = dot$),
 )
 
 #let Remove-SupPathsEq-Discard = prooftree(
   axiom($p subset.sq.eq p'$),
   axiom($Delta minus.circle p = Delta'$),
-  rule(n:2, label: "Remove-SupPathsEq-Discard", $(p': alpha beta, Delta) minus.circle p = Delta'$),
+  rule(n:2, label: "Deep-Remove-Discard", $(p': alpha beta, Delta) minus.circle p = Delta'$),
 )
 
 #let Remove-SupPathsEq-Keep = prooftree(
   axiom($p subset.not.sq.eq p'$),
   axiom($Delta minus.circle p = Delta'$),
-  rule(n:2, label: "Remove-SupPathsEq-Keep", $(p': alpha beta, Delta) minus.circle p = (p': alpha beta, Delta')$),
+  rule(n:2, label: "Deep-Remove-Keep", $(p': alpha beta, Delta) minus.circle p = (p': alpha beta, Delta')$),
 )
 
 #let Replace = prooftree(
@@ -135,19 +135,19 @@
 
 #let Get-SupPaths-Empty = prooftree(
   axiom(""),
-  rule(label: "Get-SupPaths-Empty", $dot tr sp(p) = dot$),
+  rule(label: "Get-Sup-Paths-Empty", $dot tr sp(p) = dot$),
 )
 
 #let Get-SupPaths-Discard = prooftree(
   axiom($not (p subset.sq p')$),
   axiom($Delta tr sp(p) = p_0 : alpha_0 beta_0, ..., p_n : alpha_n beta_n$),
-  rule(n: 2, label: "Get-SupPaths-Discard", $p': alpha beta, Delta tr sp(p) = p_0 : alpha_0 beta_0, ..., p_n : alpha_n beta_n$),
+  rule(n: 2, label: "Get-Sup-Paths-Discard", $p': alpha beta, Delta tr sp(p) = p_0 : alpha_0 beta_0, ..., p_n : alpha_n beta_n$),
 )
 
 #let Get-SupPaths-Keep = prooftree(
   axiom($p subset.sq p'$),
   axiom($Delta tr sp(p) = p_0 : alpha_0 beta_0, ..., p_n : alpha_n beta_n$),
-  rule(n: 2, label: "Get-SupPaths-Keep", $p': alpha beta, Delta tr sp(p) = p': alpha beta, p_0 : alpha_0 beta_0, ..., p_n : alpha_n beta_n$),
+  rule(n: 2, label: "Get-Sup-Paths-Keep", $p': alpha beta, Delta tr sp(p) = p': alpha beta, p_0 : alpha_0 beta_0, ..., p_n : alpha_n beta_n$),
 )
 
 // ************ Get ************
