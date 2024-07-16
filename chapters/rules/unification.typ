@@ -57,13 +57,16 @@
   rule(label: "Ctx-Lub-Sym", $Delta_1 lub Delta_2 = Delta_2 lub Delta_1$),
 )
 
-#let Ctx-Lub-1 = prooftree(
-  axiom($Delta_2 inangle(p.f) = alpha'' beta''$),
-  axiom($Delta_2 without p.f = Delta'_2$),
-  axiom($Delta_1 lub Delta'_2 = Delta'$),
-  axiom($Lub{alpha beta, alpha'' beta''} = alpha' beta'$),
-  rule(n:4, label: "Ctx-Lub-1", $(p.f : alpha beta, Delta_1) lub Delta_2 = p.f : alpha' beta', Delta'$),
-)
+#let Ctx-Lub-1 = {
+  let a1 = $Delta_2 inangle(p.f) = alpha'' beta''$
+  let a2 = $Delta_2 without p.f = Delta'_2$
+  let a3 = $Delta_1 lub Delta'_2 = Delta'$
+  let a4 = $Lub{alpha beta, alpha'' beta''} = alpha' beta'$
+  prooftree(
+    stacked-axiom((a1, a2), (a3, a4)),
+    rule(label: "Ctx-Lub-1", $(p.f : alpha beta, Delta_1) lub Delta_2 = p.f : alpha' beta', Delta'$),
+  )
+}
 
 #let Ctx-Lub-2 = prooftree(
   axiom($x in.not Delta_2$),
@@ -71,13 +74,17 @@
   rule(n:2, label: "Ctx-Lub-2", $(x : alpha beta, Delta_1) lub Delta_2 = x : top, Delta'$),
 )
 
-#let Ctx-Lub-3 = prooftree(
-  axiom($Delta_2 inangle(x) = alpha'' beta''$),
-  axiom($Delta_2 without x = Delta'_2$),
-  axiom($Delta_1 lub Delta'_2 = Delta'$),
-  axiom($Lub{alpha beta, alpha'' beta''} = alpha' beta'$),
-  rule(n:4, label: "Ctx-Lub-3", $(x : alpha beta, Delta_1) lub Delta_2 = x : alpha' beta', Delta'$),
-)
+#let Ctx-Lub-3 = {
+  let a1 = $Delta_2 inangle(x) = alpha'' beta''$
+  let a2 = $Delta_2 without x = Delta'_2$
+  let a3 = $Delta_1 lub Delta'_2 = Delta'$
+  let a4 = $Lub{alpha beta, alpha'' beta''} = alpha' beta'$
+  prooftree(
+    stacked-axiom((a1, a2), (a3, a4)),
+    rule(label: "Ctx-Lub-3", $(x : alpha beta, Delta_1) lub Delta_2 = x : alpha' beta', Delta'$),
+  )
+}
+
 
 #let Remove-Locals-Base = prooftree(
   axiom($$),
@@ -111,8 +118,11 @@
   rule(label: "N-Empty", $norm(dot) = dot$)
 )
 
-#let N-Rec = prooftree(
-  axiom($Lub(alpha_i beta_i | p_i = p_0 and 0 <= i <= n) = ablub$),
-  axiom($norm(p_i: alpha_i beta_i | p_i != p_0 and 0 <= i <= n) = p'_0 : alpha'_0 beta'_0, ..., p'_m : alpha'_m beta'_m$),
-  rule(n:2, label: "N-rec", $norm(p_0\: alpha_0 beta_0, ..., p_n\: alpha_n beta_n) = p_0 : ablub, p'_0 : alpha'_0 beta'_0, ..., p'_m : alpha'_m beta'_m$)
-)
+#let N-Rec = {
+  let a1 = $Lub(alpha_i beta_i | p_i = p_0 and 0 <= i <= n) = ablub$
+  let a2 = $norm(p_i: alpha_i beta_i | p_i != p_0 and 0 <= i <= n) = p'_0 : alpha'_0 beta'_0, ..., p'_m : alpha'_m beta'_m$
+  prooftree(
+    stacked-axiom((a1,), (a2,)),
+    rule(label: "N-rec", $norm(p_0\: alpha_0 beta_0, ..., p_n\: alpha_n beta_n) = p_0 : ablub, p'_0 : alpha'_0 beta'_0, ..., p'_m : alpha'_m beta'_m$)
+  )
+}

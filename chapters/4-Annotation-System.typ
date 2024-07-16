@@ -258,6 +258,20 @@ However, these rules are not sufficient to type a method call statement since pa
 == Paths
 <cap:paths>
 
+=== Root
+
+#display-rules(
+  Root-Base, Root-Rec,
+)
+
+*TODO: Spiega*
+
+=== Get
+
+#display-rules(
+  Get-Var, Get-Path,
+)
+
 - $Lub{alpha_0 beta_0, ..., alpha_n beta_n}$ identifies the least upper bound of the annotations based on the lattice in @annotation-lattice.
 - Note that even if $p.f$ is annotated as unique in the class declaration, $Delta(p.f)$ can be shared (or $top$) if $Delta(p) = shared$ (or $top$)
 - Note that fields of a borrowed parameter are borrowed too and they need to be treated carefully in order to avoid unsoundness. Specifically, borrowed fields:
@@ -265,38 +279,63 @@ However, these rules are not sufficient to type a method call statement since pa
   - Have to become `T` after being read (even if shared).
   - Can only be reassigned with a `unique`.
 - Note that $(Delta(p) = alpha beta) => (Delta inangle(root(p)) = alpha' beta')$ i.e. the root is present in the context.
-- $Delta tr std(p, alpha beta)$ means that paths rooted in $p$ have the right permissions when passing $p$ where $alpha beta$ is expected. To understand better why these rules are necessary look at the example in /*@path-permissions*/.
-- Note that in the rule "Std-Rec-2" the premise $(x : alpha beta) (p') = alpha'' beta''$ means that the evaluation of $p'$ in a context in which there is only $x : alpha beta$ is $alpha'' beta''$
+
+*TODO: Spiega e riorganizza*
+
+=== Standard Form
 
 #display-rules(
-  Root-Base, Root-Rec,
-  Get-Var, Get-Path,
   Std-Empty, Std-Rec-1,
   Std-Rec-2, "",
 )
 
+*TODO:* fondamentale per method-modularity
+
+- $Delta tr std(p, alpha beta)$ means that paths rooted in $p$ have the right permissions when passing $p$ where $alpha beta$ is expected. To understand better why these rules are necessary look at the example in
+- Note that in the rule "Std-Rec-2" the premise $(x : alpha beta) (p') = alpha'' beta''$ means that the evaluation of $p'$ in a context in which there is only $x : alpha beta$ is $alpha'' beta''$
+
+
+
 == Unification
 
-- $Delta_1 lub Delta_2$ is the pointwise lub of $Delta_1$ and $Delta_2$.
-  - If a variable $x$ is present in only one context, it will be annotated with $top$ in $Delta_1 lub Delta_2$.
-  - If a path $p.f$ is missing in one of the two contexts, we can just consider the annotation in the class declaration.
-- $Delta triangle.filled.small.l Delta_1$ is used to maintain the correct context when exiting a scope.
-  - $Delta$ represents the resulting context of the inner scope.
-  - $Delta_1$ represents the context at the beginning of the scope.
-  - The result of the operation is a context where paths rooted in variable locally declared inside the scope are removed.
-- $unify(Delta, Delta_1, Delta_2)$ means that we want to unify $Delta_1$ and $Delta_2$ starting from a parent environment $Delta$.
-  - A path $p$ contained in $Delta_1$ or $Delta_2$ such that $root(p) = x$ is not contained $Delta$ will not be included in the unfication.
-  - The annotation of variables contained in the unfication is the least upper bound of the annotation in $Delta_1$ and $Delta_2$.
+=== Pointwise LUB
 
 #display-rules(
   Ctx-Lub-Empty, Ctx-Lub-Sym,
   Ctx-Lub-1, "",
   Ctx-Lub-2, "",
   Ctx-Lub-3, "",
-  Remove-Locals-Base, Remove-Locals-Keep,
+)
+
+*TODO: sistema descrizione*
+- $Delta_1 lub Delta_2$ is the pointwise lub of $Delta_1$ and $Delta_2$.
+  - If a variable $x$ is present in only one context, it will be annotated with $top$ in $Delta_1 lub Delta_2$.
+  - If a path $p.f$ is missing in one of the two contexts, we can just consider the annotation in the class declaration.
+
+=== Local declarations removal
+
+#display-rules(
+  Remove-Locals-Base, "",
+  Remove-Locals-Keep, "",
   Remove-Locals-Discard, "",
+)
+
+*TODO: sistema descrizione*
+- $Delta triangle.filled.small.l Delta_1$ is used to maintain the correct context when exiting a scope.
+  - $Delta$ represents the resulting context of the inner scope.
+  - $Delta_1$ represents the context at the beginning of the scope.
+  - The result of the operation is a context where paths rooted in variable locally declared inside the scope are removed.
+
+=== Unify
+
+#display-rules(
   Unify, ""
 )
+
+*TODO: sistema descrizione*
+- $unify(Delta, Delta_1, Delta_2)$ means that we want to unify $Delta_1$ and $Delta_2$ starting from a parent environment $Delta$.
+  - A path $p$ contained in $Delta_1$ or $Delta_2$ such that $root(p) = x$ is not contained $Delta$ will not be included in the unfication.
+  - The annotation of variables contained in the unfication is the least upper bound of the annotation in $Delta_1$ and $Delta_2$.
 
 == Normalization
 
@@ -319,7 +358,8 @@ fun use_f(x: unique) {
 
 == Statements Typing
 
-TODO: How to read typing rules
+*TODO: How to read typing rules*
+*TODO: adjust program definition*
 
 $"Program" ::= overline(CL) times overline(M)$
 where:

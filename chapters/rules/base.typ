@@ -174,11 +174,14 @@
   rule(n:2, label: "Std-Rec-1", $p' : alpha beta, Delta tr std(p, alpha beta)$),
 )
 
-#let Std-Rec-2 = prooftree(
-  axiom($p subset.sq p'$),
-  axiom($root(p) = x$),
-  axiom($(x : alpha beta) (p') = alpha'' beta''$),
-  axiom($alpha' beta' rel alpha'' beta''$),
-  axiom($Delta tr std(p, alpha beta)$),
-  rule(n:5, label: "Std-Rec-2", $p' : alpha' beta', Delta tr std(p, alpha beta)$),
-)
+#let Std-Rec-2 = {
+  let a1 = $p subset.sq p'$
+  let a2 = $root(p) = x$
+  let a3 = $(x : alpha beta) (p') = alpha'' beta''$
+  let a4 = $alpha' beta' rel alpha'' beta''$
+  let a5 = $Delta tr std(p, alpha beta)$
+  prooftree(
+    stacked-axiom((a1, a2), (a3, a4, a5)),
+    rule(label: "Std-Rec-2", $p' : alpha' beta', Delta tr std(p, alpha beta)$),
+  )
+}
