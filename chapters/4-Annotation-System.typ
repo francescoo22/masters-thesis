@@ -5,6 +5,8 @@
 #import "rules/statements.typ": *
 
 #pagebreak(to:"odd")
+
+// TODO: appendice con il rule-set completo
 // TODO: annotazioni nei commenti del codice a volte maiuscole e a volte minuscole
 // TODO: tutti gli esempi in una figure con la caption
 // TODO: coerenza nei nomi delle regole (nel modo in cui abbrevio unique, shared e borrowed)
@@ -150,7 +152,7 @@ A context is a list of paths associated with their annotations $alpha$ and $beta
 
 This first set of rules defines how a well-formed context is structured. The judgement $p in.not Delta$ is derivable when $p$ is not present in the context. If the judgement $Delta ctx$ is derivable, the context is well-formed. In order to be well-formed, a context must not contain duplicate paths and must be finite.
 
-=== Lookup
+=== Lookup<cap:lookup>
 
 #display-rules(
   Lookup-Base, Lookup-Rec,
@@ -230,7 +232,7 @@ $ \_ tr sp(\_) : Delta -> p -> "List"(p : alpha beta) $
 
 == Annotations relations
 
-=== Partial ordering
+=== Partial ordering<cap:PO>
 
 #display-rules(
   A-id, A-trans,
@@ -264,7 +266,9 @@ However, these rules are not sufficient to type a method call statement since pa
   Root-Base, Root-Rec,
 )
 
-*TODO: Spiega*
+This simple function takes a path and returns its root. The function can simplify the preconditions of more complex rules. For example $root(x.y.z) = x$
+
+$ root : p -> p $
 
 === Get
 
@@ -272,15 +276,41 @@ However, these rules are not sufficient to type a method call statement since pa
   Get-Var, Get-Path,
 )
 
-- $Lub{alpha_0 beta_0, ..., alpha_n beta_n}$ identifies the least upper bound of the annotations based on the lattice in @annotation-lattice.
-- Note that even if $p.f$ is annotated as unique in the class declaration, $Delta(p.f)$ can be shared (or $top$) if $Delta(p) = shared$ (or $top$)
-- Note that fields of a borrowed parameter are borrowed too and they need to be treated carefully in order to avoid unsoundness. Specifically, borrowed fields:
-  - Can be passed as arguments to other functions (if relation rules are respected).
-  - Have to become `T` after being read (even if shared).
-  - Can only be reassigned with a `unique`.
-- Note that $(Delta(p) = alpha beta) => (Delta inangle(root(p)) = alpha' beta')$ i.e. the root is present in the context.
+As described in @cap:lookup, the lookup function might not return the correct annotation for a given path. The task of returning the right annotation for a path within a context is left to the (partial) function described in this chapter.
 
-*TODO: Spiega e riorganizza*
+$ \_(\_) : Delta -> p -> alpha beta $
+
+In the case that the given path is a variable, the function will return the same annotation returned by the lookup function. If the given path is not a variable, the function will return the least upper bound ($lub$) between the lookup of the given path and all its sub-paths. The LUB between a set of annotations can be easily obtained by using the partial order described in @cap:PO. 
+
+It is important to note that if $Delta(p) = alpha beta$ is derivable for some $alpha beta$ then the root of $p$ is contained inside $Delta$. This is important because many rules in the subsequent sections will use the judgement $Delta(p) = alpha beta$ as a precondition and it also helps to guarantee that the root of $p$ is contained inside $Delta$.
+
+The following example makes it easier to understand how this function works.
+
+#v(1em)
+
+Given a context
+
+$ Delta = x: unique, space x.y: top, space x.y.z: shared $
+
+The annotation that is returned for the variable $x$ is the same as the one returned by the lookup.
+
+$ Delta(x) = Delta inangle(x) = unique $
+
+The annotation returned for the path $x.y$ is the LUB between the lookup of $x.y$ and that of all its sub-paths.
+
+$
+Delta(x.y) &= Lub{Delta inangle(x), Delta inangle(x.y)} \
+&= Lub{unique, top} \
+&= top
+$
+
+Finally, the annotation returned for the path $x.y.z$ is the LUB between the lookup of $x.y.z$ and that of all its sub-paths.
+
+$
+Delta(x.y.z) &= Lub{Delta inangle(x), Delta inangle(x.y), Delta inangle(x.y.z)} \
+&= Lub{unique, top, shared} \
+&= top
+$
 
 === Standard Form
 
@@ -289,12 +319,23 @@ However, these rules are not sufficient to type a method call statement since pa
   Std-Rec-2, "",
 )
 
-*TODO:* fondamentale per method-modularity
+If the judgement $Delta tr std(p, alpha beta)$ is derivable,  inside the context $Delta$, all the sup-paths of $p$ carry the right annotations when $p$ is passed to a function expecting an argument annotated with $alpha beta$. This type of judgement is necessary verify the correctness of the annotations in a method-modular fashion.
 
-- $Delta tr std(p, alpha beta)$ means that paths rooted in $p$ have the right permissions when passing $p$ where $alpha beta$ is expected. To understand better why these rules are necessary look at the example in
-- Note that in the rule "Std-Rec-2" the premise $(x : alpha beta) (p') = alpha'' beta''$ means that the evaluation of $p'$ in a context in which there is only $x : alpha beta$ is $alpha'' beta''$
+Since a called method does not have information about $Delta$ when verified, all the sup-paths of $p$ must have an annotation in $Delta$ that is lower or equal ($rel$) to the annotation that they have in a context containing just their root annotated with $alpha beta$.
 
+To understand better standard forms, consider the following program and a context $Delta$.
 
+$
+class C(y: unique) \
+f_1(x: unique){...} \
+f_2(x: shared){...} \ \
+Delta = x: unique, space x.y : shared
+$
+
+Within the context $Delta$:
+
+- $Delta tr std(x, unique)$ is not derivable, meaning that $x$ cannot be passed to the function $f_1$. The judgement is not derivable because $Delta(x.y) = shared$ while in a context $Delta' = x: unique$, $Delta'(x.y) = unique$, but $shared lt.eq.curly.not unique$.
+- $Delta tr std(x, shared)$ is derivable, meaning that $x$ might be passed to the function $f_2$ if all the preconditions, which would be formalized by statement's typing rules, are also satisfied.
 
 == Unification
 
@@ -626,6 +667,12 @@ fun f(@Unique x: B, y: C){
 
 // TODO: spiegazione
 // TODO: esempio
+
+// copied from OLD path chapter
+- Note that fields of a borrowed parameter are borrowed too and they need to be treated carefully in order to avoid unsoundness. Specifically, borrowed fields:
+  - Can be passed as arguments to other functions (if relation rules are respected).
+  - Have to become `T` after being read (even if shared).
+  - Can only be reassigned with a `unique`.
 
 === If
 
