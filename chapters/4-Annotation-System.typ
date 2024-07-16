@@ -345,7 +345,6 @@ Within the context $Delta$:
   Ctx-Lub-Empty, Ctx-Lub-Sym,
   Ctx-Lub-1, "",
   Ctx-Lub-2, "",
-  Ctx-Lub-3, "",
 )
 
 *TODO: sistema descrizione*
@@ -732,24 +731,11 @@ $ {...; ret null} equiv {...; var "fresh" ; "fresh" = null ; ret "fresh"} $
 $ {...; ret m(...)} equiv {...; var "fresh" ; "fresh" = m(...) ; ret "fresh"} $
 Where _fresh_ is a variable that has not been declared before.
 
-// TODO: examples
-
-#line(length: 100%)
-
-#display-rules(
-  Begin, "",
-  Decl, Assign-Null,
-  Seq-Base, Seq-Rec,
-  Assign-Unique, "",
-  Assign-Shared, "",
-  Assign-Borrowed-Field, "",
-  Assign-Call, "",
-  Call, "",
-  If, "",
-  Return-p, "",
-)
+// TODO: examples for return
 
 // TODO: Stack example + DERIVATION
+
+// --------
 
 // TODO: put this in a separate chapter
 
