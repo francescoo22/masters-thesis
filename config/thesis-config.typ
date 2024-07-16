@@ -29,7 +29,7 @@
         stack(
             spacing: 2em,
             if it.numbering != none {
-                text(size: 1.5em)[#chapter #counter(heading).display()]
+                text(size: 1.5em)[#heading.supplement #counter(heading).display()]
                 // text(size: 1em)[Chapter #counter(heading).display()]
             },
             text(size:1.75em, it.body),

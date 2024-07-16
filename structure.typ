@@ -10,6 +10,7 @@
 // Mainmatter
 
 #counter(page).update(1)
+#set heading(numbering: "1.1", supplement: "Chapter")
 
 #include "./chapters/1-Introduction.typ"
 #include "./chapters/2-Background.typ"
@@ -18,14 +19,13 @@
 #include "./chapters/5-Encoding.typ"
 #include "./chapters/6-Conclusion.typ"
 
-// // Appendix
-
-// #include "./appendix/appendice-a.typ"
-
-// // Backmatter
-
-// // Praticamente il glossario
-
 // Bibliography
 
 #include("./appendix/bibliography/bibliography.typ")
+
+// Appendix
+
+#set heading(numbering: "A.1", supplement: "Appendix")
+#counter(heading).update(0)
+
+#include("./appendix/full-rules-set.typ")
