@@ -69,12 +69,6 @@
   rule(n:2, label: "Lookup-Default", $dot inangle(p.f) = alpha$),
 )
 
-// #let In = prooftree(
-//   axiom($root(p) = x$),
-//   axiom($Delta inangle(x) = alpha beta$),
-//   rule(n:2, label: "In", $p in Delta$),
-// )
-
 #let Remove-Empty = prooftree(
   axiom(""),
   rule(label: "Remove-Empty", $dot without p = dot$),

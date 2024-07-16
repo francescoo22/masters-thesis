@@ -150,23 +150,6 @@
 
 }
 
-// #let Return-m = {
-//   let a0 = $mtype(m) = alpha_0^m, beta_0^m, ..., alpha_n^m beta_n^m -> alpha_r$
-//   let a1 = $mtype(m') = alpha_0^m', beta_0^m', ..., alpha_n'^m' beta_n'^m' -> alpha'_r$
-//   let a2 = $mid(m'(p_0, ..., p_n'))'$
-//   let a3 = $alpha'_r rel alpha_r$
-//   let a4 = $forall 0 <= i, j <= n : (alpha_i beta_i != unique) => Delta' tr std(p_i, alpha_i beta_i)$
-//   prooftree(
-//     stacked-axiom(
-//       (a0,),
-//       (a1,),
-//       (a2, a3),
-//       (a4,)
-//     ),
-//     rule(label: "Return-m", $Delta tr ret_m space m'(p_0, ..., p_n') tl dot$),
-//   )
-// }
-
 #let While-Base = prooftree(
   axiom($mid(overline(s))_1$),
   axiom($unify(Delta, Delta, Delta_1) = Delta$),

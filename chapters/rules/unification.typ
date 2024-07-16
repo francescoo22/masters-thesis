@@ -3,7 +3,6 @@
 
 // *********** Unify ***********
 
-
 #let Ctx-Lub-Empty = prooftree(
   axiom($$),
   rule(label: "Ctx-LUB-Empty", $dot space lub space dot space = space dot$),
@@ -30,18 +29,6 @@
   axiom($Delta_1 lub Delta_2 = Delta'$),
   rule(n:2, label: "Ctx-LUB-2", $(x : alpha beta, Delta_1) lub Delta_2 = x : top, Delta'$),
 )
-
-// #let Ctx-Lub-3 = {
-//   let a1 = $Delta_2 inangle(x) = alpha'' beta''$
-//   let a2 = $Delta_2 without x = Delta'_2$
-//   let a3 = $Delta_1 lub Delta'_2 = Delta'$
-//   let a4 = $Lub{alpha beta, alpha'' beta''} = alpha' beta'$
-//   prooftree(
-//     stacked-axiom((a1, a2), (a3, a4)),
-//     rule(label: "Ctx-LUB-3", $(x : alpha beta, Delta_1) lub Delta_2 = x : alpha' beta', Delta'$),
-//   )
-// }
-
 
 #let Remove-Locals-Base = prooftree(
   axiom($$),
