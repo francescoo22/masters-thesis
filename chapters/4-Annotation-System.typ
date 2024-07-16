@@ -239,14 +239,10 @@ $ \_ tr sp(\_) : Delta -> p -> "List"(p : alpha beta) $
   A-un-2, "",
 )
 
-*TODO* spiegare piu' ad alto livello il senso di tutto cio.
-Dire che non sono sufficienti per funzioni con piu' parametri.
-Esempi?????
-
-$alpha beta rel alpha' beta'$ means that $alpha beta$ can be passed where $alpha' beta'$ is expected.
+This set of rules is used to define a partial order between the annotations. This partial order can be represented by the lattice shown in @annotation-lattice. The meaning of these relations is that if $alpha beta rel alpha' beta'$, then $alpha beta$ can be used where $alpha' beta'$ is expected, for example for function calls. Thanks to these rules, it will be correct to pass a unique reference to a function expecting a shared argument, but not vice versa. Moreover, the relations are consistent with the definition of $top$ since it will not be possible to pass an inaccessible reference to any function.
 
 #v(1em)
-#figure(image(width: 35%, "../images/lattice.svg"), caption: [Lattice obtained by annotations relations rules])<annotation-lattice>
+#figure(image(width: 35%, "../images/lattice.svg"), caption: [Lattice obtained by Rel rules])<annotation-lattice>
 
 === Passing
 
@@ -255,8 +251,9 @@ $alpha beta rel alpha' beta'$ means that $alpha beta$ can be passed where $alpha
   Pass-Sh, ""
 )
 
-*TODO*
-$alpha beta ~> alpha' beta' ~> alpha'' beta''$ means that after passing a reference annotated with $alpha beta$ as argument where $alpha' beta'$ is expected, the reference will be annotated with $alpha'' beta''$ right after the method call.
+Pass rules define what happens to the annotations of a reference after passing it to a method.
+If derivable, a judgement $alpha beta ~> alpha' beta' ~> alpha'' beta''$ indicates that after passing a reference annotated with $alpha beta$ to a method expecting an argument annotated with $alpha' beta'$, the reference will be annotated with $alpha'' beta''$ after the call.
+However, these rules are not sufficient to type a method call statement since passing the same reference more than once to the same method call is a situation that has to be handled carefully. Nonetheless, the rules are fundamental to express the logic of the annotation system and will be used for typing method calls in subsequent sections.
 
 == Paths
 <cap:paths>
@@ -358,7 +355,7 @@ $ f(this: unique, x: unique borrowed, y: shared borrowed, z: shared){begin_f; ..
 
 #display-rules(Decl, "")
 
-After declaring a variable, it is unaccessible until its initialization and so the varaible will be in the context with $top$ annotation.
+After declaring a variable, it is inaccessible until its initialization and so the varaible will be in the context with $top$ annotation.
 Note that this rule only allows to declare variables if they are not in the context while Kotlin allows to shadow variables declared in outer scopes. Kotlin code using shadowing is not currently supported by this system.
 
 ```kt
