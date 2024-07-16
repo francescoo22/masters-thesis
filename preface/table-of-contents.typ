@@ -31,10 +31,10 @@
 
 // TODO: decide whether to include listings here, along figures or not to include them at all
 
-// #v(8em)
+#v(8em)
 
-// #outline(
-//     title: "List of Listings",
-//     target: figure.where(kind: raw),
-//     indent: auto
-// )
+#outline(
+    title: "List of Listings",
+    target: figure.where(kind: raw),
+    indent: auto
+)
