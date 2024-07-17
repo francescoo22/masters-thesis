@@ -2,8 +2,9 @@
 = Conclusion
 == Results
 == Future Work
-=== improving annotations inference
-=== better tracking of known aliases
-=== checking annotations
-=== extending the language (loops, lambdas, ...)
+=== Improving Annotations Inference
+=== Better Tracking of known Aliases
+=== Checking Annotations
+=== Extending the Language 
+(loops, lambdas, ...)
 lambdas: @reachability-types

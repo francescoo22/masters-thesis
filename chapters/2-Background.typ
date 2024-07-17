@@ -11,7 +11,7 @@ Kotlin @Kotlin is a statically-typed, versatile programming language that was de
 
 Only Kotlin's features that are relevant for this work will be discussed in detail.
 
-=== Mutable and immutable variables
+=== Mutable vs Immutable Variables
 
 // AIG
 // TODO sistema i blocchi di codice che vanno a capo
@@ -93,8 +93,6 @@ In @contract-1 it is possible to see how contracts allow the initialization of i
 
 === Annotations?
 
-=== FIR?
-
 == Aliasing
 
 // TODO: Read better these summaries and modify them (AIG)
@@ -121,7 +119,7 @@ Following that, variable `z` is initialized with a newly-created object in the f
   ```
 )<aliasing>
 
-=== Problems caused by aliasing
+=== Problems Caused by Aliasing
 
 Aliasing is a topic that has been studied for decades in Computer Science. 
 Although aliasing is essential in object-oriented programming as it allows programmers to implement designs involving sharing, as described in The Geneva Convention @GenevaConvention, aliasing can be a problem in both formal veriﬁcation and practical programming.
@@ -177,7 +175,7 @@ Finally, @alias-bug presents a contrived example to illustrate how aliasing can 
   ```
 )<alias-bug>
 
-=== How to deal with aliasing
+=== Dealing with aliasing
 
 The Geneva Convention @GenevaConvention has established four primary methods to manage aliasing: Detection, Advertisement, Prevention, and Control. These methods aim to provide systematic approaches to identify, communicate, prevent, and manage aliasing in software systems.
 
@@ -248,6 +246,6 @@ The Viper toolchain is designed to make it easy to implement verification techni
   image("../images/viper.png", width: 80%)
 )
 
-==== language overview
-==== permissions
-==== predicates
+==== Language Overview
+==== Permissions
+==== Predicates

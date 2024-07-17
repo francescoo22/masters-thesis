@@ -17,7 +17,7 @@
 
 == Context
 
-=== Well-formed context
+=== Well-Formed Contexts
 
 #display-rules(
   Not-In-Base, Not-In-Rec,
@@ -69,9 +69,9 @@
   Get-SupPaths-Keep, "",
 )
 
-== Annotations relations
+== Relations between Annotations
 
-=== Partial ordering
+=== Partial Ordering
 
 #display-rules(
   A-id, A-trans,
@@ -118,7 +118,7 @@
   Ctx-Lub-2, "",
 )
 
-=== Local declarations removal
+=== Removal of Local Declarations
 
 #display-rules(
   Remove-Locals-Base, "",

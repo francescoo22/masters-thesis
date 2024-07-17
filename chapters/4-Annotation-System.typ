@@ -43,7 +43,7 @@ In order to define the rules of this annotation system, a grammar representing a
     $
 ))
 
-=== Class and Method declaration
+=== Classes and Methods
 - Primitive fields are not considered
 - `this` can be seen as a parameter
 - constructors can be seen as functions returning a `unique` value
@@ -141,7 +141,7 @@ fun m3(
 
 A context is a list of paths associated with their annotations $alpha$ and $beta$. While $beta$ is defined in the same way of the grammar, $alpha$ is slightly different. Other than _unique_ and _shared_, in a context, an annotation $alpha$ can also be $top$. As will be better explained in the following sections, the annotation $top$ can only be inferred, so it is not possible for the user to write it. A path annotated with $top$ within a context is not accessible, meaning that the path needs to be re-assigned before beign read. The formal meaning of the annotation $top$ will be clearer while formilizing the statement typing rules.
 
-=== Well-formed context
+=== Well-Formed Context
 
 #display-rules(
   Not-In-Base, Not-In-Rec,
@@ -228,9 +228,9 @@ Finally, Get-Sup-Paths rules are used to define a function that returns all the 
 
 $ \_ tr sp(\_) : Delta -> p -> "List"(p : alpha beta) $
 
-== Annotations relations
+== Relations between Annotations
 
-=== Partial ordering<cap:PO>
+=== Partial Ordering<cap:PO>
 
 #display-rules(
   A-id, A-trans,
@@ -359,7 +359,7 @@ Delta_1 lub Delta_2 &= x: Lub {shared, unique}, space y: top \
 &= x: shared, space y: top
 $
 
-=== Local declarations removal
+=== Removal of Local Declarations
 
 #display-rules(
   Remove-Locals-Base, "",
@@ -495,7 +495,7 @@ fun f() {
 // f(){begin_f; var b; ...; b = null; ...}
 // $
 
-=== Sequence of statements
+=== Sequence of Statements
 
 #display-rules(Seq-Base, Seq-Rec)
 

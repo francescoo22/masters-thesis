@@ -1,12 +1,13 @@
 #pagebreak(to:"odd")
 = Related Work
 
-== Systems for controlling aliasing
+== Systems for Aliasing Control
 
 In recent decades, extensive research has been conducted to address the issue of aliasing. The book "Aliasing in Object-Oriented Programming" @Aliasing-OOP provides a comprehensive survey of the latest techniques for managing aliasing in object-oriented programming. The following subsections will discuss the most relevant techniques for this work in detail.
 
-=== Something about destructive reads??
-=== Alias Burying: Unique variables without destructive reads
+=== Something about destructive reads?
+
+=== Alias Burying
 Boyland @boyland2001alias proposes a system for controlling aliasing in Java.
 The system introduces several annotations:
 - Procedure parameters and return values may be declared *unique*.
@@ -17,7 +18,7 @@ The main contribution of this work is the introduction of the "alias burying" ru
 On the other hand, having a *shared* reference does not provide any guarantee on the uniqueness of that reference.
 Finally the object referred to by a *borrowed* parameter may not be returned from a procedure, assigned to a field or passed as an owned (that is, not borrowed) actual parameter.
 
-=== Latte: Lightweight Aliasing Tracking for Java
+=== Latte
 Zimmerman et al. @zimmerman2023latte propose an approach to reduce both the volume of annotations and the complexity of invariants necessary for reasoning about aliasing in an object-oriented language with mutation.
 
 The system requires few annotations to be provided by the user:
@@ -33,10 +34,10 @@ ment are precisely inferred".
 
 Latte's analysis produces at each program point an *alias graph*, that is an undirected graph whose nodes are syntactic paths and distinct paths $p_1$ and $p_2$ are connected iff $p_1$ and $p_2$ are aliased. Moreover a directed graph whose nodes are syntactic path called *reference graph* is also produced for every program point. Intuitively, having an edge from $p_1$ to $p_2$ in the reference graph means that the annotation of $p_1$ requires to be updated when $p_2$ is updated.
 
-=== aliasJava
+=== AliasJava
 @aldrich2002alias
 
-=== An entante cordiale
+=== An Entante Cordiale
 @An-Entente-Cordiale
 
 === Rust
