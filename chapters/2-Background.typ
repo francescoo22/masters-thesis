@@ -2,30 +2,26 @@
 = Background
 
 // TODO: symbols for code that compiles vs code that doesn't?
+// TODO: cite language specification
 
 == Kotlin
 
-// TODO: scriverlo per davvero AIG
+Developed by JetBrains, Kotlin @Kotlin is an open-source, statically typed programming language that gained popularity in recent years especially in the Android software development ﬁeld. Kotlin shares many similarities with Java and can fully interoperate with it. Notably, Kotlin also introduces several features that are absent in Java, such as improved type inference, functional programming, null-safety, and smart-casting.
 
-Kotlin @Kotlin is a statically-typed, versatile programming language that was developed by JetBrains in 2011. Built with the aim to enhance productivity and satisfaction of developers, it offers a unique blend of object-oriented and functional programming features capable of gracing any application with simplicity, clarity, and excellent interoperability. Kotlin is primarily used for Android app development and is officially recommended by Google. Its efficiency, conciseness, and safety to prevent common programming errors make it a rather compelling choice for developers worldwide.
-
-Only Kotlin's features that are relevant for this work will be discussed in detail.
+The following sections will present the features of the language that are more relevant for this work.
 
 === Mutable vs Immutable Variables
 
-// AIG
-// TODO sistema i blocchi di codice che vanno a capo
+In programming languages, mutability refers to the capability to alter the value of a variable after it has been initialized. Variables in Kotlin are either mutable, defined using the `var` keyword, or immutable, defined using the `val` keyword. Mutable variables, once assigned, can have their value changed during the execution of the program, while immutable variables, once assigned a value, cannot be altered subsequently. For instance, `var x = 5` allows you to change the value of `x` later in the program, while `val y = 5` maintains `y` at a value of 5 throughout the program. Mutability is a fundamental principle in programming, and Kotlin's clear distinction between `val` and `var` improves code readability and helps in maintaining data consistency, especially in a multithreaded environment.
 
-In Kotlin, mutability refers to the capability to alter the value of a variable after it has been initialized. Variables in Kotlin are either mutable, defined using the `var` keyword, or immutable, defined using the `val` keyword. Mutable variables, once assigned, can have their value changed during the execution of the program, while immutable variables, once assigned a value, cannot be altered subsequently. For instance, `var x = 5` allows you to change the value of x later in the program, while `val y = 5` maintains y at a value of 5 throughout the program. Mutability is a fundamental principle in programming, and Kotlin's clear distinction between `val` and `var` enhances code readability and aids in maintaining data consistency, especially in a multithreaded environment.
+=== Functional Programming?
 
 === Smart Casts
 
-// AIG un po' rivisto
-
-In Kotlin, smart casts refer to a feature of the language that automatically handles explicit typecasting, reducing the need for manual intervention. A smart cast occurs when the compiler tracks conditions inside conditional expressions and automatically casts types if possible, eliminating the necessity for explicit casting in many scenarios. This considerably simplifies the syntax and increases readability. For example, if we perform a type check on a variable in an `if` condition, we can use that variable in its checked type within the `if` block without the requirement to explicitly cast it. An example of smart cast can be found in @smart-cast
+In Kotlin, smart casts refer to a feature of the language that automatically handles explicit typecasting, reducing the need for manual intervention. A smart cast occurs when the compiler tracks conditions inside conditional expressions and automatically casts types if possible, eliminating the necessity for explicit casting in many scenarios. This considerably simplifies the syntax and increases readability. For example, if we perform a type check on a variable in an `if` condition, we can use that variable in its checked type within the `if` block without the requirement to explicitly cast it. An example of smart cast can be found in @smart-cast.
 
 #figure(
-  caption: "",
+  caption: "Example of smart-cast in Kotlin",
   ```kt
   open class A()
   class B : A() {
@@ -44,6 +40,8 @@ In Kotlin, smart casts refer to a feature of the language that automatically han
 
 
 === Null Safety
+
+*TODO*
 
 === Contracts
 

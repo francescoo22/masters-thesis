@@ -21,15 +21,14 @@
   target: figure.where(kind: image)
 )
 
-#v(8em)
+// TODO: show if there will be tables
+// #v(8em)
 
-#outline(
-    title: tablesList,
-    target: figure.where(kind: table),
-    indent: auto
-)
-
-// TODO: decide whether to include listings here, along figures or not to include them at all
+// #outline(
+//     title: tablesList,
+//     target: figure.where(kind: table),
+//     indent: auto
+// )
 
 #v(8em)
 

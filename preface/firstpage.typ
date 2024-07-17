@@ -31,6 +31,10 @@
         #align(left, text(12pt, weight: 400, style: "italic", supervisor))
         #v(5pt)
         #align(left, text(11pt, profTitle + myProf))
+        #v(10pt)
+        #align(left, text(12pt, weight: 400, style: "italic", "Tutors"))
+        #v(5pt)
+        #align(left, text(11pt, "Ilya Chernikov, Komi Golov"))
 
         #align(right, text(12pt, weight: 400, style: "italic", undergraduate))
         #v(5pt)
