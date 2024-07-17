@@ -6,16 +6,12 @@
 
 #pagebreak(to:"odd")
 
-// TODO: the word "function" must refer to functions in the rules. The word "method" must refer to kotlin funcitons
-// TODO: quando cito un capitolo viene fuori Chapter e non Section
-// TODO: appendice con il rule-set completo
-// TODO: annotazioni nei commenti del codice a volte maiuscole e a volte minuscole
-// TODO: tutti gli esempi in una figure con la caption
-// TODO: coerenza nei nomi delle regole (nel modo in cui abbrevio unique, shared e borrowed)
-// TODO: decidere cosa fare con gli esempi scritti anche con la notazione della grammatica (da rivedere tutti in ogni caso (nomi classi T vs C)). Anche capire se ha senso dare un nome al subset del linguaggio
-// decidere se call, if ecc. in corsivo
-// decidere se unique, shared, borrowed in corsivo
-// decidere se nomi delle regole in corsivo
+// TODO: the word "function" must refer to functions in the rules. The word "method" must refer to funciton statements
+// TODO: Fix Chapter vs Section while using @
+// TODO: consistency in rules names (in the way unique, shared, borrowed are abbreviated)
+// TODO: decide whether to put call, if ecc. in italic
+// TODO: decide whether to put unique, shared, borrowed in italic
+// TODO: decide whether to put nomi delle regole in italic
 
 = Annotation System
 
@@ -426,6 +422,8 @@ A program is well-typed iff $forall m equiv m(...){overline(s)} in overline(M) .
 
 This rule is used to initialize the context at the beginning of a method. The initial context will contain only the method's arguments with the declared uniqueness annotations.
 
+#figure(
+  caption: "Typing example for Begin statement",
 ```kt
 class C
 
@@ -438,10 +436,10 @@ fun @receiver:Unique C.f(
     // ...
 }
 ```
+)
 
-// TODO: derivation?
 
-$ f(this: unique, x: unique borrowed, y: shared borrowed, z: shared){begin_f; ...} $
+// $ f(this: unique, x: unique borrowed, y: shared borrowed, z: shared){begin_f; ...} $
 
 === Variable Declaration
 
@@ -450,6 +448,8 @@ $ f(this: unique, x: unique borrowed, y: shared borrowed, z: shared){begin_f; ..
 After declaring a variable, it is inaccessible until its initialization and so the varaible will be in the context with $top$ annotation.
 Note that this rule only allows to declare variables if they are not in the context while Kotlin allows to shadow variables declared in outer scopes. Kotlin code using shadowing is not currently supported by this system.
 
+#figure(
+  caption: "Typing example for variable declaration",
 ```kt
 class C
 
@@ -460,12 +460,11 @@ fun f(){
     // ...
 }
 ```
-$ f(){begin_f; var x; ...} $
+)
+
+// $ f(){begin_f; var x; ...} $
 
 === Assigning null
-
-// TODO: precondizione per p in context???
-// basta essere coerenti, o sempre o mai
 
 #display-rules(Assign-Null, "")
 
@@ -473,6 +472,8 @@ The definition of unique tells us that a reference is unique when it is `null` o
 
 It is also important to note the presence of the premise "$Delta(p) = alpha beta$" ensuring that the root of the path $p$ is inside the context $Delta$.
 
+#figure(
+  caption: "Typing example for assigning null",
 ```kt
 class C
 class B(@property:Unique var t: C)
@@ -487,17 +488,18 @@ fun f() {
     // ...
 }
 ```
+)
 
-$ 
-class B(t:unique) \
-f(){begin_f; var b; ...; b = null; ...}
-$
+// $ 
+// class B(t:unique) \
+// f(){begin_f; var b; ...; b = null; ...}
+// $
 
 === Sequence of statements
 
 #display-rules(Seq-Base, Seq-Rec)
 
-// TODO: anche begin e return dovrebbero essere statement. Sarebbe da creare una entry nella grammatica che li includa.
+// TODO: begin and return should be statements. It would be good to add an entry in the grammar for that.
 
 These rules are straightforward, but necessary to define how to type a sequence of statements. In a sequence, statements are typed in the order that they appear. After a statement is typed, the resulting context is used to type the following one.
 
@@ -524,7 +526,7 @@ In @call-sup-wrong is not possible to call `g` by passing `b` and `b.f`, this is
 Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and `x.f` since the method expects both of the arguments to be _shared_.
 
 #figure(
-  caption: "TODO",
+  caption: "Typing example for method call with same reference",
   ```kt
   class C
 
@@ -535,22 +537,22 @@ Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and 
   fun h(x: C, @Borrowed y: C) {}
 
   fun use_f(@Unique x: C) {
-      // Δ = x: Unique
+      // Δ = x: unique
       f(x, x) // error: 'x' is passed more than once but is also expected to be unique
   }
 
   fun use_g_h(@Unique x: C) {
-      // Δ = x: Unique
+      // Δ = x: unique
       g(x, x) // ok, uniqueness is also preserved since both the args are borrowed
-      // Δ = x: Unique
+      // Δ = x: unique
       h(x, x) // ok, but uniqueness is lost after normalization
-      // Δ = x: Shared
+      // Δ = x: shared
   }
   ```
 )<call-arg-twice>
 
 #figure(
-  caption: "TODO",
+  caption: "Typing example for correct method call with sup-references",
   ```kt
   class C
   class A(var f: C)
@@ -558,9 +560,9 @@ Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and 
   fun f(@Unique x: A, y: C) {}
 
   fun use_f(@Unique x: A) {
-      // Δ = x: Unique
+      // Δ = x: unique
       f(x, x.f) // ok
-      // Δ = x: T, x.f: Shared
+      // Δ = x: T, x.f: shared
       // Note that even if x.f is marked shared in the context,
       // it is not accessible since Δ(x.f) = T
   }
@@ -568,7 +570,7 @@ Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and 
 )<call-sup-ok-1>
 
 #figure(
-  caption: "TODO",
+  caption: "Typing example for incorrect method call with sup-references",
   ```kt
   class C
   class B(@Unique var f: C)
@@ -576,15 +578,15 @@ Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and 
   fun g(@Unique x: B, y: C) {}
 
   fun use_g(@Unique b: B) {
-      // Δ = b: Unique
-      g(b, b.f) // error: 'b.f' cannot be passed since 'b' is passed as Unique and Δ(b.f) = Unique
+      // Δ = b: unique
+      g(b, b.f) // error: 'b.f' cannot be passed since 'b' is passed as unique and Δ(b.f) = unique
       // It is correct to raise an error since 'g' expects x.f to be unique
   }
   ```
 )<call-sup-wrong>
 
 #figure(
-  caption: "TODO",
+  caption: "Typing example for correct method call with sup-references",
   ```kt
   class C
   class B(@Unique var f: C)
@@ -592,9 +594,9 @@ Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and 
   fun h(x: B, y: C) {}
 
   fun use_h(@Unique x: B) {
-      // Δ = x: Unique
+      // Δ = x: unique
       h(x, x.f) // ok
-      // Δ = x: Shared, x.f: Shared
+      // Δ = x: shared, x.f: shared
   }
   ```
 )<call-sup-ok-2>
@@ -605,6 +607,8 @@ Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and 
 
 After defining how to type a _call_, it is easy to formilize the typing of a _call_ assignment. Like all the other assignment rules, the root of the path on the left side of the assignment must be in the context. First of all, the _call_ is typed obtaining a new context $Delta_1$. Then, the annotation of the path on the left side of the assignment is replaced ($|->$) in $Delta_1$ with the annotation of the return value of the function.
 
+#figure(
+  caption: "Typing example for assigning a method call",
 ```kt
 class C
 
@@ -616,11 +620,12 @@ fun get_shared(): C { /* ... */ }
 fun f() {
     // Δ = ∅
     val x = get_unique()
-    // Δ = x: Unique
+    // Δ = x: unique
     val y = get_shared()
-    // Δ = x: Unique, y: Shared
+    // Δ = x: unique, y: shared
 }
 ```
+)
 
 === Assign unique
 
@@ -636,19 +641,22 @@ The resulting context is built in the following way:
 - The context $Delta_1$ is used to obtain a context $Delta'$ by replacing ($|->$) the annotation of $p$ with _unique_.
 - Finally, to obtain the resulting context, all the paths that were originally rooted in $p'$ are rooted in $p$ with the same annotation and added to $Delta'$.
 
+#figure(
+  caption: "Typing example for assigning a unique reference",
 ```kt
 class C
 class B(@property:Unique var t: C)
 class A(@property:Unique var b: B)
 
 fun f(@Unique x: A, @Unique y: B){
-    // Δ = x: Unique, y: Unique
+    // Δ = x: unique, y: unique
     y.t = x.b.t
-    // Δ = x: Unique, y: Unique, x.b.t: T, y.t: Unique
+    // Δ = x: unique, y: unique, x.b.t: T, y.t: unique
     x.b = y
-    // Δ = x: Unique, y: T, x.b: Unique
+    // Δ = x: unique, y: T, x.b: unique
 }
 ```
+)
 
 === Assign shared
 
@@ -660,25 +668,28 @@ Typing an assignment $p = p'$ in which $p'$ is _shared_ is similar to the case w
 
 Also the resulting context is constructed in a similar way to the previous case. The only difference is that in this case it is not needed to replace ($|->$) the annotation of $p'$.
 
+#figure(
+  caption: "Typing example for assigning a shared reference",
 ```kt
 class C
 class B(@property:Unique var t: C)
 
 fun f(@Unique x: B, y: C){
-    // Δ = x: Unique, y: Shared
+    // Δ = x: unique, y: shared
     x.t = y
-    // Δ = x: Unique, y: Shared, x.t: Shared
+    // Δ = x: unique, y: shared, x.t: shared
 }
 ```
+)
 
 === Assign boorowed field
 
 #display-rules(Assign-Borrowed-Field, "")
 
-// TODO: spiegazione
-// TODO: esempio
+*TODO: Add description (the current one is copied from the other document)*
 
-// copied from OLD path chapter
+*TODO: Add an example*
+
 - Note that fields of a borrowed parameter are borrowed too and they need to be treated carefully in order to avoid unsoundness. Specifically, borrowed fields:
   - Can be passed as arguments to other functions (if relation rules are respected).
   - Have to become `T` after being read (even if shared).
@@ -694,6 +705,8 @@ Note that the system does not allow to have _null_ or a _method call_ in the gua
 $ fi (p == null) ... equiv var "fresh" ; "fresh" = null ; fi(p == "fresh") ... $
 $ fi (p == m(...)) ... equiv var "fresh" ; "fresh" = m(...) ; fi(p == "fresh") ... $
 
+#figure(
+  caption: "Typing example for if statement",
 ```kt
 class C
 class A(@property:Unique var c: C)
@@ -703,29 +716,31 @@ fun consumeUnique(@Unique c: C) {}
 fun consumeShared(a: A) {}
 
 fun f(@Unique a: A, @Borrowed c: C) {
-    // Δ = a: unique, t: shared borrowed
+    // Δ = a: unique, t: shared ♭
     if (a.c == c) {
         consumeUnique(a.c)
-        // Δ1 = a: unique, a.f: T, t: shared borrowed
+        // Δ1 = a: unique, a.f: T, t: shared ♭
     } else {
         consumeShared(a)
-        // Δ2 = a: shared, t: shared borrowed
+        // Δ2 = a: shared, t: shared ♭
     }
-    // unify(Δ; Δ1; Δ2) = a: LUB{ unique, shared }, a.f: LUB{ T, shared }, t: shared borrowed
-    // Δ = a: shared, a.f: T, t: shared borrowed
+    // unify(Δ; Δ1; Δ2) = a: LUB{ unique, shared }, a.f: LUB{ T, shared }, t: shared ♭
+    // Δ = a: shared, a.f: T, t: shared ♭
 }
 ```
-$
-class A(c: unique) \
-"consumeUnique"(c: unique){} \
-"consumeShared"(a: shared){} \
-f(a: unique, c: shared borrowed){
-  fi(a.c == c) 
-    "consumeUnique"(a.c)
-   els 
-    "consumeShared"(a)
-}
-$
+)
+
+// $
+// class A(c: unique) \
+// "consumeUnique"(c: unique){} \
+// "consumeShared"(a: shared){} \
+// f(a: unique, c: shared borrowed){
+//   fi(a.c == c) 
+//     "consumeUnique"(a.c)
+//    els 
+//     "consumeShared"(a)
+// }
+// $
 
 === Return
 
@@ -742,7 +757,7 @@ $ {...; ret null} equiv {...; var "fresh" ; "fresh" = null ; ret "fresh"} $
 $ {...; ret m(...)} equiv {...; var "fresh" ; "fresh" = m(...) ; ret "fresh"} $
 Where _fresh_ is a variable that has not been declared before.
 
-// TODO: examples for return
+*TODO: Add example for return*
 
 // TODO: Stack example + DERIVATION
 
@@ -761,7 +776,6 @@ Where _fresh_ is a variable that has not been declared before.
 
 // // quote something??
 
-// === Static analysis (IntelliJ)
 // === Smart cast
 // === Function optimiztion (modify lists implace)
 // === Garbage collection in Kotlin native

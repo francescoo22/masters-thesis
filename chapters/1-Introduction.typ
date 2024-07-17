@@ -1,5 +1,5 @@
 #pagebreak(to:"odd")
 
-// TODO: per tutti i capitoli/sottocapitoli, coerenza nell'uso delle maiuscole nei titoli
+*TODO: For all chapters/subchapters, consistency in the use of capital letters in titles.*
 
 = Introduction

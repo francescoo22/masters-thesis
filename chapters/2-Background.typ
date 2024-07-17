@@ -1,11 +1,11 @@
 #pagebreak(to:"odd")
 = Background
 
-// TODO: simboli per codice che compila vs codice che non compila
+// TODO: symbols for code that compiles vs code that doesn't?
 
 == Kotlin
 
-// TODO: scriverlo per davvero
+// TODO: scriverlo per davvero AIG
 
 Kotlin @Kotlin is a statically-typed, versatile programming language that was developed by JetBrains in 2011. Built with the aim to enhance productivity and satisfaction of developers, it offers a unique blend of object-oriented and functional programming features capable of gracing any application with simplicity, clarity, and excellent interoperability. Kotlin is primarily used for Android app development and is officially recommended by Google. Its efficiency, conciseness, and safety to prevent common programming errors make it a rather compelling choice for developers worldwide.
 
@@ -14,7 +14,7 @@ Only Kotlin's features that are relevant for this work will be discussed in deta
 === Mutable and immutable variables
 
 // AIG
-// sistema i blocchi di codice che vanno a capo
+// TODO sistema i blocchi di codice che vanno a capo
 
 In Kotlin, mutability refers to the capability to alter the value of a variable after it has been initialized. Variables in Kotlin are either mutable, defined using the `var` keyword, or immutable, defined using the `val` keyword. Mutable variables, once assigned, can have their value changed during the execution of the program, while immutable variables, once assigned a value, cannot be altered subsequently. For instance, `var x = 5` allows you to change the value of x later in the program, while `val y = 5` maintains y at a value of 5 throughout the program. Mutability is a fundamental principle in programming, and Kotlin's clear distinction between `val` and `var` enhances code readability and aids in maintaining data consistency, especially in a multithreaded environment.
 
