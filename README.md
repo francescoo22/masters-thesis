@@ -7,3 +7,5 @@ On the other hand, aliasing poses significant challenges for formal verification
 Developed by JetBrains, Kotlin is an open-source, statically typed programming language that gained popularity in recent years especially in the Android software development field. However, unlike other programming languages, few tools for performing formal verification in Kotlin exist. Moreover, Kotlin does not provide any guarantee against aliasing, making formal verification a hard task for the language.
 
 This work introduces an annotation system for a significant subset of the Kotlin language, designed to provide some formal guarantees on the uniqueness of references. After presenting and formalizing the annotation system, the thesis shows how to use these annotations for performing formal verification of Kotlin by encoding it into Viper, a language and suite of tools developed by ETH Zurich to provide an architecture for designing new verification tools.
+
+**Note: This is still a WIP, the latest version of the thesis can always be found [here](https://github.com/francescoo22/masters-thesis/actions).**
