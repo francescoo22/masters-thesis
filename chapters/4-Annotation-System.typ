@@ -6,6 +6,8 @@
 
 #pagebreak(to:"odd")
 
+// TODO: the word "function" must refer to functions in the rules. The word "method" must refer to kotlin funcitons
+// TODO: quando cito un capitolo viene fuori Chapter e non Section
 // TODO: appendice con il rule-set completo
 // TODO: annotazioni nei commenti del codice a volte maiuscole e a volte minuscole
 // TODO: tutti gli esempi in una figure con la caption
@@ -246,7 +248,7 @@ This set of rules is used to define a partial order between the annotations. Thi
 #v(1em)
 #figure(image(width: 35%, "../images/lattice.svg"), caption: [Lattice obtained by Rel rules])<annotation-lattice>
 
-=== Passing
+=== Passing<cap:passing>
 
 #display-rules(
   Pass-Bor, Pass-Un,
@@ -378,22 +380,16 @@ $ "unify" : Delta -> Delta -> Delta -> Delta $
 
 == Normalization
 
-- Normalization takes a list of annotated $p$ and retruns a list in which duplicates are substituted with the least upper bound.
-- Normalization is required for method calls in which the same variable is passed more than once.
-
-```kt
-fun f(x: ♭ shared, y: shared)
-fun use_f(x: unique) {
-  // Δ = x: unique
-  f(x, x)
-  // Δ = normalize(x: unique, x:shared) = x: shared
-}
-```
-
 #display-rules(
   N-Empty, "",
   N-Rec, ""
 )
+
+Normalize is a function that takes and returns a list of annotated paths. In the returned list, duplicate paths from the given list are substituted with a single path annotated with the LUB of the annotations from the duplicate paths.
+As already mentioned, rules in @cap:passing are not sufficient to type a method call because the same path might be passed more than once to the same method.
+Normalization is the missing piece that will enable the formalization of typing rules for method calls.
+
+$ "normalize" : "List"(p : alpha beta) -> "List"(p : alpha beta) $
 
 == Statements Typing
 
@@ -493,23 +489,22 @@ These rules are straightforward, but necessary to define how to type a sequence 
 
 #display-rules(Call, "")
 
-Typing a function call follows the logic presented in the "passing" ($~>$) rules while taking care of what can happen with function accepting multiple parameters.
-- All the roots of the paths passed to a function must be in the context (also guranteed by the language).
-- All the paths passed to a function must be in standard form of the expected annotation.
-- It is allowed to pass the same path twice to the same function, but only if it passed where a shared argument is expected.
+Typing a method call follows the logic presented in the rules of @cap:passing ($~>$) while taking care of what can happen with method accepting multiple parameters.
+- All the roots of the paths passed to a method must be in the context (also guranteed by the language).
+- All the paths passed to a method must be in standard form of the expected annotation.
+- It is allowed to pass the same path twice to the same method, but only if it passed where a shared argument is expected.
 - It is allowed to pass two paths $p_i$ and $p_j$ such that $p_i subset.sq p_j$ when one of the following conditions is satisfied:
   - $p_j$ is _shared_.
-  - The function that has been called expects _shared_ (possibly _borrowed_) arguments in positions $i$ and $j$.
+  - The method that has been called expects _shared_ (possibly _borrowed_) arguments in positions $i$ and $j$.
 - The resulting context is constructed in the following way:
-  - Paths passed to the function and their sup-paths are removed from the initial context.
+  - Paths passed to the method and their sup-paths are removed from the initial context.
   - A list of annotated paths (in which a the same path may appear twice) in constructed by mapping passed paths according to the "passing" ($~>$) rules.
   - The obtained list is normalized and added to the context.
 
-@call-arg-twice shows the cases where it is possible to pass the same reference more than once.
+@call-arg-twice shows the cases where it is possible to pass the same reference more than once and how normalization is applied.
 In @call-sup-ok-1 it is possible to call `f` by passing `x` and `x.f` since $Delta(x.f) = shared$.
 In @call-sup-wrong is not possible to call `g` by passing `b` and `b.f`, this is because `g`, in its body, expects `x.f` to be _unique_, but it would not be the case by passing `b` and `b.f`.
-Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and `x.f` since the function expects both of the arguments to be _shared_.
-
+Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and `x.f` since the method expects both of the arguments to be _shared_.
 
 #figure(
   caption: "TODO",
@@ -531,7 +526,7 @@ Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and 
       // Δ = x: Unique
       g(x, x) // ok, uniqueness is also preserved since both the args are borrowed
       // Δ = x: Unique
-      h(x, x) // ok, but uniqueness is lost since one of the args is not borrowed
+      h(x, x) // ok, but uniqueness is lost after normalization
       // Δ = x: Shared
   }
   ```
