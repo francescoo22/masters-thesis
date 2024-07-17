@@ -95,7 +95,8 @@ In @contract-1 it is possible to see how contracts allow the initialization of i
 
 // TODO: Read better these summaries and modify them (AIG)
 
-// TODO: cite book aliasing
+// TODO: Double check
+// TODO: cite book aliasing also here?
 
 Aliasing refers to the situation where a data location in memory can be accessed through different symbolic names in the program. Thus, changing the data through one name inherently leads to a change when accessed through the other name as well. This can happen due to several reasons such as pointers, references, multiple arrays pointing to the same memory location etc.
 
@@ -183,7 +184,7 @@ Alias detection is a retrospective process that identifies potential or actual a
 Alias detection needs a complex interprocedural analysis due to its non-local nature. It provides information about the alias relationship between two variables i.e. if they never, sometimes, or always alias the same object. Variables are said to sometimes alias, when they are aliased in some situations but not always. This information is particularly useful for optimization purposes.
 
 ==== Advertisement
-Because global alias detection is impractical, it is crucial to develop methods and constructs for modular analysis. Programmers and formalists benefit from constructs that enhance local analysis by annotating methods based on their aliasing properties. Optimistic assumptions about aliasing are common, such as expecting a Boolean object's or(arg) method to return a new object rather than an aliased one, despite it being correct behavior.
+Because global alias detection is impractical, it is crucial to develop methods and constructs for modular analysis. Programmers and formalists benefit from constructs that improve local analysis by annotating methods based on their aliasing properties. Optimistic assumptions about aliasing are common, such as expecting a Boolean object's or(arg) method to return a new object rather than an aliased one, despite it being correct behavior.
 
 Popular object-oriented languages lack means to indicate whether methods capture objects by creating persistent access paths. Annotations indicating which object bindings are captured by a method and which aliases a method can handle could function similarly to const in C++, offering useful behavioral specifications.
 
