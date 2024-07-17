@@ -354,6 +354,15 @@ The rules in this section describe a function that takes two contexts and return
 
 $ \_ lub \_ : Delta -> Delta -> Delta $
 
+The following example shows how pointwise LUB works.
+
+$
+Delta_1 &= x: shared, space y: shared \
+Delta_2 &= x: unique \
+Delta_1 lub Delta_2 &= x: Lub {shared, unique}, space y: top \ 
+&= x: shared, space y: top
+$
+
 === Local declarations removal
 
 #display-rules(
@@ -366,6 +375,14 @@ The function formalized by these rules is used to obtain the correct context whe
 The result of the operation is a context where paths rooted in variables that have been locally declared inside the scope are removed.
 
 $ \_ triangle.filled.small.l \_ : Delta -> Delta -> Delta $
+
+What follows is an example showing how the removal of local declarations works.
+
+$
+Delta_1 &= x: unique, space y: unique, space x.f: unique, space y.f: shared \
+Delta_2 &= x: shared \
+Delta_1 triangle.filled.small.l Delta_2 &= x: unique, space x.f: unique \
+$
 
 === Unify
 
