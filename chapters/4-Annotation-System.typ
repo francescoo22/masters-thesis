@@ -335,6 +335,7 @@ $
 Within the context $Delta$:
 
 - $Delta tr std(x, unique)$ is not derivable, meaning that $x$ cannot be passed to the function $f_1$. The judgement is not derivable because $Delta(x.y) = shared$ while in a context $Delta' = x: unique$, $Delta'(x.y) = unique$, but $shared lt.eq.curly.not unique$.
+
 - $Delta tr std(x, shared)$ is derivable, meaning that $x$ might be passed to the function $f_2$ if all the preconditions, which would be formalized by statement's typing rules, are also satisfied.
 
 == Unification
@@ -347,10 +348,9 @@ Within the context $Delta$:
   Ctx-Lub-2, "",
 )
 
-*TODO: sistema descrizione*
-- $Delta_1 lub Delta_2$ is the pointwise lub of $Delta_1$ and $Delta_2$.
-  - If a variable $x$ is present in only one context, it will be annotated with $top$ in $Delta_1 lub Delta_2$.
-  - If a path $p.f$ is missing in one of the two contexts, we can just consider the annotation in the class declaration.
+The rules in this section describe a function that takes two contexts and returns the LUB between each pair of paths in the given contexts. If a variable $x$ is present in only one of the two contexts, it will be annotated with $top$ in the resulting context.
+
+$ \_ lub \_ : Delta -> Delta -> Delta $
 
 === Local declarations removal
 
@@ -360,11 +360,10 @@ Within the context $Delta$:
   Remove-Locals-Discard, "",
 )
 
-*TODO: sistema descrizione*
-- $Delta triangle.filled.small.l Delta_1$ is used to maintain the correct context when exiting a scope.
-  - $Delta$ represents the resulting context of the inner scope.
-  - $Delta_1$ represents the context at the beginning of the scope.
-  - The result of the operation is a context where paths rooted in variable locally declared inside the scope are removed.
+The function formalized by these rules is used to obtain the correct context when exiting a scope. When writing $Delta_1 triangle.filled.small.l Delta_2$, $Delta_1$ represents the resulting context of a scope, while $Delta_2$ represents the context at the beginning of that scope.
+The result of the operation is a context where paths rooted in variables that have been locally declared inside the scope are removed.
+
+$ \_ triangle.filled.small.l \_ : Delta -> Delta -> Delta $
 
 === Unify
 
@@ -372,10 +371,10 @@ Within the context $Delta$:
   Unify, ""
 )
 
-*TODO: sistema descrizione*
-- $unify(Delta, Delta_1, Delta_2)$ means that we want to unify $Delta_1$ and $Delta_2$ starting from a parent environment $Delta$.
-  - A path $p$ contained in $Delta_1$ or $Delta_2$ such that $root(p) = x$ is not contained $Delta$ will not be included in the unfication.
-  - The annotation of variables contained in the unfication is the least upper bound of the annotation in $Delta_1$ and $Delta_2$.
+Finally, the unify function groups the two functions described before. This function will be fundamental to type if-statements.
+In particular, $unify(Delta, Delta_1, Delta_2)$ can be used to type an if-statement: when $Delta$ is the context at the beginning of the statement while $Delta_1$ and $Delta_2$ are the resulting contexts of the two branches of the statement.
+
+$ "unify" : Delta -> Delta -> Delta -> Delta $
 
 == Normalization
 
