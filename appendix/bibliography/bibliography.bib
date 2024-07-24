@@ -17,6 +17,16 @@ pages = {11–16},
 numpages = {6}
 }
 
+@article{beyondGenevaConvention,
+  title={Beyond the geneva convention on the treatment of object aliasing},
+  author={Clarke, Dave and Noble, James and Wrigstad, Tobias},
+  journal={Aliasing in Object-Oriented Programming. Types, Analysis and Verification},
+  pages={1--6},
+  year={2013},
+  publisher={Springer}
+}
+
+
 @article{zimmerman2023latte,
   title={Latte: Lightweight Aliasing Tracking for Java},
   author={Zimmerman, Conrad and Gamboa, Catarina and Fonseca, Alcides and Aldrich, Jonathan},
@@ -61,7 +71,9 @@ isbn="978-3-030-99336-8"
   publisher={ACM New York, NY, USA}
 }
 
-@INPROCEEDINGS{1029817,
+// TODO: decide what to keep for separation logic
+
+@INPROCEEDINGS{separationLogic1,
   author={Reynolds, J.C.},
   booktitle={Proceedings 17th Annual IEEE Symposium on Logic in Computer Science}, 
   title={Separation logic: a logic for shared mutable data structures}, 
@@ -72,8 +84,35 @@ isbn="978-3-030-99336-8"
   keywords={Data structures;Computer science;Programmable logic arrays;Reflection;Logic programming;Computer languages;Logic arrays;Arithmetic;Artificial intelligence;Bibliographies},
   doi={10.1109/LICS.2002.1029817}}
 
+@inproceedings{separationLogic2,
+  title={Local reasoning about programs that alter data structures},
+  author={O’Hearn, Peter and Reynolds, John and Yang, Hongseok},
+  booktitle={Computer Science Logic: 15th International Workshop, CSL 2001 10th Annual Conference of the EACSL Paris, France, September 10--13, 2001, Proceedings 15},
+  pages={1--19},
+  year={2001},
+  organization={Springer}
+}
 
-@inproceedings{MuellerSchwerhoffSummers16,
+@article{separationLogic3,
+author = {Ishtiaq, Samin S. and O'Hearn, Peter W.},
+title = {BI as an assertion language for mutable data structures},
+year = {2001},
+issue_date = {March 2001},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {36},
+number = {3},
+issn = {0362-1340},
+url = {https://doi.org/10.1145/373243.375719},
+doi = {10.1145/373243.375719},
+abstract = {Reynolds has developed a logic for reasoning about mutable data structures in which the pre- and postconditions are written in an intuitionistic logic enriched with a spatial form of conjunction. We investigate the approach from the point of view of the logic BI of bunched implications of O'Hearnand Pym. We begin by giving a model in which the law of the excluded middleholds, thus showing that the approach is compatible with classical logic. The relationship between the intuitionistic and classical versions of the system is established by a translation, analogous to a translation from intuitionistic logic into the modal logic S4. We also consider the question of completeness of the axioms. BI's spatial implication is used to express weakest preconditions for object-component assignments, and an axiom for allocating a cons cell is shown to be complete under an interpretation of triplesthat allows a command to be applied to states with dangling pointers. We make this latter a feature, by incorporating an operation, and axiom, for disposing of memory. Finally, we describe a local character enjoyed by specifications in the logic, and show how this enables a class of frame axioms, which say what parts of the heap don't change, to be inferred automatically.},
+journal = {SIGPLAN Not.},
+month = {jan},
+pages = {14–26},
+numpages = {13}
+}
+
+@inproceedings{Viper,
   author      = {P. M{\"u}ller and M. Schwerhoff and A. J. Summers},
   title       = {Viper: A Verification Infrastructure for Permission-Based Reasoning},
   booktitle   = {Verification, Model Checking, and Abstract Interpretation (VMCAI)},
@@ -128,6 +167,19 @@ isbn="978-3-030-99336-8"
   title        = {Kotlin Programming Language},
   year         = {2024},
   url          = {https://kotlinlang.org/},
+}
+
+@article{KotlinSpec,
+  title={Kotlin language specification},
+  author={Akhin, Marat and Belyaev, Mikhail},
+  journal={Kotlin Language Specification},
+  year={2021}
+}
+
+@online{ViperWebSite,
+  author = {Department of Computer Science, ETH Zürich},
+  title = {Viper Language},
+  url = {https://www.pm.inf.ethz.ch/research/viper.html},
 }
 
 @misc{FormVerPlugin,

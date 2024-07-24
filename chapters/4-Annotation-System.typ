@@ -13,7 +13,7 @@
 // TODO: decide whether to put unique, shared, borrowed in italic
 // TODO: decide whether to put nomi delle regole in italic
 
-= Annotation System
+= Annotation System<cap:annotation-system>
 
 This chapter describes an annotation system for controlling aliasing within a subset of the Kotlin language.
 The system takes inspiration from some previous works @boyland2001alias @zimmerman2023latte @aldrich2002alias  but it also introduces significant modifications.

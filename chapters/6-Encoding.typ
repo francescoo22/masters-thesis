@@ -1,5 +1,5 @@
 #pagebreak(to:"odd")
-= Encoding in Viper
+= Encoding in Viper<cap:encoding>
 @FormVerPlugin
 
 == Classes Encoding

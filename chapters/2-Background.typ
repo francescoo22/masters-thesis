@@ -1,5 +1,5 @@
 #pagebreak(to:"odd")
-= Background
+= Background<cap:background>
 
 // TODO: symbols for code that compiles vs code that doesn't?
 // TODO: cite language specification
@@ -210,7 +210,7 @@ Aliasing prevention alone is insufficient because aliasing is unavoidable in con
 == Viper and Separation Logic
 
 === Separation Logic
-In Computer Science, separation logic @1029817 is an extension of Hoare logic, a way of reasoning about programs.
+In Computer Science, separation logic @separationLogic1 @separationLogic2 @separationLogic3 is an extension of Hoare logic, a way of reasoning about programs.
 
 Separation logic facilitates reasoning about:
 - Programs that manipulate pointer data structures including information hiding in the presence of pointers.
@@ -229,7 +229,7 @@ $
 
 // TODO: use different words (this is just copy pasted)
 
-Viper @MuellerSchwerhoffSummers16 (Verification Infrastructure for Permission-based Reasoning) is a language and suite of tools, providing an architecture on which new verification tools and prototypes can be developed simply and quickly. Viper is being developed at ETH Zurich in close collaboration with the team of Alex Summers at UBC.
+Viper @Viper @ViperWebSite (Verification Infrastructure for Permission-based Reasoning) is a language and suite of tools, providing an architecture on which new verification tools and prototypes can be developed simply and quickly. Viper is being developed at ETH Zurich in close collaboration with the team of Alex Summers at UBC.
 
 Viper comprises a novel intermediate verification language, also named Viper, and automatic verifiers for the language, as well as example front-end tools. The Viper toolset can be used to implement verification techniques for front-end programming languages via translations into the Viper language.
 

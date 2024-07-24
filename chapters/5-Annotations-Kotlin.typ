@@ -1,5 +1,5 @@
 #pagebreak(to:"odd")
-= Annotations in Kotlin
+= Annotations in Kotlin<cap:annotations-kt>
 
 == Examples of Aliasing control in Kotlin
 
