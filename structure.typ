@@ -16,8 +16,9 @@
 #include "./chapters/2-Background.typ"
 #include "./chapters/3-Related-Work.typ"
 #include "./chapters/4-Annotation-System.typ"
-#include "./chapters/5-Encoding.typ"
-#include "./chapters/6-Conclusion.typ"
+#include "./chapters/5-Annotations-Kotlin.typ"
+#include "./chapters/6-Encoding.typ"
+#include "./chapters/7-Conclusion.typ"
 
 // Bibliography
 

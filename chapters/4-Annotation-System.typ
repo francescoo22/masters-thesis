@@ -760,24 +760,3 @@ Where _fresh_ is a variable that has not been declared before.
 *TODO: Add example for return*
 
 // TODO: Stack example + DERIVATION
-
-// --------
-
-// TODO: put this in a separate chapter
-
-// == Aliasing control in Kotlin
-
-// === Verify  contracts
-
-
-// // example of contracts usage
-
-// // example of improvement in verification of contracts
-
-// // quote something??
-
-// === Smart cast
-// === Function optimiztion (modify lists implace)
-// === Garbage collection in Kotlin native
-
-// == The system
