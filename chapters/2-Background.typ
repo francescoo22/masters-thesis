@@ -2,11 +2,10 @@
 = Background<cap:background>
 
 // TODO: symbols for code that compiles vs code that doesn't?
-// TODO: cite language specification
 
 == Kotlin
 
-Developed by JetBrains, Kotlin @Kotlin is an open-source, statically typed programming language that gained popularity in recent years especially in the Android software development ﬁeld. Kotlin shares many similarities with Java and can fully interoperate with it. Notably, Kotlin also introduces several features that are absent in Java, such as improved type inference, functional programming, null-safety, and smart-casting.
+Developed by JetBrains, Kotlin @Kotlin @KotlinSpec is an open-source, statically typed programming language that gained popularity in recent years especially in the Android software development ﬁeld. Kotlin shares many similarities with Java and can fully interoperate with it. Notably, Kotlin also introduces several features that are absent in Java, such as improved type inference, functional programming, null-safety, and smart-casting.
 
 The following sections will present the features of the language that are more relevant for this work.
 
@@ -93,9 +92,7 @@ In @contract-1 it is possible to see how contracts allow the initialization of i
 
 == Aliasing
 
-// TODO: Read better these summaries and modify them (AIG)
-
-// TODO: Double check
+// TODO: Double check summaries
 // TODO: cite book aliasing also here?
 
 Aliasing refers to the situation where a data location in memory can be accessed through different symbolic names in the program. Thus, changing the data through one name inherently leads to a change when accessed through the other name as well. This can happen due to several reasons such as pointers, references, multiple arrays pointing to the same memory location etc.
@@ -174,39 +171,6 @@ Finally, @alias-bug presents a contrived example to illustrate how aliasing can 
   ```
 )<alias-bug>
 
-=== Dealing with aliasing
-
-The Geneva Convention @GenevaConvention has established four primary methods to manage aliasing: Detection, Advertisement, Prevention, and Control. These methods aim to provide systematic approaches to identify, communicate, prevent, and manage aliasing in software systems.
-
-==== Detection
-Alias detection is a retrospective process that identifies potential or actual alias patterns in a program through static or dynamic techniques. This is beneficial for compilers, static analysis tools, and programmers as they can detect aliasing conflicts in programs, leads to more efficient code generation, helps find cases where aliasing can invalidate predicates, and assists programmers in resolving problematic conflicts. 
-
-Alias detection needs a complex interprocedural analysis due to its non-local nature. It provides information about the alias relationship between two variables i.e. if they never, sometimes, or always alias the same object. Variables are said to sometimes alias, when they are aliased in some situations but not always. This information is particularly useful for optimization purposes.
-
-==== Advertisement
-Because global alias detection is impractical, it is crucial to develop methods and constructs for modular analysis. Programmers and formalists benefit from constructs that improve local analysis by annotating methods based on their aliasing properties. Optimistic assumptions about aliasing are common, such as expecting a Boolean object's or(arg) method to return a new object rather than an aliased one, despite it being correct behavior.
-
-Popular object-oriented languages lack means to indicate whether methods capture objects by creating persistent access paths. Annotations indicating which object bindings are captured by a method and which aliases a method can handle could function similarly to const in C++, offering useful behavioral specifications.
-
-For instance, qualifying a parameter with uncaptured would indicate that the object is not bound to a variable that could be modified through side channels after the method returns. A method like or might declare that both self and arg are const and uncaptured, and the return variable is also uncaptured.
-
-Methods could also be advertised with preconditions like noalias, indicating that actual arguments should not be aliased, a restriction common in Turing. The pattern of const, noalias, and uncaptured operands and results mirrors "pure" functions, enhancing reasoning about program behavior. Enforcing such qualifiers leads to effective alias prevention.
-
-==== Prevention
-
-Alias prevention techniques introduce constructs that ensure aliasing does not occur in specific contexts, enabling static checkability by compilers and program analyzers. However, this requires conservative definitions, which may restrict valid uses that are not syntactically safe. For instance, checkable constructs like "uncaptured" and "noalias" may overly limit variable bindings and changes within collections, respectively.
-
-Conservatism ensures validity but may prevent valid formulas from being provable and safe code from compiling without errors. Therefore, fine-grained alias prevention constructs have limited utility, necessitating higher-level constructs.
-
-One such higher-level construct is "islands," which isolate groups of related objects, preventing static references across their boundaries. This allows scalable aliasing control within these isolated groups.
-
-A more radical approach replaces the traditional assignment operator with a swapping operator, eliminating reference copying and thus avoiding aliasing issues. However, this requires a different programming paradigm, which may not integrate well with mainstream object-oriented techniques.
-
-
-==== Control
-
-Aliasing prevention alone is insufficient because aliasing is unavoidable in conventional object-oriented programming. Aliasing control is necessary to ensure the system does not reach a state with unexpected aliasing, which requires analysis of the runtime state.
-
 == Viper and Separation Logic
 
 === Separation Logic
@@ -227,24 +191,145 @@ $
 
 === Viper
 
-// TODO: use different words (this is just copy pasted)
+Viper @ViperWebSite @Viper (Verification Infrastructure for Permission-based Reasoning) is a language and suite of tools developed by ETH Zurich that can be used for developing new verification tools.
 
-Viper @Viper @ViperWebSite (Verification Infrastructure for Permission-based Reasoning) is a language and suite of tools, providing an architecture on which new verification tools and prototypes can be developed simply and quickly. Viper is being developed at ETH Zurich in close collaboration with the team of Alex Summers at UBC.
+The whole Viper infrastructure is shown in @vpr-infrastructure and is made of the Viper intermediate language and two back-ends, the first based on symbolic execution and the second based on verifcation condition generation.
 
-Viper comprises a novel intermediate verification language, also named Viper, and automatic verifiers for the language, as well as example front-end tools. The Viper toolset can be used to implement verification techniques for front-end programming languages via translations into the Viper language.
+The verification process using the Viper toolchain happens as follows. An higher-level language is first encoded into the Viper intermediate language which provides support to permissions natively and uses them to express ownership of heap locations in a style similar to separation logic. 
+This is convenient for reasoning about programs that manipulate the heap and concurrent thread interactions. 
+Viper conditions are then verified using one of the two back-ends and an SMT Solver (Z3). 
+Viper back-ends aim to achieve extensive automation with the intention to avoid circumstances where tool developers and users need to comprehend the inner behaviour of the back-ends to carry out the verification process. 
 
-The Viper toolchain is designed to make it easy to implement verification techniques for sequential and concurrent programs with mutable state. It provides native support for reasoning about the program state using permissions or ownership, e.g. in the style of separation logic. New verification techniques can be implemented directly as translations to the Viper language, using either of the verifiers provided. The Viper language is also useful to encode verification problems manually, for instance, while prototyping new verification techniques.
-
-/* TODO: add
-* website reference for the image
-* examples of viper code explaining most useful feature and their relation with separation logic
-*/
+// TODO: is it okay to have just the reference to the website for the image?
 
 #figure(
   caption: "The Viper verification infrastructure",
   image("../images/viper.png", width: 80%)
-)
+)<vpr-infrastructure>
 
 ==== Language Overview
+
+The Viper intermediate language is an object-oriented, sequential programming language. Despite being designed as an intermediary language, Viper offers high-level features that are beneficial in manually expressing verification issues, along with potent low-level features useful for automatic encoding of source languages.
+
+In Viper, methods can be seen as an abstraction over an operation sequence, which may involve executing an unlimited number of statements. The caller of a method observes its behaviour solely through the method's signature and its preconditions and postconditions. This allows Viper to perform a method-modular verifcation, avoiding all the complexities associated with interprocedural analysis.
+
+#figure(
+  caption: "Viper method example",
+  ```java
+  method multiply(x: Int, y: Int) returns (res: Int)
+  requires x >= 0 && y >= 0
+  ensures res == x * y
+  {
+    res := 0
+    var i: Int := 0
+    while (i < x)
+      invariant i <= x
+      invariant res == i * y
+    {
+      res := res + y
+      i := i + 1
+    }
+  }
+  ```
+)<ViperMultiply>
+
+@ViperMultiply shows an example of method in Viper. It is possible to notice that the signature of the method (Line 1) declares the returned values as a list of variables. Preconditions (Line 2), postconditions (Line 3) and invariants (Lines 8-9) are the assertions subject to verification. The remaining statements are similar to most of the existing programming languages. The language is statically typed and several built-in types like `Ref`, `Bool`, `Int`, `Seq`, `Set` and others are provided.
+
+==== TODO: Functions
 ==== Permissions
+
+In Viper, fields are top-level declarations and, since classes do not exist in Viper, every object has all the declared fields.
+Field permissions, which define the heap areas that an expression, a statement, or an assertion can access, control the reasoning of a Viper program's heap. Heap locations are only accessible if the relevant permission is under the control of the method currently being verified.
+@vpr-permissions-1 shows how a method can require field permissions in its precondtions (Line 4) and ensure that these permissions will still be valid when returning to the caller (Line 5).
+
+#figure(
+  caption: "Viper permissions example",
+  ```java
+  field b: Bool
+
+  method nagation(this: Ref)
+  requires acc(this.b)
+  ensures acc(this.b)
+  {
+    this.b := !this.b
+  }
+  ```
+)<vpr-permissions-1>
+
+As well as being declared in preconditions and postconditions, field permissions can also be obtained within a method's body. The operation that allows to gain permissions is called inhaling and can be seen in @vpr-permissions-2 (Line 3). The opposite operation is called exhaling and enables to drop permissions.
+@vpr-permissions-2 also allows to notice how access permissions that has been seen until now are exclusive. In fact, the assertion `acc(x.b) && acc(y.b)` is similar to a separating conjunction in separation logic and so inhaling that assertion implies that `x != y`. This is confermed by the fact that the statement at Line 6 can be verified.
+
+#figure(
+  caption: "Viper exclusivity example",
+  ```java
+  method conjuntion(x: Ref, y: Ref)
+  {
+    inhale acc(x.b) && acc(y.b)
+    x.b := true
+    y.b := true
+    assert x != y
+  }
+  ```
+)<vpr-permissions-2>
+
+Sometimes, exclusive permissions can be too restrictive. Viper also allows to have fractional permissions for heap locations that can be shared but only read. Fractional permissions are declared with a permission amount between 0 and 1 or with the `wildcard` keyword.
+The value represented by a `wildcard` is not constant, instead it is reselected each time an expression involving a `wildcard` is identified. 
+The wildcard permission amount provides a convenient way to implement duplicable read-only resources, which is often suitable for the representation of immutable data. The example in @vpr-fractional shows how fractional permissions can be combined to gain full permissions (Line 6-7). In the same example it is also possible to see that Viper does not allow to have a permission amount greater than 1, in fact, since `wildcard` is an amount grater than 0, a situation in which `x == y == z` is not possible and so the assertion on Line 9 can be verified.
+
+#figure(
+  caption: "Viper fractional permissions example",
+  ```java
+  method fractional(x: Ref, y: Ref, z: Ref)
+  requires acc(x.b, 1/2)
+  requires acc(y.b, 1/2)
+  requires acc(z.b, wildcard)
+  {
+    if (x == y) {
+      x.b := true
+      if (x == z) {
+        assert false
+      }
+    }
+  }
+  ```
+)<vpr-fractional>
+
 ==== Predicates
+
+Predicates can be seen as an abstraction tool over assertions, which can include resources like field permissions. The body of a predicate is an assertion. However, predicates are not automatically inlined. In fact, in order to substitute the predicate resource with the assertions defined by its body, it is necessary to perform an unfold operation. The opposite operation is called a fold: folding a predicate substitutes the resources determined by its core content with an instance of the predicate. Having predicates that are not automatically inlined is fundamental since it allows to represent potentially unbounded data structure as shown in @vpr-predicate (Lines 4-8) where the predicate `List` can represent a linked-list. The same example shows how unfold and fold operations can be performed to access the value of the second element of a list (Lines 22-26) and how it is also possible to perform these operation within an immutable operation (Line 14).
+
+#figure(
+  caption: "Viper predicate example",
+  ```java
+  field value: Int
+  field next: Ref
+
+  predicate List(this: Ref)
+  {
+    acc(this.value) &&
+    acc(this.next) &&
+    (this.next != null ==> List(this.next))
+  }
+
+  function size(xs: Ref): Int
+  requires List(xs)
+  {
+    unfolding List(xs) in xs.next == null ? 1 : 1 + size(xs.next) 
+  }
+
+
+  method second(xs: Ref) returns(res: Int)
+  requires List(xs) && size(xs) > 1
+  ensures List(xs)
+  {
+    unfold List(xs)
+    unfold List(xs.next)
+    res := xs.next.value
+    fold List(xs.next)
+    fold List(xs)
+  }
+  ```
+)<vpr-predicate>
+
+==== TODO: Domains
+Since predicates include subtype domain assertions, probably it's worth to have this paragraph.
