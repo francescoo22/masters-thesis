@@ -13,7 +13,27 @@ The following sections will present the features of the language that are more r
 
 In programming languages, mutability refers to the capability to alter the value of a variable after it has been initialized. Variables in Kotlin are either mutable, defined using the `var` keyword, or immutable, defined using the `val` keyword. Mutable variables, once assigned, can have their value changed during the execution of the program, while immutable variables, once assigned a value, cannot be altered subsequently. For instance, `var x = 5` allows you to change the value of `x` later in the program, while `val y = 5` maintains `y` at a value of 5 throughout the program. Mutability is a fundamental principle in programming, and Kotlin's clear distinction between `val` and `var` improves code readability and helps in maintaining data consistency, especially in a multithreaded environment.
 
-=== Functional Programming?
+=== Functional Programming
+
+In Kotlin, functions are considered first-class citizens. This implies that, like any other data type, they can be assigned to variables, can be incorporated into data structures, can be passed into other higher-order functions as arguments and can even be returned from such functions. Essentially, functions in Kotlin are as manipulable as any other non-functional values. 
+
+#figure(
+  caption: "Kotlin higher-order function",
+  ```kt
+  fun <T, R> myMap(xs: List<T>, f: (T) -> R): List<R> {
+      val result = mutableListOf<R>()
+      for (item in xs) {
+          result.add(f(item))
+      }
+      return result.toList()
+  }
+
+  fun main() {
+      val xs = listOf(1, 2, 3)
+      val ys = myMap(xs) { y -> y * 2 } // ys = [2, 4, 6]
+  }
+  ```
+)
 
 === Smart Casts
 
@@ -40,7 +60,41 @@ In Kotlin, smart casts refer to a feature of the language that automatically han
 
 === Null Safety
 
-*TODO*
+Kotlin's type system has been designed with the goal of eliminating the danger of null references. In many programming languages, including Java, accessing a member of a null reference results in a null reference exception. This is more difficult to happen in Kotlin since the type system distinguishes between references that can hold `null` and those that cannot, the former are called nullable references while the latter are called non-nullable reference. @kt-null-safety shows how nullable references are declared by appending a question mark to the type name and it shows that trying to assign `null` to a non-nullable reference leads to a compilation error.
+
+#figure(
+  caption: "Kotlin null safety example",
+  ```kt
+  var nullableString: String?
+  nullableString = "abc" // ok
+  nullableString = null // ok
+
+  var nonNullableString: String
+  nonNullableString = "abc" // ok
+  nonNullableString = null // compilation error
+  ```
+)<kt-null-safety>
+
+Accessing members of nullable reference or calling a method with a nullable reference as receiver is only allowed if the compiler can understand that the reference will never be null when one of these actions occurs. Usually, this is done with a smart cast considering that for every type `T`, its nullable counterpart `T?` is a supertype of `T`.
+
+#figure(
+  caption: "Kotlin smart cast to non-nullable",
+  ```kt
+  fun f(nullableString: String?) {
+      if (nullableString != null) {
+          // 'nullableString' is smart-casted from 'String?' to 'String'
+          println(nullableString.length) // safe
+          println(nullableString.isEmpty()) // safe
+      }
+      val n = nullableString.length // compilation error
+  }
+  ```
+)
+
+However, there are some cases in which a `NullPointerException` can be raised in Kotlin:
+- An explicit call to `throw NullPointerException()`.
+- Unsafe (non-smart) casts.
+- Java interoperation.
 
 === Contracts
 
@@ -89,6 +143,8 @@ In @contract-1 it is possible to see how contracts allow the initialization of i
 )<contract-2>
 
 === Annotations?
+
+// TODO: decide if it is worth to have this paragraph
 
 == Aliasing
 
