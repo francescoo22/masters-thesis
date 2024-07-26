@@ -6,8 +6,7 @@ Aliasing is a topic that has been studied for decades  @Aliasing-OOP @GenevaConv
 Aliasing is an important characteristic of object-oriented programming languages allowing the programmers to develope complex designs involving sharing. However, reasoning about programs written with languages that allow aliasing without any kind of control is a hard task for programmers, compilers and formal verifcation tools. In fact, as reported in the Geneva Convention @GenevaConvention, without having guarantees about aliasing it can be difficult to prove the correctness of a simple Hoare formula like the following. $ {x = "true"} space y := "false" {x = "true"} $ 
 Indeed, when $x$ and $y$ are aliased, the formula is not valid, and most of the time proving that aliasing cannot occur is not straightforward.
 
-#v(1em)
-// TODO: decide whether to keep @separationLogic3
+== Contributions
 
 This work aims to show how controlling aliasing through an annotation system can allow to refine formal verifcation @FormVerPlugin for the Kotlin language @Kotlin @KotlinSpec.
 In particular, formal verification is performed using Viper @ViperWebSite @Viper, a language developed by ETH Zurich.
@@ -19,7 +18,7 @@ This restriction becomes problematic when encoding Kotlin code into Viper since 
 To understand better the problem, it is possible to look at the Kotlin code in @example-kt-1 where passing the same reference twice when calling function `f`, and thus creating aliasing, is completely allowed by the language. @example-vpr-1 shows a wrong way to encoding the example presented in @example-kt-1. The Viper example, despite being really similar to the Kotlin one, fails verification when calling `f(x, x)`. This happens because `f` requires write access to the field `n` of its arguments and, as mentioned before, Viper disallows references to be shared and mutable at the same time.
 
 #figure(
-  caption: "Kotlin code containg aliasing",
+  caption: "Kotlin code containing aliasing",
   ```kt
   class A(var n: Int)
 
@@ -35,7 +34,7 @@ To understand better the problem, it is possible to look at the Kotlin code in @
 )<example-kt-1>
 
 #figure(
-  caption: "Viper code containg aliasing",
+  caption: "Viper code containing aliasing",
   ```java
   field n: Int
 
@@ -57,7 +56,7 @@ To understand better the problem, it is possible to look at the Kotlin code in @
 Kotlin does not provide primitives to control or avoid aliasing. This work shows that this problem can be overcome by introducing an annotation system for controlling aliasing.
 // TODO: elaborate this part a bit more 
 
-#v(1em)
+== Overview
 
 The rest of the thesis is organized as follows:
 

@@ -171,15 +171,11 @@ Finally, @alias-bug presents a contrived example to illustrate how aliasing can 
   ```
 )<alias-bug>
 
-== Viper and Separation Logic
+== Separation Logic
 
-=== Separation Logic
-In Computer Science, separation logic @separationLogic1 @separationLogic2 @separationLogic3 is an extension of Hoare logic, a way of reasoning about programs.
+Separation logic @separationLogic1 @separationLogic2 @separationLogic3 is an extension of Hoare logic that allows to reason about low-level imperative programs that use shared mutable data structure.
 
-Separation logic facilitates reasoning about:
-- Programs that manipulate pointer data structures including information hiding in the presence of pointers.
-- Managing "transfer of ownership" principles.
-- Virtual separation (modular reasoning) between concurrent modules.
+Separation logic significantly simplifies reasoning about programs that manipulate pointer data structures. It also helps in managing principles related to the "transfer of ownership," as well as offering a virtual separation that enables modular reasoning between concurrent modules. 
 
 $
 angle.l "assert" angle.r &::= \
@@ -189,7 +185,14 @@ angle.l "assert" angle.r &::= \
 &| angle.l "assert" angle.r "−∗" angle.l "assert" angle.r #h(5em) &&& "separating implication" \
 $
 
-=== Viper
+In particular, `emp` is an assertion used to express that the heap is empty, $e_1 |-> e_2$ states that the heap contains one cell at address $e$ containing $e_2$.
+$a_1 * a_2$ asserts that it is possible to split the heap into two disjoint parts in which $a_1$ and $a_2$ hold respectively.
+Finally, $a_1 "−∗" a_2$ states that, extending the current heap with a disjoint part where $a_1$ holds, will lead to a heap where $a_2$ holds.
+The following example shows a derivable formula in separation logic.
+
+$ {(x |-> -) * ((x |-> 1) "−∗" P)} space x := 1 {P} $
+
+== Viper
 
 Viper @ViperWebSite @Viper (Verification Infrastructure for Permission-based Reasoning) is a language and suite of tools developed by ETH Zurich that can be used for developing new verification tools.
 
@@ -207,7 +210,7 @@ Viper back-ends aim to achieve extensive automation with the intention to avoid 
   image("../images/viper.png", width: 80%)
 )<vpr-infrastructure>
 
-==== Language Overview
+=== Language Overview
 
 The Viper intermediate language is an object-oriented, sequential programming language. Despite being designed as an intermediary language, Viper offers high-level features that are beneficial in manually expressing verification issues, along with potent low-level features useful for automatic encoding of source languages.
 
@@ -235,7 +238,7 @@ In Viper, methods can be seen as an abstraction over an operation sequence, whic
 
 @ViperMultiply shows an example of method in Viper. It is possible to notice that the signature of the method (Line 1) declares the returned values as a list of variables. Preconditions (Line 2), postconditions (Line 3) and invariants (Lines 8-9) are the assertions subject to verification. The remaining statements are similar to most of the existing programming languages. The language is statically typed and several built-in types like `Ref`, `Bool`, `Int`, `Seq`, `Set` and others are provided.
 
-==== Permissions
+=== Permissions
 
 In Viper, fields are top-level declarations and, since classes do not exist in Viper, every object has all the declared fields.
 Field permissions, which define the heap areas that an expression, a statement, or an assertion can access, control the reasoning of a Viper program's heap. Heap locations are only accessible if the relevant permission is under the control of the method currently being verified.
@@ -293,7 +296,7 @@ The wildcard permission amount provides a convenient way to implement duplicable
   ```
 )<vpr-fractional>
 
-==== Predicates and Functions
+=== Predicates and Functions
 
 Predicates can be seen as an abstraction tool over assertions, which can include resources like field permissions. The body of a predicate is an assertion. However, predicates are not automatically inlined. In fact, in order to substitute the predicate resource with the assertions defined by its body, it is necessary to perform an unfold operation. The opposite operation is called a fold: folding a predicate substitutes the resources determined by its core content with an instance of the predicate. Having predicates that are not automatically inlined is fundamental since it allows to represent potentially unbounded data structure as shown in @vpr-predicate (Lines 4-8) where the predicate `List` can represent a linked-list. The same example shows how unfold and fold operations can be performed to access the value of the second element of a list (Lines 22-26).
 
@@ -333,5 +336,5 @@ Functions body must be an immutable expression and differently from methods, Vip
   ```
 )<vpr-predicate>
 
-==== TODO: Domains
+=== TODO: Domains
 Since predicates include subtype domain assertions, probably it's worth to have this paragraph.
