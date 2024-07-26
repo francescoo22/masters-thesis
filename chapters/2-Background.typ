@@ -235,7 +235,6 @@ In Viper, methods can be seen as an abstraction over an operation sequence, whic
 
 @ViperMultiply shows an example of method in Viper. It is possible to notice that the signature of the method (Line 1) declares the returned values as a list of variables. Preconditions (Line 2), postconditions (Line 3) and invariants (Lines 8-9) are the assertions subject to verification. The remaining statements are similar to most of the existing programming languages. The language is statically typed and several built-in types like `Ref`, `Bool`, `Int`, `Seq`, `Set` and others are provided.
 
-==== TODO: Functions
 ==== Permissions
 
 In Viper, fields are top-level declarations and, since classes do not exist in Viper, every object has all the declared fields.
@@ -294,9 +293,12 @@ The wildcard permission amount provides a convenient way to implement duplicable
   ```
 )<vpr-fractional>
 
-==== Predicates
+==== Predicates and Functions
 
-Predicates can be seen as an abstraction tool over assertions, which can include resources like field permissions. The body of a predicate is an assertion. However, predicates are not automatically inlined. In fact, in order to substitute the predicate resource with the assertions defined by its body, it is necessary to perform an unfold operation. The opposite operation is called a fold: folding a predicate substitutes the resources determined by its core content with an instance of the predicate. Having predicates that are not automatically inlined is fundamental since it allows to represent potentially unbounded data structure as shown in @vpr-predicate (Lines 4-8) where the predicate `List` can represent a linked-list. The same example shows how unfold and fold operations can be performed to access the value of the second element of a list (Lines 22-26) and how it is also possible to perform these operation within an immutable operation (Line 14).
+Predicates can be seen as an abstraction tool over assertions, which can include resources like field permissions. The body of a predicate is an assertion. However, predicates are not automatically inlined. In fact, in order to substitute the predicate resource with the assertions defined by its body, it is necessary to perform an unfold operation. The opposite operation is called a fold: folding a predicate substitutes the resources determined by its core content with an instance of the predicate. Having predicates that are not automatically inlined is fundamental since it allows to represent potentially unbounded data structure as shown in @vpr-predicate (Lines 4-8) where the predicate `List` can represent a linked-list. The same example shows how unfold and fold operations can be performed to access the value of the second element of a list (Lines 22-26).
+
+Similarly to predicates, functions are used to define parametrised and pontentially-recursive assertions.
+Functions body must be an immutable expression and differently from methods, Viper reasons about function applications in terms of the function bodies, meaning that it is not always necessary to provide postconditions. In @vpr-predicate (Lines 11-15) a function is used to represent the size of a `List` and due to the immutability of its body, the function can be used in the preconditions of the method `second` (Line 19).
 
 #figure(
   caption: "Viper predicate example",
