@@ -31,15 +31,22 @@ Aliasing prevention alone is not sufficient because aliasing is unavoidable in c
 
 == Systems for controlling Aliasing 
 
-In recent decades, extensive research has been conducted to address the issue of aliasing. The book "Aliasing in Object-Oriented Programming" @Aliasing-OOP provides a comprehensive survey of the latest techniques for managing aliasing in object-oriented programming. The following subsections will discuss the most relevant techniques for this work in detail.
+In recent decades, extensive research has been conducted to address the issue of aliasing. The book "Aliasing in Object-Oriented Programming" @Aliasing-OOP provides a comprehensive survey of the latest techniques for managing aliasing in object-oriented programming.
 
-// deve parlare di destructive reads (aliasJava), altri sistemi come aliasburying, latte
-// decidere se mettere an entente cordiale da qualche parte
+=== Controlling aliasing with uniqueness
 
-=== Something about destructive reads?
+A uniqueness type system distinguishes values referenced no more than once from values that can be referenced multiple times in a program. Harrington's "uniqueness logic" @uniqueness-logic provides a formalization of concept of uniqueness.
+The common trait of all systems based on uniqueness is that a reference declared as unique points to an object that is not accessible by any other unknown reference. Moreover, the unique status of a reference can be dropped at any point of the program.
 
-=== Alias Burying
-Boyland @boyland2001alias proposes a system for controlling aliasing in Java.
+#v(1em)
+
+A first approach to ensuring uniqueness consists of using destructive reads. AliasJava @aldrich2002alias is a system for controlling aliasing that uses this approach.
+AliasJava is characterized by a strong uniqueness invariant asserting that "at a particular point in dynamic program execution, if a variable or field that refers to an object `o` is annotated unique, then no other field in the program refers to `o`, and all other local variables that refer to `o` are annotated lent".
+This invariant is maintained by the fact that unique references can only be read in a destructive manner, meaning that immediately being read, the value `null` is assigned to the reference.
+
+#v(1em)
+
+Alias Burying @boyland2001alias proposes a system for controlling aliasing in Java that does not require to use destructive reads.
 The system introduces several annotations:
 - Procedure parameters and return values may be declared *unique*.
 - Parameters and return values that are not *unique* are called *shared*.
@@ -49,8 +56,9 @@ The main contribution of this work is the introduction of the "alias burying" ru
 On the other hand, having a *shared* reference does not provide any guarantee on the uniqueness of that reference.
 Finally the object referred to by a *borrowed* parameter may not be returned from a procedure, assigned to a field or passed as an owned (that is, not borrowed) actual parameter.
 
-=== Latte
-Zimmerman et al. @zimmerman2023latte propose an approach to reduce both the volume of annotations and the complexity of invariants necessary for reasoning about aliasing in an object-oriented language with mutation.
+#v(1em)
+
+Latte @zimmerman2023latte proposes an approach to reduce both the volume of annotations and the complexity of invariants necessary for reasoning about aliasing in an object-oriented language with mutation.
 
 The system requires few annotations to be provided by the user:
 - *unique* or *shared* for object ﬁelds and return types.
@@ -58,27 +66,20 @@ The system requires few annotations to be provided by the user:
 - The remaining information for local variables is inferred.
 
 Furthermore, the system provides flexibility for uniqueness by permitting local variable aliasing, as long as this aliasing can be precisely determined.
-A uniqueness invariant is defined as follows: "a unique
-object is stored at most once on the heap. In addition, all
-usable references to a unique object from the local environ-
-ment are precisely inferred".
+A uniqueness invariant is defined as follows: "a unique object is stored at most once on the heap. In addition, all usable references to a unique object from the local environment are precisely inferred".
 
 Latte's analysis produces at each program point an *alias graph*, that is an undirected graph whose nodes are syntactic paths and distinct paths $p_1$ and $p_2$ are connected iff $p_1$ and $p_2$ are aliased. Moreover a directed graph whose nodes are syntactic path called *reference graph* is also produced for every program point. Intuitively, having an edge from $p_1$ to $p_2$ in the reference graph means that the annotation of $p_1$ requires to be updated when $p_2$ is updated.
 
-=== AliasJava
-Destructive reads -> @aldrich2002alias
+=== Controlling aliasing with linear types
 
-== Languages that provides guarantees on aliasing
-
-=== Rust
 // TODO: write it based on the content of the paper
 
-Rust @Rust and its "Shared XOR Mutable" principle. 
+*Rust* @Rust and its "Shared XOR Mutable" principle. 
 
 @An-Entente-Cordiale describes the difference between linearity and uniqueness.
 // Rust @Rust is a programming language that prioritizes safety and performance, offering some unique tools for managing memory. One of its principles is the "Shared XOR Mutable" rule, which maintains that any given piece of data can either have any number of readers or exactly one writer at any given time. This principle is key in preventing data races, as it ensures safe concurrency. With this principle, Rust provides the advantages of thread safety without necessitating a garbage collector, delivering an optimal balance between performance and security.
 
-=== Swift
+// TODO: decide whether to include or not swift
 
 
 == Tools for verification with Viper
