@@ -8,7 +8,7 @@ Indeed, when $x$ and $y$ are aliased, the formula is not valid, and most of the 
 
 == Contributions
 
-This work aims to show how controlling aliasing through an annotation system can allow to refine formal verifcation @FormVerPlugin for the Kotlin language @Kotlin @KotlinSpec.
+This work aims to show how controlling aliasing through an annotation system can allow to refine formal verifcation performed by an already existing plugin @FormVerPlugin for the Kotlin language @Kotlin @KotlinSpec.
 In particular, formal verification is performed using Viper @ViperWebSite @Viper, a language developed by ETH Zurich.
 Viper is an intermediate verification language that allows to write functions with preconditions and postconditions. The correctness of these conditions is verified using one of the two verification back-ends (one based on symbolic execution and one based on verification condition generation) and an SMT solver.
 In order to verify Kotlin code with Viper it is just necessary to translate the former language into the latter.

@@ -5,6 +5,10 @@
 
 // put examples that are currently in chapter 4
 
+== Stack example
+
+// since it's popular to have this example (latte, aliasJava)
+
 == Improvents to the language
 
 === Contracts verification
