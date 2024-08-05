@@ -29,7 +29,7 @@ A unique design goal of this system is to improve the verification process with 
 In order to define the rules of this annotation system, a grammar representing a substet of the Kotlin language is used.
 
 #figure(
-  caption: "TODO",
+  caption: "Grammar defining a subset of the Kotlin language",
   frame-box(
     $
       CL &::= class C(overline(f\: alpha_f)) \

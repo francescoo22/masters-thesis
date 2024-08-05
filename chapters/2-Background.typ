@@ -125,7 +125,7 @@ In @contract-1 it is possible to see how contracts allow the initialization of i
 )<contract-1>
 
 #figure(
-  caption: "TODO",
+  caption: "Compilation error caused by the absence of contracts",
   ```kt
   fun <R> runWithoutContract(block: () -> R): R {
       return block()
@@ -144,12 +144,9 @@ In @contract-1 it is possible to see how contracts allow the initialization of i
 
 === Annotations?
 
-// TODO: decide if it is worth to have this paragraph
+TODO: decide if it is worth to have a paragraph about kotlin's annotations.
 
 == Aliasing
-
-// TODO: Double check summaries
-// TODO: cite book aliasing also here?
 
 Aliasing refers to the situation where a data location in memory can be accessed through different symbolic names in the program. Thus, changing the data through one name inherently leads to a change when accessed through the other name as well. This can happen due to several reasons such as pointers, references, multiple arrays pointing to the same memory location etc.
 
@@ -173,7 +170,7 @@ Following that, variable `z` is initialized with a newly-created object in the f
 
 === Problems Caused by Aliasing
 
-Aliasing is a topic that has been studied for decades in Computer Science. 
+Aliasing is a topic that has been studied for decades in Computer Science @Aliasing-OOP.
 Although aliasing is essential in object-oriented programming as it allows programmers to implement designs involving sharing, as described in The Geneva Convention @GenevaConvention, aliasing can be a problem in both formal veriﬁcation and practical programming.
 
 The example in @alias-verification illustrates how aliasing between references can complicate the formal verification process. In the given example, a class `A` is declared with a boolean field `x`, followed by the function `f` which accepts two arguments `a1` and `a2` of type `A`. The function assigns `true` to `a1.x`, `false` to `a2.x`, and finally returns `a1.x`. Despite the function being straightforward, we cannot assert that the function will always return `true`. The reason for this uncertainty is the potential aliasing of `a1` and `a2`, as the second assignment might change the value of `a1.x` as well.
@@ -182,7 +179,6 @@ Modern programming languages frequently utilize a high degree of concurrency, wh
 
 Finally, @alias-bug presents a contrived example to illustrate how aliasing can lead to mysterious bugs. Function `f` takes two lists `xs` and `ys` as arguments.If both lists are not empty, the function removes the last element from each. One might assume this function will never raise an `IndexOutOfBoundsException`. However, if `xs` and `ys` are aliased and have a size of one, this exception will occur.
 
-// TODO: put @alias-verification and @alias-verification-concurrency on the same line
 // TODO: decide whether to write in the caption that the examples are written in Kotlin
 
 #figure(
