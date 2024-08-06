@@ -78,19 +78,14 @@ A uniqueness invariant is defined as follows: "a unique object is stored at most
 
 Latte's analysis produces at each program point an "alias graph", that is an undirected graph whose nodes are syntactic paths and distinct paths $p_1$ and $p_2$ are connected iff $p_1$ and $p_2$ are aliased. Moreover a directed graph whose nodes are syntactic path called "reference graph" is also produced for every program point. Intuitively, having an edge from $p_1$ to $p_2$ in the reference graph means that the annotation of $p_1$ requires to be updated when $p_2$ is updated.
 
-=== Programming languages that control aliasing
+=== Programming languages with aliasing guarantees
 
-*TODO: decide whether to include this section or not*
+Recently, several programming languages have started to introduce type systems that provide strong guarantees regarding aliasing.
 
-- *Rust* and its "Shared XOR Mutable" principle.
+Rust @rustlang is a modern programming language that prioritizes both high performance and static safety. A crucial aspect of Rust is its ownership-based type system, which ensures complete memory safety by preventing issues like dangling pointers, data races, and unintended side effects from aliased references. This type system enforces strict rules, allowing memory to be either mutable or shared, but not both simultaneously, thereby avoiding common memory errors. Additionally, this design choice simplifies the process of formal verification.
 
-// It can be something similar to what is written in the prusti page.
-
-// The Rust /* @ https://www.rust-lang.org/ */ programming language includes an ownership type system which guarantees rich memory safety properties: well-typed Rust programs are guaranteed to not exhibit problems such as dangling pointers, data races, and unexpected side effects through aliased references.
-
-// Rust is a modern systems programming language designed to offer both performance and static safety. A key distinguishing feature is a strong type system, which enforces by default that memory is either shared or mutable, but never both. This guarantee is used to prevent common pitfalls such as memory errors and data races. It can also be used to greatly simplify formal verification
-
-- *Swift*
+- *TODO: Swift*
+- *TODO: Ocaml???*
 
 == Tools for verification with Viper
 
