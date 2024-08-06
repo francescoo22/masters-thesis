@@ -102,7 +102,12 @@ In addition to use Prusti to ensure that programs are free from runtime panics, 
 In terms of Viper encoding, Rust structs are represented as potentially nested and recursive predicates representing unique access to a type instance. Furthermore, moves and straightforward usages of Rust’s shared and mutable borrows are akin to ownership transfers within the permission semantics of separation logic assertions. Reborrowing is directly modeled using magic wands: when a reborrowed reference is returned to the caller, it includes a magic wand denoting the ownership of all locations from which borrowing occurred, except those currently in the proof. 
 
 === Gobra
-@gobra
+
+Go is a programming language that combines typical characteristics of imperative languages, like mutable heap-based data structures, with more unique elements such as structural subtyping and efficient concurrency primitives. This mix of mutable data and sophisticated concurrency constructs presents unique challenges for static program verification.
+
+Gobra @gobra is a tool designed for Go that allows modular verification of programs. It can ensure memory safety, crash resistance, absence of data races, and compliance with user-defined specifications.
+
+Compared to Prusti, Gobra generally requires more user-provided annotations. Benchmarks indicate that the annotation overhead varies from 0.3 to 3.1 lines of annotations per line of code.
 
 === Nagini
 @nagini
