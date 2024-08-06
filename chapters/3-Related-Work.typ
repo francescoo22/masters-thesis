@@ -84,15 +84,30 @@ Latte's analysis produces at each program point an "alias graph", that is an und
 
 - *Rust* and its "Shared XOR Mutable" principle.
 
+// It can be something similar to what is written in the prusti page.
+
+// The Rust /* @ https://www.rust-lang.org/ */ programming language includes an ownership type system which guarantees rich memory safety properties: well-typed Rust programs are guaranteed to not exhibit problems such as dangling pointers, data races, and unexpected side effects through aliased references.
+
+// Rust is a modern systems programming language designed to offer both performance and static safety. A key distinguishing feature is a strong type system, which enforces by default that memory is either shared or mutable, but never both. This guarantee is used to prevent common pitfalls such as memory errors and data races. It can also be used to greatly simplify formal verification
+
 - *Swift*
 
 == Tools for verification with Viper
 
+Several verifiers have been built on top of Viper. The most relevant tools for this work are: Prusti, a verifier for the Rust programming language, Gobra, used to verify code written in Go, and Nagini, which can be used to verify Python programs.
+
 === Prusti
-@AstrauskasBilyFialaGrannanMathejaMuellerPoliSummers22
+
+Based on the Viper infrastructure, Prusti @prusti1 @prusti2 is an automated verifier for Rust programs. It takes advantage of Rust's robust type system to make the specification and verification processes more straightforward.
+
+By default, Prusti ensures that a Rust program will not encounter an unrecoverable error state causing it to terminate at runtime. This includes panics caused by explicit `panic!(...)` calls as well as those from bounds-checks or integer overflows.
+
+In addition to use Prusti to ensure that programs are free from runtime panics, developers can gradually add annotations to their code, thereby achieving increasingly robust correctness guarantees and improving the overall reliability and safety of their software. 
+
+In terms of Viper encoding, Rust structs are represented as potentially nested and recursive predicates representing unique access to a type instance. Furthermore, moves and straightforward usages of Rust’s shared and mutable borrows are akin to ownership transfers within the permission semantics of separation logic assertions. Reborrowing is directly modeled using magic wands: when a reborrowed reference is returned to the caller, it includes a magic wand denoting the ownership of all locations from which borrowing occurred, except those currently in the proof. 
 
 === Gobra
-@WolfArquintClochardOortwijnPereiraMueller21
+@gobra
 
 === Nagini
-@eilers2018nagini
+@nagini
