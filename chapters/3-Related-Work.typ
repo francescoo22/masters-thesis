@@ -31,12 +31,20 @@ Aliasing prevention alone is not sufficient because aliasing is unavoidable in c
 
 == Systems for controlling Aliasing 
 
-In recent decades, extensive research has been conducted to address the issue of aliasing. The book "Aliasing in Object-Oriented Programming" @Aliasing-OOP provides a comprehensive survey of the latest techniques for managing aliasing in object-oriented programming.
+In recent decades, extensive research has been conducted to address the issue of aliasing. The book _Aliasing in Object-Oriented Programming_ @Aliasing-OOP provides a comprehensive survey of the latest techniques for managing aliasing in object-oriented programming.
 
 === Controlling aliasing with uniqueness
 
-A uniqueness type system distinguishes values referenced no more than once from values that can be referenced multiple times in a program. Harrington's "uniqueness logic" @uniqueness-logic provides a formalization of concept of uniqueness.
-The common trait of all systems based on uniqueness is that a reference declared as unique points to an object that is not accessible by any other unknown reference. Moreover, the unique status of a reference can be dropped at any point of the program.
+// TODO: decidere se usare virgolette o corsivo per linear logi, uniqueness locic ecc.
+
+A uniqueness type system distinguishes values referenced no more than once from values that can be referenced multiple times in a program. Harrington's _Uniqueness Logic_ @uniqueness-logic provides a formalization of the concept of uniqueness.
+
+Uniqueness logic might seem similar to the more well-known _Linear Logic_.
+_Linearity and Uniqueness: An Entente Cordiale_ @An-Entente-Cordiale describes the differences between linearity and uniqueness and shows how they can coexist.
+
+#v(1em)
+
+The common trait of all systems based on uniqueness is that a reference declared as unique points to an object that is not accessible by any other unknown reference. Moreover, the unique status of a reference can be dropped at any point in the program.
 
 #v(1em)
 
@@ -68,19 +76,15 @@ The system requires few annotations to be provided by the user:
 Furthermore, the system provides flexibility for uniqueness by permitting local variable aliasing, as long as this aliasing can be precisely determined.
 A uniqueness invariant is defined as follows: "a unique object is stored at most once on the heap. In addition, all usable references to a unique object from the local environment are precisely inferred".
 
-Latte's analysis produces at each program point an *alias graph*, that is an undirected graph whose nodes are syntactic paths and distinct paths $p_1$ and $p_2$ are connected iff $p_1$ and $p_2$ are aliased. Moreover a directed graph whose nodes are syntactic path called *reference graph* is also produced for every program point. Intuitively, having an edge from $p_1$ to $p_2$ in the reference graph means that the annotation of $p_1$ requires to be updated when $p_2$ is updated.
+Latte's analysis produces at each program point an "alias graph", that is an undirected graph whose nodes are syntactic paths and distinct paths $p_1$ and $p_2$ are connected iff $p_1$ and $p_2$ are aliased. Moreover a directed graph whose nodes are syntactic path called "reference graph" is also produced for every program point. Intuitively, having an edge from $p_1$ to $p_2$ in the reference graph means that the annotation of $p_1$ requires to be updated when $p_2$ is updated.
 
-=== Controlling aliasing with linear types
+=== Programming languages that control aliasing
 
-// TODO: write it based on the content of the paper
+*TODO: decide whether to include this section or not*
 
-*Rust* @Rust and its "Shared XOR Mutable" principle. 
+- *Rust* and its "Shared XOR Mutable" principle.
 
-@An-Entente-Cordiale describes the difference between linearity and uniqueness.
-// Rust @Rust is a programming language that prioritizes safety and performance, offering some unique tools for managing memory. One of its principles is the "Shared XOR Mutable" rule, which maintains that any given piece of data can either have any number of readers or exactly one writer at any given time. This principle is key in preventing data races, as it ensures safe concurrency. With this principle, Rust provides the advantages of thread safety without necessitating a garbage collector, delivering an optimal balance between performance and security.
-
-// TODO: decide whether to include or not swift
-
+- *Swift*
 
 == Tools for verification with Viper
 
