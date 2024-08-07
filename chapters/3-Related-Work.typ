@@ -91,6 +91,8 @@ Rust @rustlang is a modern programming language that prioritizes both high perfo
 
 Several verifiers have been built on top of Viper. The most relevant tools for this work are: Prusti, a verifier for the Rust programming language, Gobra, used to verify code written in Go, and Nagini, which can be used to verify Python programs.
 
+*TODO: considerazione sul fatto che piu' il type system e' robust meno annotazioni sono richieste.*
+
 === Prusti
 
 Based on the Viper infrastructure, Prusti @prusti1 @prusti2 is an automated verifier for Rust programs. It takes advantage of Rust's robust type system to make the specification and verification processes more straightforward.
@@ -110,4 +112,13 @@ Gobra @gobra is a tool designed for Go that allows modular verification of progr
 Compared to Prusti, Gobra generally requires more user-provided annotations. Benchmarks indicate that the annotation overhead varies from 0.3 to 3.1 lines of annotations per line of code.
 
 === Nagini
-@nagini
+
+Nagini @nagini is a verification tool for statically-typed, concurrent Python programs. Its capabilities include proving memory safety, freedom from data races, and user-defined assertions.
+
+Programs must follow to the static, nominal type system described in PEP 484 and implemented by the Mypy type checker to be compatible with Nagini. This type system requires type annotations for function parameters and return types, while types for local variables are inferred.
+
+The tool includes a library of specification functions to express preconditions and postconditions, loop invariants, and other assertions.
+
+By default, Nagini verifies several safety properties, ensuring that validated programs do not emit runtime errors or undeclared exceptions. Its permission system ensures that validated code is memory safe and free of data races. Moreover, the tool can verify functional properties, input/output properties and can ensue that no thread is indefinitely blocked when acquiring a lock or joining another thread, thus including deadlock freedom and termination.
+
+Similarly to Gobra, Nagini requires a significant amount of annotations provided by the user and requires users to write fold operations. 
