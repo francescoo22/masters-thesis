@@ -84,7 +84,10 @@ Recently, several programming languages have started to introduce type systems t
 
 Rust @rustlang is a modern programming language that prioritizes both high performance and static safety. A crucial aspect of Rust is its ownership-based type system, which ensures complete memory safety by preventing issues like dangling pointers, data races, and unintended side effects from aliased references. This type system enforces strict rules, allowing memory to be either mutable or shared, but not both simultaneously, thereby avoiding common memory errors. Additionally, this design choice simplifies the process of formal verification.
 
-- *TODO: Swift*
+- *TODO: Swift* 
+// https://github.com/swiftlang/swift/blob/main/docs/OwnershipManifesto.md
+// https://www.swift.org/migration/documentation/swift-6-concurrency-migration-guide/dataracesafety/
+// https://docs.swift.org/swift-book/documentation/the-swift-programming-language/declarations#Parameter-Modifiers
 - *TODO: Ocaml???*
 
 == Tools for verification with Viper

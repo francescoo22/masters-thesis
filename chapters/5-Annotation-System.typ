@@ -28,20 +28,19 @@ A unique design goal of this system is to improve the verification process with 
 
 In order to define the rules of this annotation system, a grammar representing a substet of the Kotlin language is used.
 
-#figure(
-  caption: "Grammar defining a subset of the Kotlin language",
-  frame-box(
-    $
-      CL &::= class C(overline(f\: alpha_f)) \
-      M &::= m(overline(x\: af beta)): af {begin_m; overline(s); ret_m e} \
-      af &::= unique | shared \
-      beta &::= dot | borrowed \
-      p &::= x | p.f \
-      e &::= null | p | m(overline(p)) \
-      s &::= var x | p = e |  fi p_1 == p_2 then overline(s_1) els overline(s_2) | m(overline(p))
-      // \ &| loop p_1 == p_2 do overline(s)
-    $
-))
+
+#frame-box(
+  $
+    CL &::= class C(overline(f\: alpha_f)) \
+    M &::= m(overline(x\: af beta)): af {begin_m; overline(s); ret_m e} \
+    af &::= unique | shared \
+    beta &::= dot | borrowed \
+    p &::= x | p.f \
+    e &::= null | p | m(overline(p)) \
+    s &::= var x | p = e |  fi p_1 == p_2 then overline(s_1) els overline(s_2) | m(overline(p))
+    // \ &| loop p_1 == p_2 do overline(s)
+  $
+)
 
 === Classes and Methods
 - Primitive fields are not considered
@@ -107,12 +106,15 @@ fun m3(
 ```
 #align(
   center,
-  grid(
-    columns: (auto, auto),
-    column-gutter: 2em,
-    row-gutter: .5em,
-    [*Grammar*],[*Kotlin*],
-    grammar_annotations, kt_annotations
+  figure(
+    caption: "Comparision between the grammar and annotated Kotlin",
+    grid(
+      columns: (auto, auto),
+      column-gutter: 2em,
+      row-gutter: .5em,
+      [*Grammar*],[*Kotlin*],
+      grammar_annotations, kt_annotations
+    )
   )
 )
 
@@ -129,6 +131,8 @@ fun m3(
 
 == Context
 
+A context is a list of paths associated with their annotations $alpha$ and $beta$. While $beta$ is defined in the same way of the grammar, $alpha$ is slightly different. Other than _unique_ and _shared_, in a context, an annotation $alpha$ can also be $top$. As will be better explained in the following sections, the annotation $top$ can only be inferred, so it is not possible for the user to write it. A path annotated with $top$ within a context is not accessible, meaning that the path needs to be re-assigned before beign read. The formal meaning of the annotation $top$ will be clearer while formilizing the statement typing rules.
+
 #frame-box(
   $
     alpha &::= unique | shared | top \
@@ -136,10 +140,6 @@ fun m3(
     Delta &::= dot | p : alpha beta, Delta
   $
 )
-
-#v(1em)
-
-A context is a list of paths associated with their annotations $alpha$ and $beta$. While $beta$ is defined in the same way of the grammar, $alpha$ is slightly different. Other than _unique_ and _shared_, in a context, an annotation $alpha$ can also be $top$. As will be better explained in the following sections, the annotation $top$ can only be inferred, so it is not possible for the user to write it. A path annotated with $top$ within a context is not accessible, meaning that the path needs to be re-assigned before beign read. The formal meaning of the annotation $top$ will be clearer while formilizing the statement typing rules.
 
 === Well-Formed Context
 
