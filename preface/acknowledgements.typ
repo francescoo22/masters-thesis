@@ -1,3 +1,5 @@
+#pagebreak(to:"odd")
+
 #import "../config/variables.typ" : profTitle, myProf, myLocation, myTime, myName
 #import "../config/constants.typ" : acknlowledgements
 

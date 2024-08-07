@@ -1,5 +1,5 @@
 #import "../config/constants.typ": chapter
-#import "../config/utils.typ": frame-box
+#import "@preview/codly:1.0.0": *
 
 #let config(
     myAuthor: "Nome cognome",
@@ -10,6 +10,7 @@
 ) = {
   // Set the document's basic properties.
     set document(author: myAuthor, title: myTitle)
+    show: codly-init.with()
     show math.equation: set text(weight: 400)
 
     // LaTeX look (secondo la doc di Typst)
@@ -20,7 +21,18 @@
     set text(font: "New Computer Modern", size: 10pt, lang: myLang)
     set heading(numbering: myNumbering)
     // show raw.where(block: false): set text(font: "New Computer Modern Mono", size: 10pt, lang: myLang)
-    show raw.where(block: true): frame-box
+    show raw.where(block: true): it => {
+      // #let kt-logo = image("images/Kotlin.svg", width: 200%)
+      codly(
+        enabled: true,
+        languages: (
+          kt: (name: "Kotlin", color: purple),
+          java: (name: "Viper", color: orange)
+        )
+      )
+      it
+      codly-disable()
+    }
     show par: set block(spacing: 0.55em)
     show heading: set block(above: 1.4em, below: 1em)
 
