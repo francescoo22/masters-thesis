@@ -1,7 +1,7 @@
 #pagebreak(to:"odd")
 = Background<cap:background>
 
-// TODO: symbols for code that compiles vs code that doesn't?
+// IMPROVE: symbols for code that compiles vs code that doesn't?
 
 == Kotlin
 
@@ -195,8 +195,6 @@ Modern programming languages frequently utilize a high degree of concurrency, wh
 
 Finally, @alias-bug presents a contrived example to illustrate how aliasing can lead to mysterious bugs. Function `f` takes two lists `xs` and `ys` as arguments.If both lists are not empty, the function removes the last element from each. One might assume this function will never raise an `IndexOutOfBoundsException`. However, if `xs` and `ys` are aliased and have a size of one, this exception will occur.
 
-// TODO: decide whether to write in the caption that the examples are written in Kotlin
-
 #figure(
   caption: "Problems caused by aliasing in formal verification",
   ```kt
@@ -264,14 +262,12 @@ $ {(x |-> -) * ((x |-> 1) "−∗" P)} space x := 1 {P} $
 
 Viper @ViperWebSite @Viper (Verification Infrastructure for Permission-based Reasoning) is a language and suite of tools developed by ETH Zurich that can be used for developing new verification tools.
 
-The whole Viper infrastructure is shown in @vpr-infrastructure and is made of the Viper intermediate language and two back-ends, the first based on symbolic execution and the second based on verifcation condition generation.
+The whole Viper infrastructure is shown in @vpr-infrastructure @ViperWebSite and is made of the Viper intermediate language and two back-ends, the first based on symbolic execution and the second based on verifcation condition generation.
 
 The verification process using the Viper toolchain happens as follows. An higher-level language is first encoded into the Viper intermediate language which provides support to permissions natively and uses them to express ownership of heap locations in a style similar to separation logic. 
 This is convenient for reasoning about programs that manipulate the heap and concurrent thread interactions. 
 Viper conditions are then verified using one of the two back-ends and an SMT Solver (Z3). 
 Viper back-ends aim to achieve extensive automation with the intention to avoid circumstances where tool developers and users need to comprehend the inner behaviour of the back-ends to carry out the verification process. 
-
-// TODO: is it okay to have just the reference to the website for the image?
 
 #figure(
   caption: "The Viper verification infrastructure",

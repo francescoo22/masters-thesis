@@ -85,16 +85,18 @@ Recently, several programming languages have started to introduce type systems t
 Rust @rustlang is a modern programming language that prioritizes both high performance and static safety. A crucial aspect of Rust is its ownership-based type system, which ensures complete memory safety by preventing issues like dangling pointers, data races, and unintended side effects from aliased references. This type system enforces strict rules, allowing memory to be either mutable or shared, but not both simultaneously, thereby avoiding common memory errors. Additionally, this design choice simplifies the process of formal verification.
 
 - *TODO: Swift* 
-// https://github.com/swiftlang/swift/blob/main/docs/OwnershipManifesto.md
-// https://www.swift.org/migration/documentation/swift-6-concurrency-migration-guide/dataracesafety/
-// https://docs.swift.org/swift-book/documentation/the-swift-programming-language/declarations#Parameter-Modifiers
+  - https://github.com/swiftlang/swift/blob/main/docs/OwnershipManifesto.md
+  - https://www.swift.org/migration/documentation/swift-6-concurrency-migration-guide/dataracesafety/
+  - https://docs.swift.org/swift-book/documentation/the-swift-programming-language/declarations#Parameter-Modifiers
 - *TODO: Ocaml???*
+  - https://blog.janestreet.com/oxidizing-ocaml-locality/
+  - https://blog.janestreet.com/oxidizing-ocaml-ownership/
 
 == Tools for verification with Viper
 
 Several verifiers have been built on top of Viper. The most relevant tools for this work are: Prusti, a verifier for the Rust programming language, Gobra, used to verify code written in Go, and Nagini, which can be used to verify Python programs.
 
-*TODO: considerazione sul fatto che piu' il type system e' robust meno annotazioni sono richieste.*
+All these tools require the user to add annotations to the code that has to be verified. However, the number of annotations needed is inversely proportional to the robustness of the language's type system. This is the reason why the verifier for the Rust language is able to verify significant properties even without annotations, while other verifiers cannot work without user-provided annotations.
 
 === Prusti
 

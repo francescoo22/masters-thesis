@@ -7,7 +7,6 @@
     lateral: 0.5em,
   ),
   label: (
-    // TODO: split offset into horizontal and vertical
     offset: -0.1em,
     side: left,
     padding: 0.2em,
@@ -141,7 +140,7 @@
      + "`none`, `string` or `content` but was instead `" + type(label) + "`."
   )
 
-  // TODO: allow the label to be aligned on left, right or center (default and current).
+
 
   (
     __prooftree_raw: body,
@@ -191,7 +190,6 @@
   // If the type of `label` was string then it's good, otherwise we need to check its keys.
   if type(label) == "dictionary" {
     for (key, value) in label {
-      // TODO: maybe consider allowing `top`, `top-left` and `top-right` if `rule(n: 0)` gets changed.
       if key not in ("left", "right") {
         panic("The key `" + key + "` in the `label` argument `" + repr(label) + "` was not expected.")
       }
@@ -259,7 +257,6 @@
       } else {
         // Weird, situation, we have `wbranches_nolabel > width(root) > ib_line_len`
         // The line should be adjusted so that it fits kinda in the middle
-        // TODO: maybe this should also consider labels?
         let min_left = maxl(0pt, ib_line_end - line_len)
         let max_right = minl(maxl(wbranches_nolabel, width(root)), ib_line_start + line_len)
         (max_right + min_left) / 2 - line_len / 2

@@ -53,8 +53,8 @@ To understand better the problem, it is possible to look at the Kotlin code in @
   ```
 )<example-vpr-1>
 
-Kotlin does not provide primitives to control or avoid aliasing. This work shows that this problem can be overcome by introducing an annotation system for controlling aliasing.
-// TODO: elaborate this part a bit more 
+Differently from other programming languages, Kotlin lacks built-in mechanisms to control or prevent aliasing.
+This work addresses this issue by proposing the introduction of an annotation system specifically designed to manage and control aliasing in Kotlin. By incorporating this annotation system, developers can enforce stricter aliasing rules, improving the reliability of their code. This also enables to perform better formal verification, allowing to prove more interesting properties.
 
 == Overview
 

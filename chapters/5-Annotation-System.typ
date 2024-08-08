@@ -6,12 +6,12 @@
 
 #pagebreak(to:"odd")
 
-// TODO: the word "function" must refer to functions in the rules. The word "method" must refer to funciton statements
+// TODO: the word "function" must refer to functions in the rules. The word "method" must refer to function statements
 // TODO: Fix Chapter vs Section while using @
 // TODO: consistency in rules names (in the way unique, shared, borrowed are abbreviated)
 // TODO: decide whether to put call, if ecc. in italic
 // TODO: decide whether to put unique, shared, borrowed in italic
-// TODO: decide whether to put nomi delle regole in italic
+// TODO: decide whether to put rule names in italic
 
 = Annotation System<cap:annotation-system>
 
@@ -433,8 +433,6 @@ f(this: unique, x: unique ♭, y: shared ♭, z: shared): unique {
 ```
 )
 
-// TODO: derivation tree for this and the following examples? Maybe it can be put in an appendix.
-
 === Sequence of Statements
 
 #display-rules(Seq-Base, Seq-Rec)
@@ -451,8 +449,6 @@ These rules are straightforward, but necessary to define how to type a sequence 
 
 After declaring a variable, it is inaccessible until its initialization and so the varaible will be in the context with $top$ annotation.
 Note that this rule only allows to declare variables if they are not in the context while Kotlin allows to shadow variables declared in outer scopes. Kotlin code using shadowing is not currently supported by this system.
-
-// TODO: ⊢ instead of // in the examples
 
 #figure(
   caption: "Typing example for variable declaration",
@@ -515,8 +511,6 @@ Typing a method call follows the logic presented in the rules of @cap:passing ($
 In @call-sup-ok-1 it is possible to call `f` by passing `x` and `x.f` since $Delta(x.f) = shared$.
 In @call-sup-wrong is not possible to call `g` by passing `b` and `b.f`, this is because `g`, in its body, expects `x.f` to be _unique_, but it would not be the case by passing `b` and `b.f`.
 Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and `x.f` since the method expects both of the arguments to be _shared_.
-
-// TODO: use codly for comments that are not contexts (e.g. not derivable: 'x' is passed more than once but is also expected to be unique)
 
 #figure(
   caption: "Typing example for method call with same reference",
