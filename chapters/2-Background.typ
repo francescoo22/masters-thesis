@@ -91,10 +91,7 @@ Accessing members of nullable reference or calling a method with a nullable refe
   ```
 )
 
-However, there are some cases in which a `NullPointerException` can be raised in Kotlin:
-- An explicit call to `throw NullPointerException()`.
-- Unsafe (non-smart) casts.
-- Java interoperation.
+However, there are instances in which a `NullPointerException` can be raised in Kotlin. These include explicit calls to `throw NullPointerException()`, performing unsafe (non-smart) casts, and during Java interoperation. 
 
 === Contracts
 
@@ -142,9 +139,29 @@ In @contract-1 it is possible to see how contracts allow the initialization of i
   ```
 )<contract-2>
 
-=== Annotations?
+=== Annotations
 
-TODO: decide if it is worth to have a paragraph about kotlin's annotations.
+Annotations provide a way to associate metadata with the code. To declare annotations, the `annotation` modifier should be placed before a class declaration.
+It is also possible to specify additional attributes by using meta-annotations on the annotation class. For instance, `@Target` specifies the types of elements that can be annotated.
+
+#figure(
+  caption: "Example of annotations usage",
+  ```kt
+  @Target(
+      AnnotationTarget.CLASS,
+      AnnotationTarget.FUNCTION,
+      AnnotationTarget.VALUE_PARAMETER
+  )
+  annotation class MyAnnotation
+
+  @MyAnnotation
+  class MyClass {
+      @MyAnnotation
+      fun myFun(@MyAnnotation foo: Int) {
+      }
+  }
+  ```
+)
 
 == Aliasing
 
