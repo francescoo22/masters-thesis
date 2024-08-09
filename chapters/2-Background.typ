@@ -193,7 +193,9 @@ The example in @alias-verification illustrates how aliasing between references c
 
 Modern programming languages frequently utilize a high degree of concurrency, which can further complicate the verification process. As showed in @alias-verification-concurrent, even a simpler function than its counterpart in @alias-verification does not permit to assert that it will always return `true`. In this instance, the function only takes a single argument `a` of type `A`, assigns `true` to `a.x` and eventually retruns it. However, within a concurrent context there may exist another thread with access to a variable aliasing `a` that can modify `a.x` to `false` prior to the function's return, thus challenging the verification process.
 
-Finally, @alias-bug presents a contrived example to illustrate how aliasing can lead to mysterious bugs. Function `f` takes two lists `xs` and `ys` as arguments.If both lists are not empty, the function removes the last element from each. One might assume this function will never raise an `IndexOutOfBoundsException`. However, if `xs` and `ys` are aliased and have a size of one, this exception will occur.
+@alias-bug presents a contrived example to illustrate how aliasing can lead to mysterious bugs. Function `f` takes two lists `xs` and `ys` as arguments. If both lists are not empty, the function removes the last element from each. One might assume this function will never raise an `IndexOutOfBoundsException`. However, if `xs` and `ys` are aliased and have a size of one, this exception will occur.
+
+Moving to a more realistic example, @alias-custom-assign shows a reasonable implementation of the assignment operator overloading for a vector in the C++ language. The assignment operator has to explicitly take care of aliasing between `this` and `&other` (Lines 9-11). If aliasing is not properly managed, it can lead to issues like corrupted data.
 
 #figure(
   caption: "Problems caused by aliasing in formal verification",
@@ -236,6 +238,33 @@ Finally, @alias-bug presents a contrived example to illustrate how aliasing can 
   }
   ```
 )<alias-bug>
+
+#figure(
+  caption: "Aliasing handling in vector assignment operator overloading",
+  ```cpp
+  class Vector {
+  private:
+      int* data;
+      size_t size;
+  public:
+      // other code here...
+
+      Vector& operator=(const Vector& other) {
+          if (this == &other) {
+              return *this;
+          }
+          
+          delete[] data;
+          size = other.size;
+          data = new int[size];
+          std::memcpy(data, other.data, size * sizeof(int));
+          return *this;
+      }
+
+      // other code here...
+  }
+  ```
+)<alias-custom-assign>
 
 == Separation Logic
 
