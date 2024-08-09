@@ -5,14 +5,14 @@
 == Classes Encoding
 == Functions Encoding
 
-Mostrare come ogni tipo di parametro viene tradotto in Viper
+// Mostrare come ogni tipo di parametro viene tradotto in Viper
 
-Esempi
+// Esempi
 
 == Function Calls Encoding
 
-Interessante mostrare il grafo delle chiamate
+// Interessante mostrare il grafo delle chiamate
 
-Esempi
+// Esempi
 
 == Predicates Unfolding

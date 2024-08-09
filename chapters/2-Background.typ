@@ -429,5 +429,47 @@ Functions body must be an immutable expression and differently from methods, Vip
   ```
 )<vpr-predicate>
 
-=== TODO: Domains
-Since predicates include subtype domain assertions, probably it's worth to have this paragraph.
+=== Domains
+Domains allow the creation of custom types, mathematical functions, and axioms that define their properties.
+
+The functions defined within a domain are accessible globally across the Viper program. These are known as domain functions, and they have more limitations compared to standard Viper functions. Domain functions cannot have preconditions and can be used in any program state. They are also always abstract, meaning that they cannot have an implemented body. To give meaning to these abstract functions, domain axioms are used.
+
+Domain axioms are also global and define properties that are assumed to be true in all states. Typically, they are expressed as standard first-order logic assertions.
+
+#figure(
+  caption: "Viper domain example",
+  ```java
+  domain Fraction {
+    function nominator(f: Fraction): Int
+    function denominator(f: Fraction): Int
+    function create_fraction(n: Int, d: Int): Fraction
+    function multiply(f1: Fraction, f2: Fraction): Fraction
+    
+    axiom axConstruction {
+      forall f: Fraction, n: Int, d: Int ::
+        f == create_fraction(n, d) ==> 
+          nominator(f) == n && denominator(f) == d
+    }
+
+    axiom axMultiply {
+      forall f1: Fraction, f2: Fraction, res: Fraction ::
+        res == multiply(f1, f2) ==> 
+          (nominator(res) == nominator(f1) * nominator(f2)) &&
+          (denominator(res) == denominator(f1) * denominator(f2))
+    }
+  }
+
+  method m(x: Int)
+  {
+    var f: Fraction
+    f := create_fraction(x, 2)
+    assert nominator(f) == x
+    assert denominator(f) == 2
+    
+    var f_sq: Fraction
+    f_sq := multiply(f, f)
+    assert nominator(f_sq) == x * x
+    assert denominator(f_sq) == 4
+  }
+  ```
+)
