@@ -24,13 +24,13 @@
 )
 
 // TODO: show if there will be tables
-// #v(8em)
+#v(8em)
 
-// #outline(
-//     title: tablesList,
-//     target: figure.where(kind: table),
-//     indent: auto
-// )
+#outline(
+    title: tablesList,
+    target: figure.where(kind: table),
+    indent: auto
+)
 
 #v(8em)
 
