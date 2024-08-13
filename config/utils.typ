@@ -90,9 +90,7 @@
   )
 }
 
-#let code-compare(capt, s1, code1, code2) = align(
-  center,
-  figure(
+#let code-compare(capt, s1, code1, code2) = figure(
     caption: capt,
     grid(
       columns: (s1, 1fr),
@@ -101,4 +99,3 @@
       code1, code2
     )
   )
-)

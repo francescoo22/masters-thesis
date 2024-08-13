@@ -1,5 +1,5 @@
 #let classes-kt = ```kt
-class A(
+open class A(
     val x: Int,
     var y: Int
 )
@@ -15,14 +15,31 @@ field x: Int
 field y: Int
 field a1: Ref
 field a2: Ref
+field b: Ref
 
-predicate SharedA(this: Ref){
-    acc(this.x, wildcard)
+predicate SharedA(this: Ref) {
+  acc(this.x, wildcard)
 }
 
-predicate SharedB(this: Ref){
-    acc(this.a1, wildcard) &&
-    acc(SharedA(this.a1), wildcard)
+
+predicate SharedB(this: Ref) {
+  acc(this.a1, wildcard) &&
+  acc(SharedA(this.a1), wildcard)
+}
+```
+
+#let classes-2-kt = ```kt
+class C(
+    val b: B?
+) : A(0, 0)
+```
+
+#let classes-2-vpr = ```java
+predicate SharedC(this: Ref) {
+  acc(SharedA(this), wildcard)
+  acc(this.b, wildcard) &&
+  (this.b != null ==>
+  acc(SharedB(this.b), wildcard))
 }
 ```
 
