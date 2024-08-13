@@ -1,10 +1,10 @@
+#import "../vars/kt-to-vpr-examples.typ": *
+#import "../config/utils.typ": code-compare
+
 #pagebreak(to:"odd")
 = Encoding in Viper<cap:encoding>
 
-Brief introduciton on the plugin @FormVerPlugin
-- what has been done
-- aliasing problem
-- solution --> annotation system
+The annotation system for aliasing control introduced in @cap:annotations-kt and formalized in @cap:annotation-system aims to improve the verification process performed by a plugin @FormVerPlugin for the Kotlin compiler. This plugin verifies Kotlin code by encoding it to Viper and supports a substantial subset of the Kotlin language. However, as described in @cap:aliasing, the lack of guarantees about aliasing presents a significant limitation for the plugin.
 
 == Classes Encoding
 
@@ -12,7 +12,7 @@ Brief introduciton on the plugin @FormVerPlugin
 - classes are encoded as predicates
 - point out that overlapping of predicates with wildcard permission is not a problem.
 
-=== shared predicate
+=== Shared Predicate
 
 - immutable part of the class
 - interesting because can be used by shared stuff
@@ -20,9 +20,14 @@ Brief introduciton on the plugin @FormVerPlugin
 - supertype
 - type information
 
-- EXAMPLES
+The shared predicate of a class includes the read access to all the fields that are guaranteed by the language to be immutable.
 
-=== unique predicare
+#code-compare("TODO", 0.8fr, classes-kt, classes-vpr)
+
+- EXAMPLES
+- Note that Int are not represented in this way in our plugin.
+
+=== Unique Predicate
 
 - unique part of the class
 - nullables
@@ -42,7 +47,7 @@ Brief introduciton on the plugin @FormVerPlugin
 
 - this
 - return value
-- constructors
+- constructors (unique in most of the cases)
 
 - EXAMPLES
 
@@ -61,47 +66,9 @@ Within a method, the following elements are annotated as follows:
 - All the methods have to ensure access to the immutable predicate of the returned reference.
 - In addition, a method returning a `unique` reference in Kotlin will also ensure access to the mutable predicate of the returned reference.
 
-#let return-kt = ```kt
-class T()
-
-@Unique
-fun return_unique(): T {
-    // ...
-}
-
-fun return_shared(): T {
-    // ...
-}
-```
-
 // TODO: write that predicate body is not relevant, same for the function's body
 
-#let return-vpr = ```java
-predicate SharedT(this: Ref)
-predicate UniqueT(this: Ref)
-
-method return_unique()
-returns(ret: Ref)
-ensures acc(SharedT(ret), wildcard)
-ensures UniqueT(ret)
-
-method return_shared()
-returns(ret: Ref)
-ensures acc(SharedT(ret), wildcard)
-```
-
-#align(
-  center,
-  figure(
-    caption: "TODO",
-    grid(
-      columns: (1.4fr, 2fr),
-      column-gutter: 2em,
-      row-gutter: .5em,
-      return-kt, return-vpr
-    )
-  )
-)
+#code-compare("TODO", 0.7fr, return-kt, return-vpr)
 
 === Parameters
 
@@ -121,61 +88,7 @@ ensures acc(SharedT(ret), wildcard)
   )
 )
 
-#let param-kt = ```kt
-fun arg_unique(
-    @Unique t: T
-) {
-}
-
-fun arg_shared(
-    t: T
-) {
-}
-
-fun arg_unique_b(
-    @Unique @Borrowed t: T
-) {
-}
-
-fun arg_shared_b(
-    @Borrowed t: T
-) {
-}
-```
-
-#let param-vpr = ```java
-method arg_unique(t: Ref)
-requires acc(UniqueT(t))
-requires acc(SharedT(t), wildcard)
-ensures acc(SharedT(t), wildcard)
-
-method arg_shared(t: Ref)
-requires acc(SharedT(t), wildcard)
-ensures acc(SharedT(t), wildcard)
-
-method arg_unique_b(t: Ref)
-requires acc(UniqueT(t))
-requires acc(SharedT(t), wildcard)
-ensures acc(UniqueT(t))
-ensures acc(SharedT(t), wildcard)
-
-method arg_shared_b(t: Ref)
-requires acc(SharedT(t), wildcard)
-ensures acc(SharedT(t), wildcard)
-```
-
-#align(
-  center,
-  figure(
-    caption: "TODO",
-    grid(
-      columns: (1.4fr, 2fr),
-      column-gutter: 2em,
-      row-gutter: .5em,
-      param-kt, param-vpr
-    )
-  )
-)
+#code-compare("TODO", 0.7fr, param-kt, param-vpr)
 
 === Receiver
 

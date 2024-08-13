@@ -1,8 +1,8 @@
 #import "../config/utils.typ": *
-#import "rules/base.typ": *
-#import "rules/relations.typ": *
-#import "rules/unification.typ": *
-#import "rules/statements.typ": *
+#import "../vars/rules/base.typ": *
+#import "../vars/rules/relations.typ": *
+#import "../vars/rules/unification.typ": *
+#import "../vars/rules/statements.typ": *
 
 #pagebreak(to:"odd")
 
