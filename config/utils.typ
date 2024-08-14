@@ -90,12 +90,21 @@
   )
 }
 
-#let code-compare(capt, s1, code1, code2) = figure(
+#let code-compare(capt, s, code1, code2, same-row: true) = figure(
     caption: capt,
-    grid(
-      columns: (s1, 1fr),
-      column-gutter: 2em,
-      row-gutter: .5em,
-      code1, code2
-    )
+    if(same-row) {
+      grid(
+        columns: (s, 1fr),
+        column-gutter: 2em,
+        row-gutter: .5em,
+        code1, code2
+      )
+    } else {
+      grid(
+        columns: (s),
+        column-gutter: 2em,
+        row-gutter: 2em,
+        code1, code2
+      )
+    }
   )

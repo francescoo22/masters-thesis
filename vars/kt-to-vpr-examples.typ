@@ -39,28 +39,23 @@ predicate SharedC(this: Ref) {
 ```
 
 #let return-kt = ```kt
-class T()
-
 @Unique
-fun return_unique(): T {
+fun returnUnique(): T {
     // ...
 }
 
-fun return_shared(): T {
+fun returnShared(): T {
     // ...
 }
 ```
 
 #let return-vpr = ```java
-predicate SharedT(this: Ref)
-predicate UniqueT(this: Ref)
-
-method return_unique()
+method returnUnique()
 returns(ret: Ref)
 ensures acc(SharedT(ret), wildcard)
-ensures UniqueT(ret)
+ensures acc(UniqueT(ret), write)
 
-method return_shared()
+method returnShared()
 returns(ret: Ref)
 ensures acc(SharedT(ret), wildcard)
 ```
@@ -177,4 +172,36 @@ predicate p$c$C$shared(this: Ref) {
   acc(p$c$A$shared(this), wildcard) &&
   df$rt$isSubtype(df$rt$typeOf(this.bf$b), df$rt$nullable(df$rt$T$c$B()))
 }
+```
+
+#let param-table = table(
+  columns: (auto, auto, auto, auto, auto),
+  inset: 8pt,
+  align: horizon,
+  table.header(
+    "", "Unique", "Unique\nBorrowed", "Shared", "Shared\nBorrowed",
+  ),
+  "Requires Shared Predicate", $checkmark$, $checkmark$, $checkmark$, $checkmark$,
+  "Ensures Shared Predicate", $checkmark$, $checkmark$, $checkmark$, $checkmark$,
+  "Requires Unique Predicate", $checkmark$, $checkmark$, "✗", "✗",
+  "Ensures Unique Predicate", "✗", $checkmark$, "✗", "✗",
+)
+
+#let receiver-kt = ```kt
+fun @receiver:Unique T.uniqueReceiver() {}
+
+fun @receiver:Unique @receiver:Borrowed T.uniqueBorrowedReceiver() {}
+```
+
+#let receiver-vpr = ```java
+method uniqueReceiver(this: Ref)
+requires acc(SharedT(this), wildcard)
+requires acc(UniqueT(this), write)
+ensures acc(SharedT(this), wildcard)
+
+method uniqueBorrowedReceiver(this: Ref)
+requires acc(SharedT(this), wildcard)
+requires acc(UniqueT(this), write)
+ensures acc(SharedT(this), wildcard)
+ensures acc(UniqueT(this), write)
 ```

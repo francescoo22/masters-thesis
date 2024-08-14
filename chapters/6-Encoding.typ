@@ -39,79 +39,49 @@ It is worth mentioning that some overlap might exist between the assertions in t
 
 == Functions Encoding
 
+TODO: Introduction: ...
+
 // TODO: decidere se la spiegazione delle annotazioni va fatta qui o nel capitolo 4 (ad esempio che annotiamo la funzione per il return value) 
 
-- unique
-- borrowed unique
-- shared
-- borrowed shared
+=== Return object
 
-- this
-- return value
-- constructors (unique in most of the cases)
+Since accessing immutable data is not a problem even if it is shared, every Kotlin function, in its encoding can ensure access to the shared predicate of the type of the returned object.
+In addition, a Kotlin function annotated to return a unique object will also ensure access to its unique predicate. @return-comp illustrates the differences in the encoding between a function that returns a unique object and a function that returns a shared one.
 
-- EXAMPLES
-
-// Mostrare come ogni tipo di parametro viene tradotto in Viper
-
-// *************************************************
-
-Within a method, the following elements are annotated as follows:
-
-- The arguments have to be either `unique` or `shared`, in addition they can also be `borrowed`.
-- The receiver has to be either `unique` or `shared`, in addition it can also be `borrowed`.
-- The return value has to be either `unique` or `shared`.
-
-=== Return
-
-- All the methods have to ensure access to the immutable predicate of the returned reference.
-- In addition, a method returning a `unique` reference in Kotlin will also ensure access to the mutable predicate of the returned reference.
-
-// TODO: write that predicate body is not relevant, same for the function's body
-
-#code-compare("TODO", 0.7fr, return-kt, return-vpr)
+#code-compare("Function return object encoding", 0.7fr, return-kt, return-vpr)<return-comp>
 
 === Parameters
 
-#figure(
-  caption: "TODO",
-  table(
-    columns: (auto, auto, auto, auto, auto),
-    inset: 8pt,
-    align: center,
-    table.header(
-      [* *], [*Unique*], [*Unique Borrowed*], [*Shared*], [*Shared Borrowed*],
-    ),
-    "Requires Read", $checkmark$, $checkmark$, $checkmark$, $checkmark$,
-    "Ensures Read", $checkmark$, $checkmark$, $checkmark$, $checkmark$,
-    "Requires Write", $checkmark$, $checkmark$, "✗", "✗",
-    "Ensures Write", "✗", $checkmark$, "✗", "✗",
-  )
-)
+Annotations on parameters are encoded by adding preconditions and postconditions to the method. Access to the shared predicate of any parameter can always be required in preconditions and ensured in postconditions. Conversely, access to the unique predicate can be required in preconditions only for parameters annotated as unique, and it can be ensured in postconditions only for parameters annotated as both unique and borrowed. @param-comp shows how function parameters are encoded, while @param-table summarizes the assertions contained within preconditions and postconditions based on the parameter annotations.
 
-#code-compare("TODO", 0.72fr, param-kt, param-vpr)
+#code-compare("Function parameters encoding", 0.8fr, param-kt, param-vpr)<param-comp>
+
+#figure(
+  caption: "Conditions for annotated parameters",
+  param-table
+)<param-table>
 
 === Receiver
 
-- easy to encode, just consider it as a parameter
-- example
+Encoding the receiver of a method is straightforward since the receiver is considered as a normal parameter.
+
+#code-compare("Function receiver encoding", 1fr, receiver-kt, receiver-vpr, same-row: false)
+
+=== Constructor
+
+- black-box Function
+- edge cases not supported at the moment
 
 == Function Calls Encoding
 
-// Interessante mostrare il grafo delle chiamate
-
 #figure(
   caption: "TODO",
-  image("../images/calls-graph.svg", width: 80%)
+  image("../images/calls-graph.svg", width: 60%)
 )
 
 - explain the call graph
 
 - EXAMPLES
-
-
-
-// Esempi
 
 == Predicates Unfolding
 

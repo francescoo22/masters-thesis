@@ -28,6 +28,7 @@
     set document(author: myAuthor, title: myTitle)
     show: codly-init.with()
     show math.equation: set text(weight: 400)
+    show table.cell.where(y: 0): strong
 
     // LaTeX look (secondo la doc di Typst)
     // set page(margin: 1.75in, numbering: myNumbering, number-align: center)
