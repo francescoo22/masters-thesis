@@ -21,9 +21,9 @@
   "en" : "Abstract",
 ).at(myLang)
 
-#let acknlowledgements = (
+#let acknowledgements = (
   "it" : "Ringraziamenti",
-  "en" : "Acknlowledgements",
+  "en" : "Acknowledgements",
 ).at(myLang)
 
 #let figuresList = (

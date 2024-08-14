@@ -1,7 +1,7 @@
 #pagebreak(to:"odd")
 
 #import "../config/variables.typ" : profTitle, myProf, myLocation, myTime, myName
-#import "../config/constants.typ" : acknlowledgements
+#import "../config/constants.typ" : acknowledgements
 
 #set par(first-line-indent: 0pt)
 #set page(numbering: "i")
@@ -23,19 +23,19 @@
 
 #v(10em)
 
-#text(24pt, weight: "semibold", acknlowledgements)
+#text(24pt, weight: "semibold", acknowledgements)
 
 #v(3em)
 
-#text(style: "italic", "Acknlowledgement...")
+#text(style: "italic", "Acknowledgement...")
 
 #linebreak()
 
-#text(style: "italic", "Acknlowledgement...")
+#text(style: "italic", "Acknowledgement...")
 
 #linebreak()
 
-#text(style: "italic", "Acknlowledgement...")
+#text(style: "italic", "Acknowledgement...")
 
 #v(2em)
 
