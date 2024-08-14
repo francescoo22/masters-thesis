@@ -14,59 +14,28 @@ In Kotlin, as in most programming languages, classes can represent potentially u
 
 The shared predicate of a class includes read access to all fields that the language guarantees as immutable. Having access to these predicates allows the verification of certain functional properties of a program, even without uniqueness guarantees. The reason is that immutability is a stronger condition than uniqueness from a verification point of view. Indeed, while uniqueness ensures that an object is only accessible through a single reference, immutability guarantees that the object's state cannot change after its creation, eliminating the need to track or control access patterns for verifying correctness.
 
-As shown in @class-comp-1, the encoding process involves including access to all fields declared as `val`, along with their shared predicate if they have one.
-
-@class-comp-2 shows how inheritance is encoded by including access to the shared predicates of the supertypes (Line 2). Additionally, the example illustrates how Kotlin's nullable types are encoded by accessing the predicate when the reference is not `null` through a logical implication (Lines 3-5).
+As shown in @class-comp-1, the encoding process involves including access to all fields declared as `val`, along with their shared predicate if they have one. Inheritance is encoded by including access to the shared predicates of the supertypes (Line 18). Additionally, the example illustrates how Kotlin's nullable types are encoded by accessing the predicate when the reference is not `null` through a logical implication (Lines 19-21).
 
 All the encoding examples that follow are simplified to improve readability and focus on the aspects pertinent to this work. In the plugin, avoiding name clashes is a crucial concern. As a result, names in the plugin are typically more complex than those shown in the examples.
 Furthermore, the plugin extends the predicate's body by adding Kotlin type information through domain functions. Instead of mapping Kotlin `Int` and other primitive types directly to their corresponding built-in Viper types, the plugin maps them to Viper `Ref` paired with a domain function. Similarly, classes are also paired with domain functions to ensure that their type information is consistently represented. However, this representation is omitted since it is not relevant to the focus of this work.
 
-For a complete view, @complete-encoding shows how the shared predicate of the class in @class-comp-2 appears in the plugin. 
+For a complete view, @complete-encoding shows how the shared predicate of the classes in @class-comp-1 appears in the plugin. 
 
-#code-compare("Shared predicate encoding: basic classes", 0.8fr, classes-kt, classes-vpr)<class-comp-1>
-
-#code-compare("Shared predicate encoding: supertypes and nullables", 0.8fr, classes-2-kt, classes-2-vpr)<class-comp-2>
+#code-compare("Shared predicate encoding", 0.8fr, classes-kt, classes-vpr)<class-comp-1>
 
 #figure(
-  caption: "TODO",
-  ```java
-  field bf$a1: Ref
-  field bf$a2: Ref
-  field bf$b: Ref
-  field bf$x: Ref
-  field bf$y: Ref
-
-  predicate p$c$A$shared(this: Ref) {
-    acc(this.bf$x, wildcard) &&
-    df$rt$isSubtype(df$rt$typeOf(this.bf$x), df$rt$intType())
-  }
-
-  predicate p$c$B$shared(this: Ref) {
-    acc(this.bf$a1, wildcard) && 
-    acc(p$c$A$shared(this.bf$a1), wildcard) &&
-    df$rt$isSubtype(df$rt$typeOf(this.bf$a1), df$rt$T$c$A())
-  }
-
-  predicate p$c$C$shared(this: Ref) {
-    acc(this.bf$b, wildcard) &&
-    (this.bf$b != df$rt$nullValue() ==>
-    acc(p$c$B$shared(this.bf$b), wildcard)) &&
-    acc(p$c$A$shared(this), wildcard) &&
-    df$rt$isSubtype(df$rt$typeOf(this.bf$b), df$rt$nullable(df$rt$T$c$B()))
-  }
-  ```
+  caption: "Shared predicate non-simplified encoding",
+  full-encoding
 )<complete-encoding>
 
 === Unique Predicate
 
-- unique part of the class
-- nullables
-- supertype
-- type information
-- point out that overlapping of predicates with wildcard permission is not a problem.
+The unique predicate of a class represents all the resources that the annotation system guarantees will not be aliased for a unique object. This includes access to all the fields of a class with `write` or `wildcard` permission, depending on whether the field is `var` or `val`. If a field is declared unique, it also includes access to its unique predicate. Additionally, this predicate contains access assertions to the shared predicate of the fields because, as explained in the previous section, accessing immutable resources is always safe.
 
+It is worth mentioning that some overlap might exist between the assertions in the shared predicate and those in the unique predicate. However, this overlap cannot lead to contradictions in Viper, such as requiring access with a total amount greater than 1, because the only assertions that can overlap are accessed with `wildcard` permission.
 
-- EXAMPLES
+#code-compare("Unique predicate encoding", 0.65fr, classes-unique-kt, classes-unique-vpr)
+
 
 == Functions Encoding
 
@@ -120,7 +89,7 @@ Within a method, the following elements are annotated as follows:
   )
 )
 
-#code-compare("TODO", 0.7fr, param-kt, param-vpr)
+#code-compare("TODO", 0.72fr, param-kt, param-vpr)
 
 === Receiver
 
