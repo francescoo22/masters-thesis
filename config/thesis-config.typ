@@ -1,6 +1,22 @@
 #import "../config/constants.typ": chapter
 #import "@preview/codly:1.0.0": *
 
+
+#let vpr-name = stack(
+  dir: ltr,
+  image("../images/viper-logo.png", width: .9em), " Viper",
+)
+
+#let kt-name = stack(
+  dir: ltr,
+  image("../images/Kotlin.svg", width: .9em), " Kotlin",
+)
+
+#let cpp-name = stack(
+  dir: ltr,
+  image("../images/cpp-logo.svg", width: .8em), " C++",
+)
+
 #let config(
     myAuthor: "Nome cognome",
     myTitle: "Titolo",
@@ -26,8 +42,9 @@
       codly(
         enabled: true,
         languages: (
-          kt: (name: "Kotlin", color: purple),
-          java: (name: "Viper", color: orange)
+          kt: (name: kt-name, color: purple),
+          java: (name: vpr-name, color: orange),
+          cpp: (name: cpp-name, color: blue)
         )
       )
       it
