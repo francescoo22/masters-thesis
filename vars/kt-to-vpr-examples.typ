@@ -205,3 +205,84 @@ requires acc(UniqueT(this), write)
 ensures acc(SharedT(this), wildcard)
 ensures acc(UniqueT(this), write)
 ```
+
+#let unique-call-kt = ```kt
+fun uniqueParam(
+    @Unique t: T
+) {
+}
+
+fun uniqueBorrowedParam(
+    @Unique @Borrowed t: T
+) {
+}
+
+fun call(
+    @Unique @Borrowed t1: T,
+    @Unique t2: T
+) {
+    uniqueBorrowedParam(t1)
+    uniqueBorrowedParam(t2)
+    uniqueParam(t2)
+}
+```
+
+#let unique-call-vpr = ```java
+method uniqueParam(t: Ref)
+requires acc(UniqueT(t), write) && acc(SharedT(t), wildcard)
+ensures acc(SharedT(t), wildcard)
+
+method uniqueBorrowedParam(t: Ref)
+requires acc(UniqueT(t), write) && acc(SharedT(t), wildcard)
+ensures acc(UniqueT(t), write) && acc(SharedT(t), wildcard)
+
+method call(t1: Ref, t2: Ref)
+requires acc(UniqueT(t1), write) && acc(SharedT(t1), wildcard)
+requires acc(UniqueT(t2), write) && acc(SharedT(t2), wildcard)
+ensures acc(UniqueT(t1), write) && acc(SharedT(t1), wildcard)
+ensures acc(SharedT(t2), wildcard)
+{
+  uniqueBorrowedParam(t1)
+  uniqueBorrowedParam(t2)
+  uniqueParam(t2)
+}
+```
+
+#let shared-call-kt = ```kt
+fun sharedParam(
+    t: T
+) {
+}
+
+fun sharedBorrowedParam(
+    @Borrowed t: T
+) {
+}
+
+fun call(@Unique t: T) {
+    sharedBorrowedParam(t)
+    sharedParam(t)
+}
+```
+
+#let shared-call-vpr = ```java
+method sharedParam(t: Ref)
+requires acc(SharedT(t), wildcard)
+ensures acc(SharedT(t), wildcard)
+
+method sharedBorrowedParam(t: Ref)
+requires acc(SharedT(t), wildcard)
+ensures acc(SharedT(t), wildcard)
+
+method call(t: Ref)
+requires acc(UniqueT(t), write) && acc(SharedT(t), wildcard)
+ensures acc(SharedT(t), wildcard)
+{
+  exhale acc(UniqueT(t), write)
+  inhale acc(UniqueT(t), write)
+  sharedBorrowedParam(t)
+
+  exhale acc(UniqueT(t), write)
+  sharedParam(t)
+}
+```

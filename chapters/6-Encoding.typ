@@ -72,20 +72,34 @@ Encoding the receiver of a method is straightforward since the receiver is consi
 - black-box Function
 - edge cases not supported at the moment
 
-== Function Calls Encoding
-
-#figure(
-  caption: "TODO",
-  image("../images/calls-graph.svg", width: 60%)
-)
-
-- explain the call graph
-
-- EXAMPLES
-
-== Predicates Unfolding
+== Predicates Unfolding<cap:unfolding>
 
 - easy for shared
 - inhaling -> only if there are no way to access the predicate
 - design choices for unique
 - EXAMPLES
+
+== Function Calls Encoding
+
+Encoding method calls is straightforward for some cases, but requires attention for some others.
+
+=== Functions with unique parameters
+
+Functions with a unique parameter, when called, do not need the inclusion of additional statements for their encoding, except for folding or unfolding statements, as detailed in @cap:unfolding.
+
+#code-compare("Function call with unique parameter encoding", .8fr, unique-call-kt, unique-call-vpr)
+
+=== Functions with shared parameters
+
+When functions with a shared parameter are called, their encoding may require the addition of `inhale` and `exhale` statements. The annotation system allows functions with shared parameters to be called by passing unique references. However, the function's conditions alone are not sufficient to properly encode these calls.
+
+For example, passing a unique reference to a function expecting a shared (non-borrowed) parameter will result in the loss of uniqueness for that reference, which is encoded by exhaling the unique predicate. Similarly, when a unique reference is passed to a function expecting a borrowed-shared parameter, the uniqueness is preserved, but any field of that reference can be modified. This is encoded by exhaling and then re-inhaling the unique predicate of that reference.
+
+@call-graph summarizes the `inhale` and `exhale` statements added during the encoding of a function call.
+
+#figure(
+  caption: "Extra statements added for functions call encoding",
+  image("../images/calls-graph.svg", width: 60%)
+)<call-graph>
+
+#code-compare("Function call with shared parameter encoding", .8fr, shared-call-kt, shared-call-vpr)
