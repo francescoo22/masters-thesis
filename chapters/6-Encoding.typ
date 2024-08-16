@@ -69,8 +69,10 @@ Encoding the receiver of a method is straightforward since the receiver is consi
 
 === Constructor
 
-- black-box Function
-- edge cases not supported at the moment
+Constructors are encoded as black-box methods returning a unique object. The encoding of a constructor requires access to the shared predicates for every property that is not of a primitive type. In addition, the unique predicate is also required for properties that are unique in the class declaration.
+Currently, the plugin only supports class properties declared as parameters. Properties declared within the body of a class and initializing blocks are not supported yet, as they may construct objects that are not necessarily unique.
+
+#code-compare("Constructor encoding", .8fr, constructor-kt, constructor-vpr, same-row: false)
 
 == Predicates Unfolding<cap:unfolding>
 

@@ -286,3 +286,28 @@ ensures acc(SharedT(t), wildcard)
   sharedParam(t)
 }
 ```
+
+#let constructor-kt = ```kt
+class A(val x: Int, var y: Int)
+
+class B(@property:Unique var a1: A, var a2: A)
+```
+
+#let constructor-vpr = ```java
+method constructorA(p1: Int, p2: Int) returns (ret: Ref)
+  ensures acc(SharedA(ret), wildcard)
+  ensures acc(UniqueA(ret), write)
+  ensures unfolding acc(SharedA(ret), wildcard) in
+    ret.x == p1
+  ensures unfolding acc(UniqueA(ret), write) in
+    ret.x == p1 && ret.y == p2
+
+method constructorB(p1: Ref, p2: Ref) returns (ret: Ref)
+  requires acc(UniqueA(p1), write)
+  requires acc(SharedA(p1), wildcard)
+  requires acc(SharedA(p2), wildcard)
+  ensures acc(SharedB(ret), wildcard)
+  ensures acc(UniqueB(ret), write)
+  ensures unfolding acc(UniqueB(ret), write) in
+    ret.a1 == p1 && ret.a2 == p2
+```
