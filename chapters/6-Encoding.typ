@@ -6,7 +6,7 @@
 
 The annotation system for aliasing control introduced in @cap:annotations-kt and formalized in @cap:annotation-system aims to improve the verification process performed by a plugin @FormVerPlugin for the Kotlin compiler. This plugin verifies Kotlin code by encoding it to Viper and supports a substantial subset of the Kotlin language. However, as described in @cap:aliasing, the lack of guarantees about aliasing presents a significant limitation for the plugin.
 
-== Classes Encoding
+== Classes Encoding<cap:class-encoding>
 
 In Kotlin, as in most programming languages, classes can represent potentially unbounded structures on the heap, such as linked lists or trees. This characteristic was a key factor in the decision to encode Kotlin classes into Viper predicates. Viper predicates, in fact, are specifically designed to represent potentially unbounded data structures.
 
@@ -39,7 +39,9 @@ It is worth mentioning that some overlap might exist between the assertions in t
 
 == Functions Encoding
 
-TODO: Introduction: ...
+Access information provided by Kotlin's type system and by the uniqueness annotations is encoded using the predicates described in @cap:class-encoding within the conditions of a method.
+On the one hand, shared predicates can always be accessed with `wildcard` permission without causing issues. Therefore, they can always be included in the conditions of a method for its parameters, receiver, and return value.
+On the other hand, unique predicates can only be included in a method's conditions in accordance with the annotation system.
 
 // TODO: decidere se la spiegazione delle annotazioni va fatta qui o nel capitolo 4 (ad esempio che annotiamo la funzione per il return value) 
 
