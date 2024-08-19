@@ -2,7 +2,7 @@
 #let myLang = "en"
 #let myName = "Francesco Protopapa"
 #let myMatricola = "2079466"
-#let myTitle = "Verifying Kotlin Code with Viper by Controlling Aliasing"
+#let myTitle = "Verifying Kotlin Code with Viper\nby Controlling Aliasing"
 #let myDegree = "Master's Thesis"
 #let myUni = "Università degli studi di Padova"
 #let myDepartment = "Department of Mathematics ''Tullio Levi-Civita''"
