@@ -33,7 +33,7 @@ Aliasing prevention alone is not sufficient because aliasing is unavoidable in c
 
 In recent decades, extensive research has been conducted to address the issue of aliasing. The book _Aliasing in Object-Oriented Programming_ @Aliasing-OOP provides a comprehensive survey of the latest techniques for managing aliasing in object-oriented programming.
 
-=== Controlling aliasing with uniqueness
+=== Controlling aliasing with uniqueness<cap:control-alias-unique>
 
 // TODO: decidere se usare virgolette o corsivo per linear logi, uniqueness locic ecc.
 

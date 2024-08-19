@@ -738,4 +738,53 @@ Where _fresh_ is a variable that has not been declared before.
 
 *TODO: Add example for return*
 
-// TODO: Stack example + DERIVATION
+== Stack example
+
+*TODOs*
+- brief introduction
+- popular example in the literature for showing the system (alias burying, latte)
+- comment what happens
+- decide whether to put it in chapter 4 the kt example and here with the grammar. Or just one of them
+
+#figure(
+  caption: "TODO",
+  ```kt
+  class Node(
+      @property:Unique var value: Any?,
+      @property:Unique var next: Node?,
+  )
+
+  class Stack(@property:Unique var root: Node?)
+
+  fun @receiver:Borrowed @receiver:Unique Stack.push(@Unique value: Any?) {
+      // Δ = this: borrowed unique, value: unique
+      val r = this.root
+      // Δ = this: borrowed unique, this.root: T, value: unique, r: unique
+      val n = Node(value, r)
+      // Δ = this: borrowed unique, this.root: T, value: T, r: T, n: unique
+      this.root = n
+      // Δ = this: borrowed unique, this.root: unique, value: T, r: T, n: T
+  }
+
+  @Unique
+  fun @receiver:Borrowed @receiver:Unique Stack.pop(): Any? {
+      // Δ = this: borrowed unique
+      val value: Any?
+      // Δ = this: borrowed unique, value: T
+      if (this.root == null) {
+          value = null
+          // Δ = this: borrowed unique, value: unique
+      } else {
+          value = this.root!!.value // Note: here we can smart cast 'this.root' from Node? to Node
+          // Δ = this: borrowed unique, this.root.value: T, value: unique
+          val next = this.root!!.next  // Note: here we can smart cast 'this.root' from Node? to Node
+          // Δ = this: borrowed unique, this.root.value: T, this.root.next: T, value: unique, next: unique
+          this.root = next
+          // Δ = this: borrowed unique, this.root: unique, value: unique, next: T
+      }
+      // Unification...
+      // Δ = this: borrowed unique, this.root: unique, value: unique
+      return value
+  }
+  ```
+)
