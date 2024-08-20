@@ -77,7 +77,7 @@ It is important to note that properties with primitive types do not need to be a
       var y: T,
   )
 
-  fun borrowUnique(@Unique @Borrowed t: T){}
+  fun borrowUnique(@Unique @Borrowed t: T) {}
 
   fun f(@Unique uniqueA: A, sharedA: A) {
       borrowUnique(uniqueA.x) // ok: both 'uniqueA' and property 'x' are unique
@@ -113,47 +113,38 @@ The uniqueness system handles assignments similarly to Alias Burying @boyland200
   ```
 )
 
-== Examples of Aliasing control in Kotlin
+=== Stack example
 
-// TODOs
-
-// - Stack example, dire che e' esempio noto in letteratura (poi sarebbe da fare anche nel capitolo dopo)
-
-// since it's popular to have this example (latte, aliasJava)
-// maybe it's better to have this in the end of chapter 5
-
-// TODO here and in chapter 5 (maybe also 6) the axample can be simplified. There are some assignments that are useless.
+To conclude the overview of the uniqueness system, a more complex example is provided in @kt-stack. This example shows the implementation of an alias-free stack, a common illustration in the literature for showcasing uniqueness systems in action @aldrich2002alias @zimmerman2023latte. The next chapter will formally prove the correctness of this example.
 
 #figure(
-  caption: "TODO",
+  caption: "Stack implementation with uniqueness annotations",
   ```kt
-class Node(
-    @property:Unique var value: Any?,
-    @property:Unique var next: Node?,
-)
+  class Node(
+      @property:Unique var value: Any?,
+      @property:Unique var next: Node?,
+  )
 
-class Stack(@property:Unique var root: Node?)
+  class Stack(@property:Unique var root: Node?)
 
-fun @receiver:Borrowed @receiver:Unique Stack.push(@Unique value: Any?) {
-    val r = this.root
-    val n = Node(value, r)
-    this.root = n
-}
+  fun @receiver:Borrowed @receiver:Unique Stack.push(@Unique value: Any?) {
+      val r = this.root
+      this.root = Node(value, r)
+  }
 
-@Unique
-fun @receiver:Borrowed @receiver:Unique Stack.pop(): Any? {
-    val value: Any?
-    if (this.root == null) {
-        value = null
-    } else {
-        value = this.root!!.value
-        val next = this.root!!.next
-        this.root = next
-    }
-    return value
-}
+  @Unique
+  fun @receiver:Borrowed @receiver:Unique Stack.pop(): Any? {
+      val value: Any?
+      if (this.root == null) {
+          value = null
+      } else {
+          value = this.root!!.value
+          this.root = this.root!!.next
+      }
+      return value
+  }
   ```
-)
+)<kt-stack>
 
 == Improvents to the language
 

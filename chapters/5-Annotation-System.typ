@@ -759,11 +759,9 @@ Where _fresh_ is a variable that has not been declared before.
   fun @receiver:Borrowed @receiver:Unique Stack.push(@Unique value: Any?) {
       // Δ = this: borrowed unique, value: unique
       val r = this.root
-      // Δ = this: borrowed unique, this.root: T, value: unique, r: unique
-      val n = Node(value, r)
-      // Δ = this: borrowed unique, this.root: T, value: T, r: T, n: unique
-      this.root = n
-      // Δ = this: borrowed unique, this.root: unique, value: T, r: T, n: T
+      // Δ = this: borrowed unique, value: unique, r: unique, this.root: T
+      this.root = Node(value, r)
+      // Δ = this: borrowed unique, value: T, r: T, this.root: unique
   }
 
   @Unique
@@ -775,15 +773,13 @@ Where _fresh_ is a variable that has not been declared before.
           value = null
           // Δ = this: borrowed unique, value: unique
       } else {
-          value = this.root!!.value // Note: here we can smart cast 'this.root' from Node? to Node
-          // Δ = this: borrowed unique, this.root.value: T, value: unique
-          val next = this.root!!.next  // Note: here we can smart cast 'this.root' from Node? to Node
-          // Δ = this: borrowed unique, this.root.value: T, this.root.next: T, value: unique, next: unique
-          this.root = next
-          // Δ = this: borrowed unique, this.root: unique, value: unique, next: T
+          value = this.root!!.value
+          // Δ = this: borrowed unique, value: unique, this.root.value: T
+          this.root = this.root!!.next
+          // Δ = this: borrowed unique, value: unique, this.root: unique
       }
       // Unification...
-      // Δ = this: borrowed unique, this.root: unique, value: unique
+      // Δ = this: borrowed unique, value: unique, this.root: unique
       return value
   }
   ```
