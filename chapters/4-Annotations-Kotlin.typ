@@ -5,7 +5,7 @@ This chapter introduces a uniqueness system for Kotlin that takes inspiration fr
 
 == Overview
 
-The uniqueness system introduces two annotations, as shown in @kt-annotations. The `Unique` annotation can be applied to class properties, as well as function receivers, parameters, and return values. In contrast, the `Borrowed` annotation can only be used on function receivers and parameters.
+The uniqueness system introduces two annotations, as shown in @kt-annotations. The `Unique` annotation can be applied to class properties, as well as function receivers, parameters, and return values. In contrast, the `Borrowed` annotation can only be used on function receivers and parameters. These are the only annotations the user needs to write, annotations for local variables are inferred.
 
 Generally, a reference annotated with `Unique` is either `null` or the sole reference to an object. Conversely, if a reference is not unique, there are no guarantees about how many references exist to the object. Such references are referred to as shared.
 
@@ -28,21 +28,33 @@ The `Borrowed` annotation is similar to the one described by Boyland @boyland200
 
 === Function annotations
 
-The system allows annotating the receiver and parameters of a function as `Unique`. It is also possible to declare that a function's return value is unique by annotating the function itself. When a receiver or parameter is annotated with `Unique`, it imposes a restriction on the caller, that must pass a unique reference, and provides a guarantee to the callee, ensuring that it has a unique reference at the start of its execution. Conversely, a return value annotated with `Unique` guarantees to the caller that the function will return a unique object and imposes a requirement on the callee to return a unique object.
+The system allows annotating the receiver and parameters of a function as `Unique`. It is also possible to declare that a function's return value is unique by annotating the function itself. When a receiver or parameter is annotated with `Unique`, it imposes a restriction on the caller, that must pass a unique reference, and provides a guarantee to the callee, ensuring that it has a unique reference at the begin of its execution. Conversely, a return value annotated with `Unique` guarantees to the caller that the function will return a unique object and imposes a requirement on the callee to return a unique object.
 
-Additionally, function parameters and receivers can be annotated as `Borrowed`. This imposes a restriction on the callee, which must ensure that no further aliases are created, and guarantees to the caller that passing a unique reference will preserve its uniqueness.
+Additionally, function parameters and receivers can be annotated as `Borrowed`. This imposes a restriction on the callee, which must ensure that no further aliases are created, and guarantees to the caller that passing a unique reference will preserve its uniqueness. On the other hand, if a unique reference is passed to a function without borrowing guarantees, the variable becomes inaccessible to the caller until it is reassigned.
 
-// TODO: better example? or in the body section
 #figure(
-  caption: "Uniqueness annotations for a function in Kotlin",
+  caption: "Uniqueness annotations usage on Kotlin fucntions",
   ```kt
-  @Unique // the returned value is unique
-  fun @receiver:Unique T.f(
-      @Borrowed x: T,
-      @Unique @Borrowed y: T,
-      z: T,
-  ): T {
-      // ...
+  class T()
+
+  fun consumeUnique(@Unique t: T) { /* ... */ }
+
+  @Unique
+  fun returnUniqueError(@Unique t: T): T {
+      consumeUnique(t) // uniqueness is lost
+      return t // error: 'returnUniqueError' must return a unique reference
+  }
+
+  fun borrowUnique(@Unique @Borrowed t: T) { /* ... */ }
+
+  @Unique
+  fun @receiver:Unique T.returnUniqueCorrect(): T {
+      borrowUnique(this) // uniqueness is preserved
+      return this // ok
+  }
+
+  fun sharedToUnique(t: T) {
+      consumeUnique(t) // error: 'consumeUnique' expects a unique argument, but 't' is shared
   }
   ```
 )
@@ -56,7 +68,7 @@ For example, in @kt-uniqueness-class, even though the property `x` of the class 
 It is important to note that properties with primitive types do not need to be annotated.
 
 #figure(
-  caption: "Uniqueness annotations for a class in Kotlin",
+  caption: "Uniqueness annotations usage on Kotlin classes",
   ```kt
   class T()
 
@@ -65,20 +77,41 @@ It is important to note that properties with primitive types do not need to be a
       var y: T,
   )
 
-  fun f(a1: A, @Unique a2: A) {
-      // a1.x is shared
-      // a1.y is shared
-      // a2.x is unique
-      // a2.y is shared
+  fun borrowUnique(@Unique @Borrowed t: T){}
+
+  fun f(@Unique uniqueA: A, sharedA: A) {
+      borrowUnique(uniqueA.x) // ok: both 'uniqueA' and property 'x' are unique
+      borrowUnique(uniqueA.y) // error: 'uniqueA.y' is not unique since property 'y' is shared
+      borrowUnique(sharedA.x) // error: 'sharedA.x' is not unique since 'sharedA' is shared
   }
   ```
 )<kt-uniqueness-class>
 
-=== Annotatations on the Body
+=== Uniqueness and assignments
 
-- context
-- tutto inferito (correttezza non parte di questo lavoro)
-- uniqueness si puo perdere
+The uniqueness system handles assignments similarly to Alias Burying @boyland2001alias. Specifically, once a unique reference is read, it cannot be accessed again until it has been reassigned. This approach allows for the formulation of the following uniqueness invariant: "A unique reference is either `null` or points to an object as the only accessible reference to that object."
+
+#figure(
+  caption: "Uniqueness behaviour with assignments in Kotlin",
+  ```kt
+  class T()
+  class A(@property:Unique var t: T?)
+
+  fun borrowUnique(@Unique @Borrowed t: T?) {}
+
+  fun incorrectAssignment(@Unique a: A) {
+      val temp = a.t // 'temp' becomes unique, but 'a.t' becomes inaccessible
+      borrowUnique(a.t) // error: 'a.t' cannot be accessed
+  }
+
+  fun correctAssignment(@Unique a: A) {
+      val temp = a.t // 'temp' becomes unique, but 'a.t' becomes inaccessible
+      borrowUnique(temp) // ok
+      a.t = null // 'a.t' is unique again
+      borrowUnique(a.t) // ok
+  }
+  ```
+)
 
 == Examples of Aliasing control in Kotlin
 
@@ -94,33 +127,31 @@ It is important to note that properties with primitive types do not need to be a
 #figure(
   caption: "TODO",
   ```kt
-  class Node(
-      @property:Unique var value: Any?,
-      @property:Unique var next: Node?,
-  )
+class Node(
+    @property:Unique var value: Any?,
+    @property:Unique var next: Node?,
+)
 
-  class Stack(@property:Unique var root: Node?)
+class Stack(@property:Unique var root: Node?)
 
-  fun @receiver:Borrowed @receiver:Unique Stack.push(@Unique value: Any?) {
-      val r = this.root
-      val n = Node(value, r)
-      this.root = n
-  }
+fun @receiver:Borrowed @receiver:Unique Stack.push(@Unique value: Any?) {
+    val r = this.root
+    val n = Node(value, r)
+    this.root = n
+}
 
-  @Unique
-  fun @receiver:Borrowed @receiver:Unique Stack.pop(): Any? {
-      val value: Any?
-      if (this.root == null) {
-          value = null
-      } else {
-      // Note: here is possible to smart cast 'this.root' from Node? to Node
-          value = this.root.value
-      // Note: here is possible to smart cast 'this.root' from Node? to Node
-          val next = this.root.next
-          this.root = next
-      }
-      return value
-  }
+@Unique
+fun @receiver:Borrowed @receiver:Unique Stack.pop(): Any? {
+    val value: Any?
+    if (this.root == null) {
+        value = null
+    } else {
+        value = this.root!!.value
+        val next = this.root!!.next
+        this.root = next
+    }
+    return value
+}
   ```
 )
 
@@ -134,5 +165,8 @@ It is important to note that properties with primitive types do not need to be a
 // example of improvement in verification of contracts
 
 === Smart cast
+
+// In the stack example, unsafe cast can be smart cast
+
 === Function optimiztion (modify lists implace)
 === Garbage collection in Kotlin native
