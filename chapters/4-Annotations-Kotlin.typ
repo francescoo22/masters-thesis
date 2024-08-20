@@ -32,7 +32,7 @@ The system allows annotating the receiver and parameters of a function as `Uniqu
 
 Additionally, function parameters and receivers can be annotated as `Borrowed`. This imposes a restriction on the callee, which must ensure that no further aliases are created, and guarantees to the caller that passing a unique reference will preserve its uniqueness.
 
-// TODO: better example
+// TODO: better example? or in the body section
 #figure(
   caption: "Uniqueness annotations for a function in Kotlin",
   ```kt
@@ -49,22 +49,30 @@ Additionally, function parameters and receivers can be annotated as `Borrowed`. 
 
 === Class annotations
 
+Classes can have their properties annotated as `Unique`. Annotations on properties define their uniqueness at the beginning of a method. However, a property annotated as `Unique` might not be unique in practice. In fact, for a property to be truly unique, it’s necessary that both the property itself is annotated as `Unique` and that the object owning the property is also unique. This concept applies recursively to nested properties.
+
+For example, in @kt-uniqueness-class, even though the property `x` of the class `A` is annotated as `Unique`, `a1.x` is shared because `a1`, the owner of property `x`, is shared.
+
+It is important to note that properties with primitive types do not need to be annotated.
+
 #figure(
   caption: "Uniqueness annotations for a class in Kotlin",
   ```kt
-  class T(var n: Int)
+  class T()
 
   class A(
       @property:Unique var x: T,
       var y: T,
   )
-  ```
-)
 
-- cosa si puo annotare
-- primitive fields cannot be annotated
-- cosa significa (default shared/non-bor)
-- esempio
+  fun f(a1: A, @Unique a2: A) {
+      // a1.x is shared
+      // a1.y is shared
+      // a2.x is unique
+      // a2.y is shared
+  }
+  ```
+)<kt-uniqueness-class>
 
 === Annotatations on the Body
 
