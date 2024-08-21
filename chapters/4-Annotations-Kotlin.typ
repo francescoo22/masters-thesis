@@ -113,21 +113,35 @@ The uniqueness system handles assignments similarly to Alias Burying @boyland200
   ```
 )
 
-== Benefits of uniqueness
+== Benefits of Uniqueness
 
 The uniqueness annotations that have been introduced can bring several benefits to the language.
 
-=== Better verification
+=== Formal Verification
 
-- in general
-- encoding in viper
+The main goal of introducing the concept of uniqueness in Kotlin is to enable the verification of interesting functional properties. For instance, formalists might be interested in proving the absence of `IndexOutOfBound` exception in a function. However, the lack of aliasing guarantees in Kotlin can complicate such proofs, even for relatively simple functions like the one shown in @out-of-bound.  In this example, the following scenario could potentially lead to an `IndexOutOfBound` exception:
+- The function executes `xs.add(x)`, adding an element to the list `xs`.
+- Concurrently, another function with access to an alias of `xs` invokes the `clear` method, emptying the list.
+- Subsequently, `xs.first()` is called on the now-empty list, raising an `IndexOutOfBound` exception.
+
+Uniqueness, however, offers a solution by providing stronger guarantees. When a reference is unique, there are no other accessible aliases to the same object, making it easier to prove the absence of `IndexOutOfBound` exceptions.
 
 
-// example of contracts usage
 
-// example of improvement in verification of contracts
+#figure(
+  caption: "Function using a mutable list",
+  ```kt
+fun <T> f(xs: MutableList<T>, x: T) : T {
+    xs.add(x)
+    return xs.first()
+}
+  ```
+)<out-of-bound>
 
-=== Smart cast
+Moreover, the concept of uniqueness can significantly facilitate the process of encoding Kotlin programs into Viper. Uniqueness guarantees that a reference to an object is exclusive, meaning there are no other accessible references to it.
+This characteristic aligns well with Viper's notion of write access. In Viper, write access refers to a situation where a reference is guaranteed to be inaccessible to any other part of the program outside the method performing the write operation. This guarantee allows Viper to perform rigorous formal verification since it can assume that no external factors will alter the reference while it is being used.
+
+=== Smart Casts
 
 As introduced in @cap:smart-cast, smart casts are an important feature in Kotlin that allow developers to avoid using explicit cast operators under certain conditions. However, the compiler can only perform a smart cast if it can guarantee the cast will always be safe.
 Since Kotlin is a concurrent language, the compiler cannot perform smart casts when dealing with mutable properties. The reason is that after checking the type of a mutable property, another function running concurrently may access the same reference and change its value. @smart-cast-error, shows that after checking that `a.valProperty` is not `null`, the compiler can smart cast it from `Int?` to `Int`. However, the same operation is not possible for `a.varProperty` because, immediately after checking that it is not `null`, another function running concurrently might set it to `null`.
@@ -165,15 +179,12 @@ fun useUniqueA(@Unique @Borrowed a: A): Int {
 
 === Optimizations
 
-// Uniqueness can also optimize functions in certain circumstances.
-// Functions for manipulating lists in the standard library typically create a new list to store the results. For example, in @manipulate-list, the implementations of `filter`, `map`, and `reversed` each create a new list. However, with uniqueness guarantees, an alternative implementation of these standard library functions could manipulate the list in place, making the process more efficient.
-
 Uniqueness can also optimize functions in certain circumstances, particularly when working with data structures like lists. In the Kotlin standard library, functions that manipulate lists, such as `filter`, `map`, and `reversed`, typically create a new list to store the results of the operation. For instance, as shown in @manipulate-list, the `filter` function traverses the original list, selects the elements that meet the criteria, and stores these elements in a newly created list. Similarly, `map` generates a new list by applying a transformation to each element, and `reversed` produces a new list with the elements in reverse order.
 
 While this approach ensures that the original list remains unchanged, it also incurs additional memory and processing overhead due to the creation of new lists. However, when the uniqueness of a reference to the list is guaranteed, these standard library functions could be optimized to safely manipulate the list in place. This means that instead of creating a new list, the function would modify the original list directly, significantly improving performance by reducing memory usage and execution time.
 
 #figure(
-  caption: "TODO",
+  caption: "List manipulation example",
   ```kt
 fun manipulateList(xs: List<Int>): List<Int> {
     return xs.filter { it % 2 == 0 }
@@ -185,7 +196,7 @@ fun manipulateList(xs: List<Int>): List<Int> {
 
 // TODO: decidere se parlare della possibilita' di deallocare memoria su target non-jvm quando qualcosa di unique va out-of-scope
 
-== Stack example
+== Stack Example
 
 To conclude the overview of the uniqueness system, a more complex example is provided in @kt-stack. The example shows the implementation of an alias-free stack, a common illustration in the literature for showcasing uniqueness systems in action @aldrich2002alias @zimmerman2023latte. 
 It is interesting to note that having a unique receiver for the `pop` function allows to safely smart cast `this.root` from `Node?` to `Node` (Lines 19-20); this would not be allowed without uniqueness guarantees since `root` is a mutable property.
