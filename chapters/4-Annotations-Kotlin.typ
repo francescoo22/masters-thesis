@@ -33,7 +33,7 @@ The system allows annotating the receiver and parameters of a function as `Uniqu
 Additionally, function parameters and receivers can be annotated as `Borrowed`. This imposes a restriction on the callee, which must ensure that no further aliases are created, and guarantees to the caller that passing a unique reference will preserve its uniqueness. On the other hand, if a unique reference is passed to a function without borrowing guarantees, the variable becomes inaccessible to the caller until it is reassigned.
 
 #figure(
-  caption: "Uniqueness annotations usage on Kotlin fucntions",
+  caption: "Uniqueness annotations usage on Kotlin functions",
   ```kt
   class T()
 
@@ -113,9 +113,84 @@ The uniqueness system handles assignments similarly to Alias Burying @boyland200
   ```
 )
 
-=== Stack example
+== Benefits of uniqueness
 
-To conclude the overview of the uniqueness system, a more complex example is provided in @kt-stack. This example shows the implementation of an alias-free stack, a common illustration in the literature for showcasing uniqueness systems in action @aldrich2002alias @zimmerman2023latte. The next chapter will formally prove the correctness of this example.
+The uniqueness annotations that have been introduced can bring several benefits to the language.
+
+=== Better verification
+
+- in general
+- encoding in viper
+
+
+// example of contracts usage
+
+// example of improvement in verification of contracts
+
+=== Smart cast
+
+As introduced in @cap:smart-cast, smart casts are an important feature in Kotlin that allow developers to avoid using explicit cast operators under certain conditions. However, the compiler can only perform a smart cast if it can guarantee the cast will always be safe.
+Since Kotlin is a concurrent language, the compiler cannot perform smart casts when dealing with mutable properties. The reason is that after checking the type of a mutable property, another function running concurrently may access the same reference and change its value. @smart-cast-error, shows that after checking that `a.valProperty` is not `null`, the compiler can smart cast it from `Int?` to `Int`. However, the same operation is not possible for `a.varProperty` because, immediately after checking that it is not `null`, another function running concurrently might set it to `null`.
+Guarantees on the uniqueness of references can enable the compiler to perform more exhaustive analysis for smart casts. When a reference is unique, the uniqueness system ensures that there are no accessible aliases to that reference, meaning it is impossible for a concurrently running function to modify its value. @smart-cast-unique shows the same example as before, but with the function parameter being unique. Since `a` is unique, it is completely safe to smart cast `a.varProperty` from `Int?` to `Int` after verifying that it is not null.
+
+#figure(
+  caption: "Smart cast error caused by mutability",
+  ```kt
+class A(var varProperty: Int?, val valProperty: Int?)
+
+fun useSharedA(a: A): Int {
+    return when {
+        a.valProperty != null -> a.valProperty // smart cast
+        a.varProperty != null -> a.varProperty // compilation error
+        else -> 0
+    }
+}
+  ```
+)<smart-cast-error>
+
+#figure(
+  caption: "Smart cast succed thanks to uniqueness",
+  ```kt
+class A(var varProperty: Int?, val valProperty: Int?)
+
+fun useUniqueA(@Unique @Borrowed a: A): Int {
+    return when {
+        a.valProperty != null -> a.valProperty // smart cast to Int
+        a.varProperty != null -> a.varProperty // smart cast to Int
+        else -> 0
+    }
+}
+  ```
+)<smart-cast-unique>
+
+=== Optimizations
+
+// Uniqueness can also optimize functions in certain circumstances.
+// Functions for manipulating lists in the standard library typically create a new list to store the results. For example, in @manipulate-list, the implementations of `filter`, `map`, and `reversed` each create a new list. However, with uniqueness guarantees, an alternative implementation of these standard library functions could manipulate the list in place, making the process more efficient.
+
+Uniqueness can also optimize functions in certain circumstances, particularly when working with data structures like lists. In the Kotlin standard library, functions that manipulate lists, such as `filter`, `map`, and `reversed`, typically create a new list to store the results of the operation. For instance, as shown in @manipulate-list, the `filter` function traverses the original list, selects the elements that meet the criteria, and stores these elements in a newly created list. Similarly, `map` generates a new list by applying a transformation to each element, and `reversed` produces a new list with the elements in reverse order.
+
+While this approach ensures that the original list remains unchanged, it also incurs additional memory and processing overhead due to the creation of new lists. However, when the uniqueness of a reference to the list is guaranteed, these standard library functions could be optimized to safely manipulate the list in place. This means that instead of creating a new list, the function would modify the original list directly, significantly improving performance by reducing memory usage and execution time.
+
+#figure(
+  caption: "TODO",
+  ```kt
+fun manipulateList(xs: List<Int>): List<Int> {
+    return xs.filter { it % 2 == 0 }
+        .map { it + 1 }
+        .reversed()
+}
+  ```
+)<manipulate-list>
+
+// TODO: decidere se parlare della possibilita' di deallocare memoria su target non-jvm quando qualcosa di unique va out-of-scope
+
+== Stack example
+
+To conclude the overview of the uniqueness system, a more complex example is provided in @kt-stack. The example shows the implementation of an alias-free stack, a common illustration in the literature for showcasing uniqueness systems in action @aldrich2002alias @zimmerman2023latte. 
+It is interesting to note that having a unique receiver for the `pop` function allows to safely smart cast `this.root` from `Node?` to `Node` (Lines 19-20); this would not be allowed without uniqueness guarantees since `root` is a mutable property.
+
+The next chapter will formally prove the correctness of this example.
 
 #figure(
   caption: "Stack implementation with uniqueness annotations",
@@ -138,26 +213,10 @@ To conclude the overview of the uniqueness system, a more complex example is pro
       if (this.root == null) {
           value = null
       } else {
-          value = this.root!!.value
-          this.root = this.root!!.next
+          value = this.root.value
+          this.root = this.root.next
       }
       return value
   }
   ```
 )<kt-stack>
-
-== Improvents to the language
-
-=== Contracts verification
-
-
-// example of contracts usage
-
-// example of improvement in verification of contracts
-
-=== Smart cast
-
-// In the stack example, unsafe cast can be smart cast
-
-=== Function optimiztion (modify lists implace)
-=== Garbage collection in Kotlin native

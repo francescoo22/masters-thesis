@@ -35,7 +35,7 @@ In Kotlin, functions are considered first-class citizens. This implies that, lik
   ```
 )
 
-=== Smart Casts
+=== Smart Casts<cap:smart-cast>
 
 In Kotlin, smart casts refer to a feature of the language that automatically handles explicit typecasting, reducing the need for manual intervention. A smart cast occurs when the compiler tracks conditions inside conditional expressions and automatically casts types if possible, eliminating the necessity for explicit casting in many scenarios. This considerably simplifies the syntax and increases readability. For example, if we perform a type check on a variable in an `if` condition, we can use that variable in its checked type within the `if` block without the requirement to explicitly cast it. An example of smart cast can be found in @smart-cast.
 
