@@ -29,11 +29,11 @@ For static checkability, constructs must be conservatively defined. For instance
 
 Aliasing prevention alone is not sufficient because aliasing is unavoidable in conventional object-oriented programming. Aliasing control is necessary to ensure the system does not reach a state with unexpected aliasing, which requires analysis of the runtime state.
 
-== Systems for controlling Aliasing 
+== Systems for Controlling Aliasing 
 
 In recent decades, extensive research has been conducted to address the issue of aliasing. The book _Aliasing in Object-Oriented Programming_ @Aliasing-OOP provides a comprehensive survey of the latest techniques for managing aliasing in object-oriented programming.
 
-=== Controlling aliasing with uniqueness<cap:control-alias-unique>
+=== Controlling Aliasing through Uniqueness<cap:control-alias-unique>
 
 // TODO: decidere se usare virgolette o corsivo per linear logi, uniqueness locic ecc.
 
@@ -78,7 +78,7 @@ A uniqueness invariant is defined as follows: "a unique object is stored at most
 
 Latte's analysis produces at each program point an "alias graph", that is an undirected graph whose nodes are syntactic paths and distinct paths $p_1$ and $p_2$ are connected iff $p_1$ and $p_2$ are aliased. Moreover a directed graph whose nodes are syntactic path called "reference graph" is also produced for every program point. Intuitively, having an edge from $p_1$ to $p_2$ in the reference graph means that the annotation of $p_1$ requires to be updated when $p_2$ is updated.
 
-=== Programming languages with aliasing guarantees
+=== Programming Languages with Aliasing Guarantees
 
 Recently, several programming languages have started to introduce type systems that provide strong guarantees regarding aliasing.
 
@@ -92,7 +92,7 @@ Rust @rustlang is a modern programming language that prioritizes both high perfo
   - https://blog.janestreet.com/oxidizing-ocaml-locality/
   - https://blog.janestreet.com/oxidizing-ocaml-ownership/
 
-== Tools for verification with Viper
+== Viper Verification Tools
 
 Several verifiers have been built on top of Viper. The most relevant tools for this work are: Prusti, a verifier for the Rust programming language, Gobra, used to verify code written in Go, and Nagini, which can be used to verify Python programs.
 

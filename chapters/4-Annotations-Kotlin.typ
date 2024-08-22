@@ -26,7 +26,7 @@ The `Borrowed` annotation is similar to the one described by Boyland @boyland200
   ```
 )<kt-annotations>
 
-=== Function annotations
+=== Function Annotations
 
 The system allows annotating the receiver and parameters of a function as `Unique`. It is also possible to declare that a function's return value is unique by annotating the function itself. When a receiver or parameter is annotated with `Unique`, it imposes a restriction on the caller, that must pass a unique reference, and provides a guarantee to the callee, ensuring that it has a unique reference at the begin of its execution. Conversely, a return value annotated with `Unique` guarantees to the caller that the function will return a unique object and imposes a requirement on the callee to return a unique object.
 
@@ -59,7 +59,7 @@ Additionally, function parameters and receivers can be annotated as `Borrowed`. 
   ```
 )
 
-=== Class annotations
+=== Class Annotations
 
 Classes can have their properties annotated as `Unique`. Annotations on properties define their uniqueness at the beginning of a method. However, a property annotated as `Unique` might not be unique in practice. In fact, for a property to be truly unique, it’s necessary that both the property itself is annotated as `Unique` and that the object owning the property is also unique. This concept applies recursively to nested properties.
 
@@ -87,7 +87,7 @@ It is important to note that properties with primitive types do not need to be a
   ```
 )<kt-uniqueness-class>
 
-=== Uniqueness and assignments
+=== Uniqueness and Assignments
 
 The uniqueness system handles assignments similarly to Alias Burying @boyland2001alias. Specifically, once a unique reference is read, it cannot be accessed again until it has been reassigned. This approach allows for the formulation of the following uniqueness invariant: "A unique reference is either `null` or points to an object as the only accessible reference to that object."
 
