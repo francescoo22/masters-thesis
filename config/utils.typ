@@ -26,6 +26,8 @@
 #let std = "std"
 #let loop = "while"
 #let do = "do"
+#let value = "value"
+#let push = "push"
 #let ablub = $alpha_union.sq beta_union.sq$
 #let tl = $tack.l$
 #let tr = $tack.r$

@@ -747,40 +747,41 @@ Where _fresh_ is a variable that has not been declared before.
 - decide whether to put it in chapter 4 the kt example and here with the grammar. Or just one of them
 
 #figure(
-  caption: "TODO",
-  ```kt
-  class Node(
-      @property:Unique var value: Any?,
-      @property:Unique var next: Node?,
-  )
+  caption: "Typing for a Stack implementation",
+  ```
+  class Node(value: unique, next: unique)
 
-  class Stack(@property:Unique var root: Node?)
+  class Stack(root: unique)
 
-  fun @receiver:Borrowed @receiver:Unique Stack.push(@Unique value: Any?) {
-      // Δ = this: borrowed unique, value: unique
-      val r = this.root
-      // Δ = this: borrowed unique, value: unique, r: unique, this.root: T
-      this.root = Node(value, r)
-      // Δ = this: borrowed unique, value: T, r: T, this.root: unique
+  fun push(this: unique ♭, value: unique): shared {
+    begin_push;
+    // Δ = this: unique ♭, value: unique
+    var r;
+    // Δ = this: unique ♭, value: unique, r: T
+    r = this.root;
+    // Δ = this: unique ♭, value: unique, r: unique, this.root: T
+    this.root = Node(value, r);
+    // Δ = this: unique ♭, value: T, r: T, this.root: unique
+    return Unit();
   }
 
-  @Unique
-  fun @receiver:Borrowed @receiver:Unique Stack.pop(): Any? {
-      // Δ = this: borrowed unique
-      val value: Any?
-      // Δ = this: borrowed unique, value: T
-      if (this.root == null) {
-          value = null
-          // Δ = this: borrowed unique, value: unique
-      } else {
-          value = this.root!!.value
-          // Δ = this: borrowed unique, value: unique, this.root.value: T
-          this.root = this.root!!.next
-          // Δ = this: borrowed unique, value: unique, this.root: unique
-      }
-      // Unification...
-      // Δ = this: borrowed unique, value: unique, this.root: unique
-      return value
+  fun pop(this: unique ♭): unique {
+    begin_pop;
+    // Δ = this: unique ♭
+    var value;
+    // Δ = this: unique ♭, value: T
+    if (this.root == null) {
+        value = null;
+        // Δ = this: unique ♭, value: unique
+    } else {
+        value = this.root.value;
+        // Δ = this: unique ♭, value: unique, this.root.value: T
+        this.root = this.root.next;
+        // Δ = this: unique ♭, value: unique, this.root: unique
+    }
+    // Unification...
+    // Δ = this: unique ♭, value: unique, this.root: unique
+    return value;
   }
   ```
 )
