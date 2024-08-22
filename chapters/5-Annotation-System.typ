@@ -740,11 +740,7 @@ Where _fresh_ is a variable that has not been declared before.
 
 == Stack example
 
-*TODOs*
-- brief introduction
-- popular example in the literature for showing the system (alias burying, latte)
-- comment what happens
-- decide whether to put it in chapter 4 the kt example and here with the grammar. Or just one of them
+*TODO: brief introduction*
 
 #figure(
   caption: "Typing for a Stack implementation",

@@ -100,9 +100,10 @@
   let a1 = $Delta(p) = alpha' beta'$
   let a2 = $Delta tr m(overline(p)) tl Delta_1$
   let a3 = $mtype(m) = alpha_0 beta_0, ..., alpha_n beta_n -> alpha$
-  let a4 = $Delta_1[p |-> alpha] = Delta'$
+  let a4 = $(beta' = borrowed) => (alpha = unique)$
+  let a5 = $Delta_1[p |-> alpha] = Delta'$
   prooftree(
-    stacked-axiom((a1, a2), (a3, a4)),
+    stacked-axiom((a1, a2), (a3,), (a4, a5)),
     rule(label: "Assign-Call", $mid(p = m(overline(p)))'$)
   )
 }

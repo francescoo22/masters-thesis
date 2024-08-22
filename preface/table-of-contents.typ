@@ -23,7 +23,6 @@
   target: figure.where(kind: image)
 )
 
-// TODO: show if there will be tables
 #v(8em)
 
 #outline(

@@ -43,8 +43,6 @@ Access information provided by Kotlin's type system and by the uniqueness annota
 On the one hand, shared predicates can always be accessed with `wildcard` permission without causing issues. Therefore, they can always be included in the conditions of a method for its parameters, receiver, and return value.
 On the other hand, unique predicates can only be included in a method's conditions in accordance with the annotation system.
 
-// TODO: decidere se la spiegazione delle annotazioni va fatta qui o nel capitolo 4 (ad esempio che annotiamo la funzione per il return value) 
-
 === Return object
 
 Since accessing immutable data is not a problem even if it is shared, every Kotlin function, in its encoding can ensure access to the shared predicate of the type of the returned object.
