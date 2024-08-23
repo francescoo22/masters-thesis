@@ -7,10 +7,7 @@
 
 #pagebreak(to:"odd")
 
-// TODO: the word "function" must refer to functions in the rules. The word "method" must refer to function statements
-// TODO: consistency in rules names (in the way unique, shared, borrowed are abbreviated)
 // TODO: decide whether to put call, if ecc. in italic
-// TODO: decide whether to put unique, shared, borrowed in italic
 // TODO: decide whether to put rule names in italic
 
 = Annotation System<cap:annotation-system>
@@ -42,7 +39,7 @@ syntactic sugar.
 
 #v(1em)
 
-Classes are made of fields, each associated with an annotation $alpha_f$. Methods have parameters that are also associated with an annotation $alpha_f$ as well as an additional annotation $beta$, and they are further annotated with $alpha_f$ for the returned value. The receiver of a method is not explicitly included in the grammar, as it can be treated as a parameter. Similarly, constructors are excluded from the grammar since they can be viewed as functions that return a unique value. Overall, a program is simply made of a set of classes and a set of methods.
+Classes are made of fields, each associated with an annotation $alpha_f$. Methods have parameters that are also associated with an annotation $alpha_f$ as well as an additional annotation $beta$, and they are further annotated with $alpha_f$ for the returned value. The receiver of a method is not explicitly included in the grammar, as it can be treated as a parameter. Similarly, constructors are excluded from the grammar since they can be viewed as methods that return a unique value. Overall, a program is simply made of a set of classes and a set of methods.
 
 The annotations are the same that have been introduced in the previous chapter, the only difference is that `Borrowed` is represented using the symbol $borrowed$.
 Finally, statements and expressions are pretty similar to Koltin.
@@ -60,7 +57,7 @@ Given a program $P$, the rule M-Type defines a function taking a method name and
 
 == Context
 
-A context is a list of distinct paths associated with their annotations $alpha$ and $beta$. While $beta$ is defined in the same way of the grammar, $alpha$ is slightly different. Other than _unique_ and _shared_, in a context, an annotation $alpha$ can also be $top$. As will be better explained in the following sections, the annotation $top$ can only be inferred, so it is not possible for the user to write it. A path annotated with $top$ within a context is not accessible, meaning that the path needs to be re-assigned before beign read. The formal meaning of the annotation $top$ will be clearer while formilizing the statement typing rules.
+A context is a list of distinct paths associated with their annotations $alpha$ and $beta$. While $beta$ is defined in the same way of the grammar, $alpha$ is slightly different. Other than unique and shared, in a context, an annotation $alpha$ can also be $top$. As will be better explained in the following sections, the annotation $top$ can only be inferred, so it is not possible for the user to write it. A path annotated with $top$ within a context is not accessible, meaning that the path needs to be re-assigned before beign read. The formal meaning of the annotation $top$ will be clearer while formilizing the statement typing rules.
 
 #frame-box(
   $
@@ -73,7 +70,7 @@ A context is a list of distinct paths associated with their annotations $alpha$ 
 #v(1em)
 
 Apart from $top$, the rest of the annotations are similar to the annotations in the previous section.
-A reference annotated as unique may either be `null` or point to an object, with no other accessible references to that object. In contrast, a reference marked as shared can point to an object without being the only reference to it. The annotation borrowed indicates that the function receiving the reference will not create additional aliases to it, and upon returning, the fields of the object will have at least the permissions specified in the class declaration. Finally, annotations on fields only indicate the default permissions; to determine the actual permissions of a field, the context must be considered, a concept that will be formalized in the upcoming sections.
+A reference annotated as unique may either be `null` or point to an object, with no other accessible references to that object. In contrast, a reference marked as shared can point to an object without being the only reference to it. The annotation borrowed indicates that the method receiving the reference will not create additional aliases to it, and upon returning, the fields of the object will have at least the permissions specified in the class declaration. Finally, annotations on fields only indicate the default permissions; to determine the actual permissions of a field, the context must be considered, a concept that will be formalized in the upcoming sections.
 
 === Well-Formed Context
 
@@ -173,7 +170,7 @@ $ \_ tr sp(\_) : Delta -> p -> "List"(p : alpha beta) $
   A-un-2, "",
 )
 
-This set of rules is used to define a partial order between the annotations. This partial order can be represented by the lattice shown in @annotation-lattice. The meaning of these relations is that if $alpha beta rel alpha' beta'$, then $alpha beta$ can be used where $alpha' beta'$ is expected, for example for function calls. Thanks to these rules, it will be correct to pass a unique reference to a function expecting a shared argument, but not vice versa. Moreover, the relations are consistent with the definition of $top$ since it will not be possible to pass an inaccessible reference to any function.
+This set of rules is used to define a partial order between the annotations. This partial order can be represented by the lattice shown in @annotation-lattice. The meaning of these relations is that if $alpha beta rel alpha' beta'$, then $alpha beta$ can be used where $alpha' beta'$ is expected, for example for method calls. Thanks to these rules, it will be correct to pass a unique reference to a method expecting a shared argument, but not vice versa. Moreover, the relations are consistent with the definition of $top$ since it will not be possible to pass an inaccessible reference to any method.
 
 #v(1em)
 #figure(image(width: 35%, "../images/lattice.svg"), caption: [Lattice obtained by Rel rules])<annotation-lattice>
@@ -251,7 +248,7 @@ $
   Std-Rec-2, "",
 )
 
-If the judgement $Delta tr std(p, alpha beta)$ is derivable,  inside the context $Delta$, all the sup-paths of $p$ carry the right annotations when $p$ is passed to a function expecting an argument annotated with $alpha beta$. This type of judgement is necessary verify the correctness of the annotations in a method-modular fashion.
+If the judgement $Delta tr std(p, alpha beta)$ is derivable,  inside the context $Delta$, all the sup-paths of $p$ carry the right annotations when $p$ is passed to a method expecting an argument annotated with $alpha beta$. This type of judgement is necessary verify the correctness of the annotations in a method-modular fashion.
 
 Since a called method does not have information about $Delta$ when verified, all the sup-paths of $p$ must have an annotation in $Delta$ that is lower or equal ($rel$) to the annotation that they have in a context containing just their root annotated with $alpha beta$.
 
@@ -259,16 +256,16 @@ To understand better standard forms, consider the following program and a contex
 
 $
 class C(y: unique) \
-f_1(x: unique){...} \
-f_2(x: shared){...} \ \
+m_1(x: unique){...} \
+m_2(x: shared){...} \ \
 Delta = x: unique, space x.y : shared
 $
 
 Within the context $Delta$:
 
-- $Delta tr std(x, unique)$ is not derivable, meaning that $x$ cannot be passed to the function $f_1$. The judgement is not derivable because $Delta(x.y) = shared$ while in a context $Delta' = x: unique$, $Delta'(x.y) = unique$, but $shared lt.eq.curly.not unique$.
+- $Delta tr std(x, unique)$ is not derivable, meaning that $x$ cannot be passed to the method $m_1$. The judgement is not derivable because $Delta(x.y) = shared$ while in a context $Delta' = x: unique$, $Delta'(x.y) = unique$, but $shared lt.eq.curly.not unique$.
 
-- $Delta tr std(x, shared)$ is derivable, meaning that $x$ might be passed to the function $f_2$ if all the preconditions, which would be formalized by statement's typing rules, are also satisfied.
+- $Delta tr std(x, shared)$ is derivable, meaning that $x$ might be passed to the method $m_2$ if all the preconditions, which would be formalized by statement's typing rules, are also satisfied.
 
 == Unification
 
@@ -429,8 +426,8 @@ Typing a method call follows the logic presented in the rules of @cap:passing ($
 - All the paths passed to a method must be in standard form of the expected annotation.
 - It is allowed to pass the same path twice to the same method, but only if it passed where a shared argument is expected.
 - It is allowed to pass two paths $p_i$ and $p_j$ such that $p_i subset.sq p_j$ when one of the following conditions is satisfied:
-  - $p_j$ is _shared_.
-  - The method that has been called expects _shared_ (possibly _borrowed_) arguments in positions $i$ and $j$.
+  - $p_j$ is shared.
+  - The method that has been called expects shared (possibly borrowed) arguments in positions $i$ and $j$.
 - The resulting context is constructed in the following way:
   - Paths passed to the method and their sup-paths are removed from the initial context.
   - A list of annotated paths (in which a the same path may appear twice) in constructed by mapping passed paths according to the "passing" ($~>$) rules.
@@ -438,8 +435,8 @@ Typing a method call follows the logic presented in the rules of @cap:passing ($
 
 @call-arg-twice shows the cases where it is possible to pass the same reference more than once and how normalization is applied.
 In @call-sup-ok-1 it is possible to call `f` by passing `x` and `x.f` since $Delta(x.f) = shared$.
-In @call-sup-wrong is not possible to call `g` by passing `b` and `b.f`, this is because `g`, in its body, expects `x.f` to be _unique_, but it would not be the case by passing `b` and `b.f`.
-Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and `x.f` since the method expects both of the arguments to be _shared_.
+In @call-sup-wrong is not possible to call `g` by passing `b` and `b.f`, this is because `g`, in its body, expects `x.f` to be unique, but it would not be the case by passing `b` and `b.f`.
+Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and `x.f` since the method expects both of the arguments to be shared.
 
 #figure(
   caption: "Typing example for method call with same reference",
@@ -525,7 +522,7 @@ Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and 
 
 #display-rules(Assign-Call, "")
 
-After defining how to type a _call_, it is easy to formilize the typing of a _call_ assignment. Like all the other assignment rules, the root of the path on the left side of the assignment must be in the context. First of all, the _call_ is typed obtaining a new context $Delta_1$. Then, the annotation of the path on the left side of the assignment is replaced ($|->$) in $Delta_1$ with the annotation of the return value of the function.
+After defining how to type a _call_, it is easy to formilize the typing of a _call_ assignment. Like all the other assignment rules, the root of the path on the left side of the assignment must be in the context. First of all, the _call_ is typed obtaining a new context $Delta_1$. Then, the annotation of the path on the left side of the assignment is replaced ($|->$) in $Delta_1$ with the annotation of the return value of the method.
 
 #figure(
   caption: "Typing example for assigning a method call",
@@ -548,14 +545,14 @@ After defining how to type a _call_, it is easy to formilize the typing of a _ca
 
 #display-rules(Assign-Unique, "")
 
-In order to type an assignment $p = p'$ in which $p'$ is _unique_, the following conditions must hold:
+In order to type an assignment $p = p'$ in which $p'$ is unique, the following conditions must hold:
 - The root of $p$ must be in context.
-- $p'$ must be _unique_ in the context.
+- $p'$ must be unique in the context.
 - Assignments in which $p' subset.eq.sq p$, like $p.f = p$, are not allowed.
 
 The resulting context is built in the following way:
 - Starting from the initial context $Delta$, a context $Delta_1$ is obtained by replacing ($|->$) the annotation of $p'$ with $top$.
-- The context $Delta_1$ is used to obtain a context $Delta'$ by replacing ($|->$) the annotation of $p$ with _unique_.
+- The context $Delta_1$ is used to obtain a context $Delta'$ by replacing ($|->$) the annotation of $p$ with unique.
 - Finally, to obtain the resulting context, all the paths that were originally rooted in $p'$ are rooted in $p$ with the same annotation and added to $Delta'$.
 
 #figure(
@@ -580,9 +577,9 @@ The resulting context is built in the following way:
 
 #display-rules(Assign-Shared, "")
 
-Typing an assignment $p = p'$ in which $p'$ is _shared_ is similar to the case where $p'$ is _unique_, but with some differences:
-- $p$ cannot be _borrowed_. This is necessary to guarantee the soundness of the system when a _unique_ variable is passed to a function expecting a _shared borrowed_ argument.
-- Obviously $p'$ must be _shared_ in the context.
+Typing an assignment $p = p'$ in which $p'$ is shared is similar to the case where $p'$ is unique, but with some differences:
+- $p$ cannot be borrowed. This is necessary to guarantee the soundness of the system when a unique variable is passed to a method expecting a shared borrowed argument.
+- Obviously $p'$ must be shared in the context.
 
 Also the resulting context is constructed in a similar way to the previous case. The only difference is that in this case it is not needed to replace ($|->$) the annotation of $p'$.
 
@@ -670,7 +667,7 @@ By construction of the grammar, a _return_ statement will always be the last sta
 - The annotation of the returned path must be lower or equal ($rel$) than the annotation of the return value of the method.
 - The returned path must be in the standard form of the returned type
 - All the parameters that are not unique must be in the standard form of their original.
-These conditions are essential for having a method modular system. // TODO: elaborate more?
+These conditions are essential for having a method modular system. // TODO: da cambiare un po' e rielabora anche un po' di piu'
 
 Note that the system does not allow to return _null_ or a _method call_ because they are easy to be desugared, as it is shown in the following examples:
 $ {...; ret null} equiv {...; var "fresh" ; "fresh" = null ; ret "fresh"} $

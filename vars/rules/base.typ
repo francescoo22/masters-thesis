@@ -87,22 +87,22 @@
 
 #let SubPath-Base = prooftree(
   axiom(""),
-  rule(label: "SubPath-Base", $p subset.sq p.f$),
+  rule(label: "Sub-Path-Base", $p subset.sq p.f$),
 )
 
 #let SubPath-Rec = prooftree(
   axiom($p subset.sq p'$),
-  rule(label: "SubPath-Rec", $p subset.sq p'.f$),
+  rule(label: "Sub-Path-Rec", $p subset.sq p'.f$),
 )
 
 #let SubPath-Eq-1 = prooftree(
   axiom($p = p'$),
-  rule(label: "SubPath-Eq-1", $p subset.sq.eq p'$),
+  rule(label: "Sub-Path-Eq-1", $p subset.sq.eq p'$),
 )
 
 #let SubPath-Eq-2 = prooftree(
   axiom($p subset.sq p'$),
-  rule(label: "SubPath-Eq-2", $p subset.sq.eq p'$),
+  rule(label: "Sub-Path-Eq-2", $p subset.sq.eq p'$),
 )
 
 #let Remove-SupPathsEq-Empty = prooftree(

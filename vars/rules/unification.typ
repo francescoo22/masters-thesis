@@ -67,6 +67,6 @@
   let a2 = $norm(p_i: alpha_i beta_i | p_i != p_0 and 0 <= i <= n) = p'_0 : alpha'_0 beta'_0, ..., p'_m : alpha'_m beta'_m$
   prooftree(
     stacked-axiom((a1,), (a2,)),
-    rule(label: "N-rec", $norm(p_0\: alpha_0 beta_0, ..., p_n\: alpha_n beta_n) = p_0 : ablub, p'_0 : alpha'_0 beta'_0, ..., p'_m : alpha'_m beta'_m$)
+    rule(label: "N-Rec", $norm(p_0\: alpha_0 beta_0, ..., p_n\: alpha_n beta_n) = p_0 : ablub, p'_0 : alpha'_0 beta'_0, ..., p'_m : alpha'_m beta'_m$)
   )
 }

@@ -76,6 +76,7 @@ Currently, the plugin only supports class properties declared as parameters. Pro
 
 == Predicates Unfolding<cap:unfolding>
 
+TODO:
 - easy for shared
 - inhaling -> only if there are no way to access the predicate
 - design choices for unique
