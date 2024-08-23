@@ -340,11 +340,14 @@ $ "normalize" : "List"(p : alpha beta) -> "List"(p : alpha beta) $
 
 == Statements Typing
 
-*TODO: How to read typing rules*
+Typing rules are structured as follows: $ Delta tr s tl Delta' $
+This judgment means that executing the statement $s$ within a context $Delta$ will lead to a context $Delta'$.
 
-*TODO: what is a well-typed program*
+A program $P$ is well-typed if and only if the following judgement is derivable:
 
-A program is well-typed iff $forall m equiv m(...){overline(s)} in overline(M) . space dot tr overline(s) tr dot$ is derivable.
+$ forall m(overline(x\: af beta)): af {begin_m; overline(s); ret_m e} in P . space dot tr begin_m; overline(s); ret_m e tl dot $
+
+This means that a program is well-typed if and only if, for every method in that program, executing the body of the method within an empty context leads to an empty context.
 
 === Begin
 
