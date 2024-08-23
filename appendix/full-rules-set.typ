@@ -144,7 +144,7 @@
 #display-rules(
   Begin, "",
   Decl, Assign-Null,
-  Seq-Base, Seq-Rec,
+  Seq-New, "",
   Assign-Unique, "",
   Assign-Shared, "",
   Assign-Borrowed-Field, "",

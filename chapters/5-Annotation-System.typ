@@ -31,12 +31,12 @@ syntactic sugar.
   $
     P &::= overline(CL) times overline(M) \
     CL &::= class C(overline(f\: alpha_f)) \
-    M &::= m(overline(x\: af beta)): af {begin_m; overline(s); ret_m e} \
+    M &::= m(overline(x\: af beta)): af {begin_m; s ; ret_m e} \
     af &::= unique | shared \
     beta &::= dot | borrowed \
     p &::= x | p.f \
     e &::= null | p | m(overline(p)) \
-    s &::= var x | p = e |  fi p_1 == p_2 then overline(s_1) els overline(s_2) | m(overline(p))
+    s &::= var x | p = e | s_1 ; s_2 | fi p_1 == p_2 then s_1 els s_2 | m(overline(p))
   $
 )
 
@@ -345,7 +345,7 @@ This judgment means that executing the statement $s$ within a context $Delta$ wi
 
 A program $P$ is well-typed if and only if the following judgement is derivable:
 
-$ forall m(overline(x\: af beta)): af {begin_m; overline(s); ret_m e} in P . space dot tr begin_m; overline(s); ret_m e tl dot $
+$ forall m(overline(x\: af beta)): af {begin_m; s; ret_m e} in P . space dot tr begin_m; s; ret_m e tl dot $
 
 This means that a program is well-typed if and only if, for every method in that program, executing the body of the method within an empty context leads to an empty context.
 
@@ -368,11 +368,9 @@ f(this: unique, x: unique ♭, y: shared ♭, z: shared): unique {
 
 === Sequence of Statements
 
-#display-rules(Seq-Base, Seq-Rec)
+#display-rules(Seq-New, "")
 
-// TODO: begin and return should be statements. It would be good to add an entry in the grammar for that.
-
-These rules are straightforward, but necessary to define how to type a sequence of statements. In a sequence, statements are typed in the order that they appear. After a statement is typed, the resulting context is used to type the following one.
+This rule is straightforward, but necessary to define how to type a sequence of statements. In a sequence, statements are typed in the order that they appear. After a statement is typed, the resulting context is used to type the following one.
 
 === Variable Declaration
 
