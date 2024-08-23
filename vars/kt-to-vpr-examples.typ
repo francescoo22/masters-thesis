@@ -311,3 +311,66 @@ method constructorB(p1: Ref, p2: Ref) returns (ret: Ref)
   ensures unfolding acc(UniqueB(ret), write) in
     ret.a1 == p1 && ret.a2 == p2
 ```
+
+// ************* Chapter 5 comparison *************
+
+#let grammar_annotations-5 = ```
+class C(
+  f1: unique,
+  f2: shared
+)
+
+m1() : unique { 
+  ... 
+}
+
+m2(this: unique) : shared {
+  ... 
+}
+
+m3(
+  x1: unique,
+  x2: unique borrowed,
+  x3: shared,
+  x4: shared borrowed
+) {
+  ...
+}
+```
+
+#let kt_annotations-5 = ```kt
+class C(
+    @property:Unique var f1: Any,
+    var f2: Any
+)
+
+@Unique fun m1(): Any {
+    /* ... */
+}
+
+fun @receiver:Unique Any.m2() {
+    /* ... */
+}
+
+fun m3(
+    @Unique x1: Any,
+    @Unique @Borrowed x2: Any,
+    x3: Any,
+    @Borrowed x4: Any
+) {
+    /* ... */
+}
+```
+
+#let compare-grammar-kt = align(
+  center,
+  figure(
+    caption: "Comparison between the grammar and annotated Kotlin",
+    grid(
+      columns: (auto, auto),
+      column-gutter: 2em,
+      row-gutter: .5em,
+      grammar_annotations-5, kt_annotations-5
+    )
+  )
+)

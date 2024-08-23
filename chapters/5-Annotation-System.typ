@@ -3,11 +3,11 @@
 #import "../vars/rules/relations.typ": *
 #import "../vars/rules/unification.typ": *
 #import "../vars/rules/statements.typ": *
+#import "../vars/kt-to-vpr-examples.typ": compare-grammar-kt
 
 #pagebreak(to:"odd")
 
 // TODO: the word "function" must refer to functions in the rules. The word "method" must refer to function statements
-// TODO: Fix Chapter vs Section while using @
 // TODO: consistency in rules names (in the way unique, shared, borrowed are abbreviated)
 // TODO: decide whether to put call, if ecc. in italic
 // TODO: decide whether to put unique, shared, borrowed in italic
@@ -15,22 +15,21 @@
 
 = Annotation System<cap:annotation-system>
 
-This chapter describes an annotation system for controlling aliasing within a subset of the Kotlin language.
-The system takes inspiration from some previous works @boyland2001alias @zimmerman2023latte @aldrich2002alias  but it also introduces significant modifications.
+This chapter formalizes the uniqueness system that was introduced in @cap:annotations-kt.
+The system is inspired from some previous works @aldrich2002alias @boyland2001alias @zimmerman2023latte, but it also introduces significant modifications.
+While the majority of previous works are made for Java, this system is designed exclusively for Kotlin and
+it is also specifically designed for being as lightweight as possible and gradually integrable with already existing Kotlin code.
 
-One distinguishing trait of this system is that it is designed exclusively for Kotlin, while the majority of previous works are made for Java and other languages.
-It is also specifically made for being as lightweight as possible and gradually integrable with already existing code.
-// TODO: borrowed unique / borrowed shared distinction here?
-
-A unique design goal of this system is to improve the verification process with Viper by establishing a link between separation logic and the absence of aliasing control in Kotlin.
+The main goal of the system is to improve the verification process with Viper by establishing a link between separation logic and the absence of aliasing control in Kotlin.
 
 == Grammar
 
-In order to define the rules of this annotation system, a grammar representing a substet of the Kotlin language is used.
-
+In order to define the rules of this annotation system, a grammar representing a subset of the Kotlin language is used. This grammar captures the specific syntax and features that the system needs to handle. By focusing on a subset, the rules can be more clearly defined and easier to manage, while many complex features of the language can be supported through 
+syntactic sugar.
 
 #frame-box(
   $
+    P &::= overline(CL) times overline(M) \
     CL &::= class C(overline(f\: alpha_f)) \
     M &::= m(overline(x\: af beta)): af {begin_m; overline(s); ret_m e} \
     af &::= unique | shared \
@@ -38,89 +37,17 @@ In order to define the rules of this annotation system, a grammar representing a
     p &::= x | p.f \
     e &::= null | p | m(overline(p)) \
     s &::= var x | p = e |  fi p_1 == p_2 then overline(s_1) els overline(s_2) | m(overline(p))
-    // \ &| loop p_1 == p_2 do overline(s)
   $
 )
 
-=== Classes and Methods
-- Primitive fields are not considered
-- `this` can be seen as a parameter
-- constructors can be seen as functions returning a `unique` value
-=== Annotations
-// TODO: create a definition function??
-- Only *fields*, *method parameters*, and *return values* have to be annotated.
-- A reference annotated as `unique` may either be `null` or point to an object, and it is the sole *accessible* reference pointing to that object.
-- A reference marked as `shared` can point to an object without being the exclusive reference to that object.
-- `T` is an annotation that can only be inferred and means that the reference is *not accessible*.
-- $borrowed$ (borrowed) indicates that the function receiving the reference won't create extra aliases to it, and on return, its fields will maintain at least the permissions stated in the class declaration.
-- Annotations on fields indicate only the default permissions, in order to understand the real permissions of a fields it is necessary to look at the context. This concept is formalized by rules in /*@cap:paths*/ and shown in /*@field-annotations.*/
+#v(1em)
 
-#let grammar_annotations = ```
-class C(
-  f1: unique,
-  f2: shared
-)
+Classes are made of fields, each associated with an annotation $alpha_f$. Methods have parameters that are also associated with an annotation $alpha_f$ as well as an additional annotation $beta$, and they are further annotated with $alpha_f$ for the returned value. The receiver of a method is not explicitly included in the grammar, as it can be treated as a parameter. Similarly, constructors are excluded from the grammar since they can be viewed as functions that return a unique value. Overall, a program is simply made of a set of classes and a set of methods.
 
-m1() : unique { 
-  ... 
-}
+The annotations are the same that have been introduced in the previous chapter, the only difference is that `Borrowed` is represented using the symbol $borrowed$.
+Finally, statements and expressions are pretty similar to Koltin.
 
-
-m2(this: unique) : shared {
-  ... 
-}
-
-m3(
-  x1: unique,
-  x2: unique borrowed,
-  x3: shared,
-  x4: shared borrowed
-) {
-  ...
-}
-```
-
-#let kt_annotations = ```kt
-class C(
-    @Unique var f1: Any,
-    var f2: Any
-)
-
-@Unique
-fun m1(): Any {
-    /* ... */
-}
-
-fun @receiver:Unique Any.m2() {
-    /* ... */
-}
-
-fun m3(
-    @Unique x1: Any,
-    @Unique @Borrowed x2: Any,
-    x3: Any,
-    @Borrowed x4: Any
-) {
-    /* ... */
-}
-```
-#align(
-  center,
-  figure(
-    caption: "Comparision between the grammar and annotated Kotlin",
-    grid(
-      columns: (auto, auto),
-      column-gutter: 2em,
-      row-gutter: .5em,
-      [*Grammar*],[*Kotlin*],
-      grammar_annotations, kt_annotations
-    )
-  )
-)
-
-=== Expressions
-=== Statements
-- Since it is not too relevant for the purposes of the system, the guard of an if statement is kept as simple as possible.
+#compare-grammar-kt
 
 == General
 
@@ -129,9 +56,11 @@ fun m3(
   M-Args, "",
 )
 
+Given a program $P$, the rule M-Type defines a function taking a method name and returning its type. Similarly, M-Args defines a function taking a method name and returning its arguments. In order to derive these rules, the method must be contained within $P$.
+
 == Context
 
-A context is a list of paths associated with their annotations $alpha$ and $beta$. While $beta$ is defined in the same way of the grammar, $alpha$ is slightly different. Other than _unique_ and _shared_, in a context, an annotation $alpha$ can also be $top$. As will be better explained in the following sections, the annotation $top$ can only be inferred, so it is not possible for the user to write it. A path annotated with $top$ within a context is not accessible, meaning that the path needs to be re-assigned before beign read. The formal meaning of the annotation $top$ will be clearer while formilizing the statement typing rules.
+A context is a list of distinct paths associated with their annotations $alpha$ and $beta$. While $beta$ is defined in the same way of the grammar, $alpha$ is slightly different. Other than _unique_ and _shared_, in a context, an annotation $alpha$ can also be $top$. As will be better explained in the following sections, the annotation $top$ can only be inferred, so it is not possible for the user to write it. A path annotated with $top$ within a context is not accessible, meaning that the path needs to be re-assigned before beign read. The formal meaning of the annotation $top$ will be clearer while formilizing the statement typing rules.
 
 #frame-box(
   $
@@ -140,6 +69,11 @@ A context is a list of paths associated with their annotations $alpha$ and $beta
     Delta &::= dot | p : alpha beta, Delta
   $
 )
+
+#v(1em)
+
+Apart from $top$, the rest of the annotations are similar to the annotations in the previous section.
+A reference annotated as unique may either be `null` or point to an object, with no other accessible references to that object. In contrast, a reference marked as shared can point to an object without being the only reference to it. The annotation borrowed indicates that the function receiving the reference will not create additional aliases to it, and upon returning, the fields of the object will have at least the permissions specified in the class declaration. Finally, annotations on fields only indicate the default permissions; to determine the actual permissions of a field, the context must be considered, a concept that will be formalized in the upcoming sections.
 
 === Well-Formed Context
 
@@ -407,12 +341,8 @@ $ "normalize" : "List"(p : alpha beta) -> "List"(p : alpha beta) $
 == Statements Typing
 
 *TODO: How to read typing rules*
-*TODO: adjust program definition*
 
-$"Program" ::= overline(CL) times overline(M)$
-where:
-- $overline(CL) in 2^CL$
-- $overline(M) in 2^M$
+*TODO: what is a well-typed program*
 
 A program is well-typed iff $forall m equiv m(...){overline(s)} in overline(M) . space dot tr overline(s) tr dot$ is derivable.
 
@@ -672,7 +602,7 @@ Also the resulting context is constructed in a similar way to the previous case.
   ```
 )
 
-=== Assign boorowed field
+=== Assign borrowed field
 
 #display-rules(Assign-Borrowed-Field, "")
 
@@ -684,6 +614,23 @@ Also the resulting context is constructed in a similar way to the previous case.
   - Can be passed as arguments to other functions (if relation rules are respected).
   - Have to become `T` after being read (even if shared).
   - Can only be reassigned with a `unique`.
+
+#figure(
+  caption: "Typing example for assigning a borrowed field",
+  ```
+  class B(t: unique)
+
+  f(x: shared ♭): unique {
+    begin_f;
+      ⊣ Δ = x: shared ♭,
+    var z;
+      ⊣ Δ = x: shared ♭, z: T
+    z = x.t;
+      ⊣ Δ = x: shared ♭, z: shared, x.t: T
+    ...
+  }
+  ```
+)
 
 === If
 
