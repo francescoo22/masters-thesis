@@ -366,7 +366,7 @@ f(this: unique, x: unique ♭, y: shared ♭, z: shared): unique {
 ```
 )
 
-=== Sequence of Statements
+=== Sequence
 
 #display-rules(Seq-New, "")
 
@@ -375,8 +375,6 @@ This rule is straightforward, but necessary to define how to type a sequence of 
 === Variable Declaration
 
 #display-rules(Decl, "")
-
-// TODO: kotlin shadowing part in a separate section?
 
 After declaring a variable, it is inaccessible until its initialization and so the varaible will be in the context with $top$ annotation.
 Note that this rule only allows to declare variables if they are not in the context while Kotlin allows to shadow variables declared in outer scopes. Kotlin code using shadowing is not currently supported by this system.
@@ -394,7 +392,7 @@ f(): unique {
 ```
 )
 
-=== Assigning null
+=== Assign null
 
 #display-rules(Assign-Null, "")
 
@@ -523,7 +521,7 @@ Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and 
   ```
 )<call-sup-ok-2>
 
-=== Assign call
+=== Assign Call
 
 #display-rules(Assign-Call, "")
 
@@ -546,7 +544,7 @@ After defining how to type a _call_, it is easy to formilize the typing of a _ca
   ```
 )
 
-=== Assign unique
+=== Assign Unique
 
 #display-rules(Assign-Unique, "")
 
@@ -578,7 +576,7 @@ The resulting context is built in the following way:
   ```
 )
 
-=== Assign shared
+=== Assign Shared
 
 #display-rules(Assign-Shared, "")
 
@@ -603,18 +601,13 @@ Also the resulting context is constructed in a similar way to the previous case.
   ```
 )
 
-=== Assign borrowed field
+=== Assign Borrowed Field
 
 #display-rules(Assign-Borrowed-Field, "")
 
-*TODO: Add description (the current one is copied from the other document)*
+Fields of a borrowed parameter must be treated with caution to avoid unsoundness. Borrowed fields can be passed as arguments to other methods if the preconditions for typing the method call are respected. In addition, they can be used on the right-hand side of an assignment with certain limitations. After being read, a borrowed field will inaccessible even if shared. Finally, borrowed fields can be used on the left-hand side of an assignment when a unique reference is on the right-hand side.
 
-*TODO: Add an example*
-
-- Note that fields of a borrowed parameter are borrowed too and they need to be treated carefully in order to avoid unsoundness. Specifically, borrowed fields:
-  - Can be passed as arguments to other functions (if relation rules are respected).
-  - Have to become `T` after being read (even if shared).
-  - Can only be reassigned with a `unique`.
+Ensuring inaccessibility after reading borrowed fields and restricting their reassignment to unique references, along with respecting the preconditions for typing a return statement stated in @type-ret, is essential for maintaining soundness when unique references are passed to methods that accept a borrowed-shared parameter.
 
 #figure(
   caption: "Typing example for assigning a borrowed field",
@@ -669,7 +662,7 @@ fun f(@Unique a: A, @Borrowed c: C) {
 ```
 )
 
-=== Return
+=== Return<type-ret>
 
 #display-rules(Return-p, "")
 
@@ -686,7 +679,7 @@ Where _fresh_ is a variable that has not been declared before.
 
 *TODO: Add example for return*
 
-== Stack example
+== Stack Example
 
 *TODO: brief introduction*
 
