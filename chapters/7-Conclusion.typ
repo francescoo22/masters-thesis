@@ -3,11 +3,11 @@
 
 == Results
 
-This thesis has presented a uniqueness system for the Kotlin language, designed to improve the verification process while using Viper.
-The uniqueness system was then rigorously formalized, detailing the rules and constraints necessary to ensure that unique references are properly maintained throughout the code.
-Finally, this work has demonstrated how the uniqueness system can be used to encode Kotlin into Viper more precisely, allowing for more accurate and reliable verification of Kotlin programs.
+This thesis has introduced a novel uniqueness system for the Kotlin language, bringing several important improvements to existing approaches. The system offers greater flexibility in managing paths, making it easier to handle nested properties in Kotlin programs. Additionally, it clearly distinguishes between borrowed-shared and borrowed-unique references, facilitating the integration of uniqueness annotations into existing codebases. Indeed, one of the key advantages of this system is its ability to be gradually integrated into existing Kotlin code, allowing developers to adopt it without requiring major changes to their current code.
 
-// TODO: elaborate more?
+The uniqueness system has been rigorously formalized, detailing the rules and constraints necessary to ensure that unique references are properly maintained within a program.
+
+Finally, this work has demonstrated how the uniqueness system can be used to encode Kotlin into Viper more precisely, enabling more accurate and reliable verification of Kotlin programs.
 
 == Future Work
 
