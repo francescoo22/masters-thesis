@@ -3,7 +3,11 @@
 
 == Results
 
-*TODO*
+This thesis has presented a uniqueness system for the Kotlin language, designed to improve the verification process while using Viper.
+The uniqueness system was then rigorously formalized, detailing the rules and constraints necessary to ensure that unique references are properly maintained throughout the code.
+Finally, this work has demonstrated how the uniqueness system can be used to encode Kotlin into Viper more precisely, allowing for more accurate and reliable verification of Kotlin programs.
+
+// TODO: elaborate more?
 
 == Future Work
 
