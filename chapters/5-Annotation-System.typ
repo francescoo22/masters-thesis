@@ -663,18 +663,22 @@ fun f(@Unique a: A, @Borrowed c: C) {
 
 #display-rules(Return-p, "")
 
-By construction of the grammar, a _return_ statement will always be the last statement to execute. Therefore, it is not relevant to have a resulting context after typing the return statement. In order to be well-typed, a _return_ statement must satisfy the following conditions:
-- The annotation of the returned path must be lower or equal ($rel$) than the annotation of the return value of the method.
-- The returned path must be in the standard form of the returned type
-- All the parameters that are not unique must be in the standard form of their original.
-These conditions are essential for having a method modular system. // TODO: da cambiare un po' e rielabora anche un po' di piu'
+By the construction of the grammar, a return statement is designed to be the final statement executed within a method. As such, there is no need to maintain a resulting context after the return statement has been typed. However, several important conditions must be satisfied when returning.
 
-Note that the system does not allow to return _null_ or a _method call_ because they are easy to be desugared, as it is shown in the following examples:
+First, the annotation of the path being returned must be lower than or equal to ($rel$) the annotation of the return value of the method. This ensures that a method cannot return a value with greater aliasing than what was specified in the method’s signature, effectively preventing borrowed values from being returned.
+
+Second, the path being returned must be in the standard form of the return type.
+
+Finally, all parameters that are shared or borrowed (or both) must remain in the standard form of their original annotations by the time the method returns.
+
+These conditions are essential for maintaining the modularity, allowing each method to be typed without knowing the implementation of the other methods.
+
+The system does not permit returning a null value or a method call directly since these cases can be easily desugared, as demonstrated in the following examples:
+
 $ {...; ret null} equiv {...; var "fresh" ; "fresh" = null ; ret "fresh"} $
 $ {...; ret m(...)} equiv {...; var "fresh" ; "fresh" = m(...) ; ret "fresh"} $
-Where _fresh_ is a variable that has not been declared before.
 
-*TODO: Add example for return*
+*TODO: Add examples for return*
 
 == Stack Example
 
