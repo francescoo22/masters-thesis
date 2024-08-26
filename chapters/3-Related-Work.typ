@@ -35,7 +35,7 @@ In recent decades, extensive research has been conducted to address the issue of
 
 === Controlling Aliasing through Uniqueness<cap:control-alias-unique>
 
-// TODO: decidere se usare virgolette o corsivo per linear logi, uniqueness locic ecc.
+// TODO: decide whether to use quote-unquote or italic for linear logic, uniqueness logic ecc.
 
 A uniqueness type system distinguishes values referenced no more than once from values that can be referenced multiple times in a program. Harrington's _Uniqueness Logic_ @uniqueness-logic provides a formalization of the concept of uniqueness.
 
@@ -69,7 +69,7 @@ Finally the object referred to by a *borrowed* parameter may not be returned fro
 Latte @zimmerman2023latte proposes an approach to reduce both the volume of annotations and the complexity of invariants necessary for reasoning about aliasing in an object-oriented language with mutation.
 
 The system requires few annotations to be provided by the user:
-- *unique* or *shared* for object ﬁelds and return types.
+- *unique* or *shared* for object fields and return types.
 - *unique*, *shared* or *owned* for method parameters.
 - The remaining information for local variables is inferred.
 

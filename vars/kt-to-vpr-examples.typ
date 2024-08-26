@@ -26,7 +26,7 @@ requires acc(x.n) && acc(y.n)
 method use_f(x: Ref)
 requires acc(x.n)
 {
-  f(x, x) // verifcation error
+  f(x, x) // verification error
 }
 ```
 

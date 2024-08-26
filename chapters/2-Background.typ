@@ -5,7 +5,7 @@
 
 == Kotlin
 
-Developed by JetBrains, Kotlin @Kotlin @KotlinSpec is an open-source, statically typed programming language that gained popularity in recent years especially in the Android software development ﬁeld. Kotlin shares many similarities with Java and can fully interoperate with it. Notably, Kotlin also introduces several features that are absent in Java, such as improved type inference, functional programming, null-safety, and smart-casting.
+Developed by JetBrains, Kotlin @Kotlin @KotlinSpec is an open-source, statically typed programming language that gained popularity in recent years especially in the Android software development field. Kotlin shares many similarities with Java and can fully interoperate with it. Notably, Kotlin also introduces several features that are absent in Java, such as improved type inference, functional programming, null-safety, and smart-casting.
 
 The following sections will present the features of the language that are more relevant for this work.
 
@@ -187,11 +187,11 @@ Following that, variable `z` is initialized with a newly-created object in the f
 
 === Problems Caused by Aliasing
 
-Although aliasing is essential in object-oriented programming as it allows programmers to implement designs involving sharing, as described in The Geneva Convention @GenevaConvention, aliasing can be a problem in both formal veriﬁcation and practical programming.
+Although aliasing is essential in object-oriented programming as it allows programmers to implement designs involving sharing, as described in The Geneva Convention @GenevaConvention, aliasing can be a problem in both formal verification and practical programming.
 
 The example in @alias-verification illustrates how aliasing between references can complicate the formal verification process. In the given example, a class `A` is declared with a boolean field `x`, followed by the function `f` which accepts two arguments `a1` and `a2` of type `A`. The function assigns `true` to `a1.x`, `false` to `a2.x`, and finally returns `a1.x`. Despite the function being straightforward, we cannot assert that the function will always return `true`. The reason for this uncertainty is the potential aliasing of `a1` and `a2`, as the second assignment might change the value of `a1.x` as well.
 
-Modern programming languages frequently utilize a high degree of concurrency, which can further complicate the verification process. As shown in @alias-verification-concurrent, even a simpler function than its counterpart in @alias-verification does not permit to assert that it will always return `true`. In this instance, the function only takes a single argument `a` of type `A`, assigns `true` to `a.x` and eventually retruns it. However, within a concurrent context there may exist another thread with access to a variable aliasing `a` that can modify `a.x` to `false` prior to the function's return, thus challenging the verification process.
+Modern programming languages frequently utilize a high degree of concurrency, which can further complicate the verification process. As shown in @alias-verification-concurrent, even a simpler function than its counterpart in @alias-verification does not permit to assert that it will always return `true`. In this instance, the function only takes a single argument `a` of type `A`, assigns `true` to `a.x` and eventually returns it. However, within a concurrent context there may exist another thread with access to a variable aliasing `a` that can modify `a.x` to `false` prior to the function's return, thus challenging the verification process.
 
 @alias-bug presents a contrived example to illustrate how aliasing can lead to mysterious bugs. Function `f` takes two lists `xs` and `ys` as arguments. If both lists are not empty, the function removes the last element from each. One might assume this function will never raise an `IndexOutOfBoundsException`. However, if `xs` and `ys` are aliased and have a size of one, this exception will occur.
 
@@ -291,12 +291,12 @@ $ {(x |-> -) * ((x |-> 1) "−∗" P)} space x := 1 {P} $
 
 Viper @ViperWebSite @Viper (Verification Infrastructure for Permission-based Reasoning) is a language and suite of tools developed by ETH Zurich that can be used for developing new verification tools.
 
-The whole Viper infrastructure is shown in @vpr-infrastructure @ViperWebSite and is made of the Viper intermediate language and two back-ends, the first based on symbolic execution and the second based on verifcation condition generation.
+The whole Viper infrastructure is shown in @vpr-infrastructure @ViperWebSite and is made of the Viper intermediate language and two back-ends, the first based on symbolic execution and the second based on verification condition generation.
 
 The verification process using the Viper toolchain happens as follows. An higher-level language is first encoded into the Viper intermediate language which provides support to permissions natively and uses them to express ownership of heap locations in a style similar to separation logic. 
 This is convenient for reasoning about programs that manipulate the heap and concurrent thread interactions. 
 Viper conditions are then verified using one of the two back-ends and an SMT Solver (Z3). 
-Viper back-ends aim to achieve extensive automation with the intention to avoid circumstances where tool developers and users need to comprehend the inner behaviour of the back-ends to carry out the verification process. 
+Viper back-ends aim to achieve extensive automation with the intention to avoid circumstances where tool developers and users need to comprehend the inner behavior of the back-ends to carry out the verification process. 
 
 #figure(
   caption: "The Viper verification infrastructure",
@@ -307,7 +307,7 @@ Viper back-ends aim to achieve extensive automation with the intention to avoid 
 
 The Viper intermediate language is an object-oriented, sequential programming language. Despite being designed as an intermediary language, Viper offers high-level features that are beneficial in manually expressing verification issues, along with potent low-level features useful for automatic encoding of source languages.
 
-In Viper, methods can be seen as an abstraction over an operation sequence, which may involve executing an unlimited number of statements. The caller of a method observes its behaviour solely through the method's signature and its preconditions and postconditions. This allows Viper to perform a method-modular verifcation, avoiding all the complexities associated with interprocedural analysis.
+In Viper, methods can be seen as an abstraction over an operation sequence, which may involve executing an unlimited number of statements. The caller of a method observes its behavior solely through the method's signature and its preconditions and postconditions. This allows Viper to perform a method-modular verification, avoiding all the complexities associated with interprocedural analysis.
 
 #figure(
   caption: "Viper method example",
@@ -335,14 +335,14 @@ In Viper, methods can be seen as an abstraction over an operation sequence, whic
 
 In Viper, fields are top-level declarations and, since classes do not exist in Viper, every object has all the declared fields.
 Field permissions, which define the heap areas that an expression, a statement, or an assertion can access, control the reasoning of a Viper program's heap. Heap locations are only accessible if the relevant permission is under the control of the method currently being verified.
-@vpr-permissions-1 shows how a method can require field permissions in its precondtions (Line 4) and ensure that these permissions will still be valid when returning to the caller (Line 5).
+@vpr-permissions-1 shows how a method can require field permissions in its preconditions (Line 4) and ensure that these permissions will still be valid when returning to the caller (Line 5).
 
 #figure(
   caption: "Viper permissions example",
   ```java
   field b: Bool
 
-  method nagation(this: Ref)
+  method negation(this: Ref)
   requires acc(this.b)
   ensures acc(this.b)
   {
@@ -352,12 +352,12 @@ Field permissions, which define the heap areas that an expression, a statement, 
 )<vpr-permissions-1>
 
 As well as being declared in preconditions and postconditions, field permissions can also be obtained within a method's body. The operation that allows to gain permissions is called inhaling and can be seen in @vpr-permissions-2 (Line 3). The opposite operation is called exhaling and enables to drop permissions.
-@vpr-permissions-2 also allows to notice how access permissions that has been seen until now are exclusive. In fact, the assertion `acc(x.b) && acc(y.b)` is similar to a separating conjunction in separation logic and so inhaling that assertion implies that `x != y`. This is confermed by the fact that the statement at Line 6 can be verified.
+@vpr-permissions-2 also allows to notice how access permissions that has been seen until now are exclusive. In fact, the assertion `acc(x.b) && acc(y.b)` is similar to a separating conjunction in separation logic and so inhaling that assertion implies that `x != y`. This is confirmed by the fact that the statement at Line 6 can be verified.
 
 #figure(
   caption: "Viper exclusivity example",
   ```java
-  method conjuntion(x: Ref, y: Ref)
+  method conjunction(x: Ref, y: Ref)
   {
     inhale acc(x.b) && acc(y.b)
     x.b := true
@@ -393,7 +393,7 @@ The wildcard permission amount provides a convenient way to implement duplicable
 
 Predicates can be seen as an abstraction tool over assertions, which can include resources like field permissions. The body of a predicate is an assertion. However, predicates are not automatically inlined. In fact, in order to substitute the predicate resource with the assertions defined by its body, it is necessary to perform an unfold operation. The opposite operation is called a fold: folding a predicate substitutes the resources determined by its core content with an instance of the predicate. Having predicates that are not automatically inlined is fundamental since it allows to represent potentially unbounded data structure as shown in @vpr-predicate (Lines 4-8) where the predicate `List` can represent a linked-list. The same example shows how unfold and fold operations can be performed to access the value of the second element of a list (Lines 22-26).
 
-Similarly to predicates, functions are used to define parametrised and pontentially-recursive assertions.
+Similarly to predicates, functions are used to define parametrized and potentially-recursive assertions.
 Functions body must be an immutable expression and differently from methods, Viper reasons about function applications in terms of the function bodies, meaning that it is not always necessary to provide postconditions. In @vpr-predicate (Lines 11-15) a function is used to represent the size of a `List` and due to the immutability of its body, the function can be used in the preconditions of the method `second` (Line 19).
 
 #figure(

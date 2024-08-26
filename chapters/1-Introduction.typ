@@ -5,7 +5,7 @@
 = Introduction
 
 Aliasing is a topic that has been studied for decades  @Aliasing-OOP @beyondGenevaConvention @GenevaConvention in Computer Science and it refers to the situation where two or more references point to the same object.
-Aliasing is an important characteristic of object-oriented programming languages allowing the programmers to develope complex designs involving sharing. However, reasoning about programs written with languages that allow aliasing without any kind of control is a hard task for programmers, compilers and formal verifcation tools. In fact, as reported in the Geneva Convention @GenevaConvention, without having guarantees about aliasing it can be difficult to prove the correctness of a simple Hoare formula like the following. $ {x = "true"} space y := "false" {x = "true"} $ 
+Aliasing is an important characteristic of object-oriented programming languages allowing the programmers to develope complex designs involving sharing. However, reasoning about programs written with languages that allow aliasing without any kind of control is a hard task for programmers, compilers and formal verification tools. In fact, as reported in the Geneva Convention @GenevaConvention, without having guarantees about aliasing it can be difficult to prove the correctness of a simple Hoare formula like the following. $ {x = "true"} space y := "false" {x = "true"} $ 
 Indeed, when $x$ and $y$ are aliased, the formula is not valid, and most of the time proving that aliasing cannot occur is not straightforward.
 
 == Contributions
@@ -30,7 +30,7 @@ The introduction of this annotation system not only improves the reliability of 
 
 The rest of the thesis is organized as follows:
 
-/ @cap:background : provides a description of the background information needed to understand the concepts presented by this work. In particular, this chapter presents the Kotlin programming language and its feature of interest for the thesis. After that, an overview to the "Aliasing" topic in Computer Science is provided and finally it is presented an introduction to the Viper language and set of verifcation tools.
+/ @cap:background : provides a description of the background information needed to understand the concepts presented by this work. In particular, this chapter presents the Kotlin programming language and its feature of interest for the thesis. After that, an overview to the "Aliasing" topic in Computer Science is provided and finally it is presented an introduction to the Viper language and set of verification tools.
 
 / @cap:related-work : analyzes works that has been fundamental for the development of this thesis. The chapter is divided in two parts, the former describing existing works about aliasing and systems for controlling it; the latter gives an overview of the already existing tools that perform formal verification using Viper.
 

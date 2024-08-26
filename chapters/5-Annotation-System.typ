@@ -42,7 +42,7 @@ syntactic sugar.
 Classes are made of fields, each associated with an annotation $alpha_f$. Methods have parameters that are also associated with an annotation $alpha_f$ as well as an additional annotation $beta$, and they are further annotated with $alpha_f$ for the returned value. The receiver of a method is not explicitly included in the grammar, as it can be treated as a parameter. Similarly, constructors are excluded from the grammar since they can be viewed as methods that return a unique value. Overall, a program is simply made of a set of classes and a set of methods.
 
 The annotations are the same that have been introduced in the previous chapter, the only difference is that `Borrowed` is represented using the symbol $borrowed$.
-Finally, statements and expressions are pretty similar to Koltin.
+Finally, statements and expressions are pretty similar to Kotlin.
 
 #compare-grammar-kt
 
@@ -57,7 +57,7 @@ Given a program $P$, the rule M-Type defines a function taking a method name and
 
 == Context
 
-A context is a list of distinct paths associated with their annotations $alpha$ and $beta$. While $beta$ is defined in the same way of the grammar, $alpha$ is slightly different. Other than unique and shared, in a context, an annotation $alpha$ can also be $top$. As will be better explained in the following sections, the annotation $top$ can only be inferred, so it is not possible for the user to write it. A path annotated with $top$ within a context is not accessible, meaning that the path needs to be re-assigned before beign read. The formal meaning of the annotation $top$ will be clearer while formilizing the statement typing rules.
+A context is a list of distinct paths associated with their annotations $alpha$ and $beta$. While $beta$ is defined in the same way of the grammar, $alpha$ is slightly different. Other than unique and shared, in a context, an annotation $alpha$ can also be $top$. As will be better explained in the following sections, the annotation $top$ can only be inferred, so it is not possible for the user to write it. A path annotated with $top$ within a context is not accessible, meaning that the path needs to be re-assigned before being read. The formal meaning of the annotation $top$ will be clearer while formalizing the statement typing rules.
 
 #frame-box(
   $
@@ -96,7 +96,7 @@ The function will return the annotations declared in the class declaration in th
 
 It is also important to note that this function does not necessarily return the correct ownership of a path, but just the annotations contained within the context or those written in the class declaration. 
 Consider an example where the context is given as $ Delta = x : shared, x.f : unique $ In this case, the lookup is the following $ Delta inangle(x.f) = unique $ However, since $x$ is shared, there can be multiple references accessing $x$. This implies there can be multiple references accessing $x.f$, meaning that $x.f$ is also shared.
-This behaviour is intended and a function able to provide the correct ownership of a reference will be defined in the next sections.
+This behavior is intended and a function able to provide the correct ownership of a reference will be defined in the next sections.
 
 === Remove
 
@@ -143,7 +143,7 @@ $ \_minus.circle\_: Delta -> p -> Delta $
   Replace, "",
 )
 
-This rule gives the definition of a funtion that will be fundamental for typing statements. The function takes a context, a path $p$ and a set of annotations $alpha beta$ and returns a context in which all the sup-paths of $p$ have been removed and the annotation of $p$ becomes $alpha beta$.
+This rule gives the definition of a function that will be fundamental for typing statements. The function takes a context, a path $p$ and a set of annotations $alpha beta$ and returns a context in which all the sup-paths of $p$ have been removed and the annotation of $p$ becomes $alpha beta$.
 
 $ \_[\_|->\_] : Delta -> p -> alpha beta -> Delta $
 
@@ -373,7 +373,7 @@ This rule is straightforward, but necessary to define how to type a sequence of 
 
 #display-rules(Decl, "")
 
-After declaring a variable, it is inaccessible until its initialization and so the varaible will be in the context with $top$ annotation.
+After declaring a variable, it is inaccessible until its initialization and so the variable will be in the context with $top$ annotation.
 Note that this rule only allows to declare variables if they are not in the context while Kotlin allows to shadow variables declared in outer scopes. Kotlin code using shadowing is not currently supported by this system.
 
 #figure(
@@ -422,7 +422,7 @@ f() {
 #display-rules(Call, "")
 
 Typing a method call follows the logic presented in the rules of @cap:passing ($~>$) while taking care of what can happen with method accepting multiple parameters.
-- All the roots of the paths passed to a method must be in the context (also guranteed by the language).
+- All the roots of the paths passed to a method must be in the context (also guaranteed by the language).
 - All the paths passed to a method must be in standard form of the expected annotation.
 - It is allowed to pass the same path twice to the same method, but only if it passed where a shared argument is expected.
 - It is allowed to pass two paths $p_i$ and $p_j$ such that $p_i subset.sq p_j$ when one of the following conditions is satisfied:
@@ -522,7 +522,7 @@ Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and 
 
 #display-rules(Assign-Call, "")
 
-After defining how to type a _call_, it is easy to formilize the typing of a _call_ assignment. Like all the other assignment rules, the root of the path on the left side of the assignment must be in the context. First of all, the _call_ is typed obtaining a new context $Delta_1$. Then, the annotation of the path on the left side of the assignment is replaced ($|->$) in $Delta_1$ with the annotation of the return value of the method.
+After defining how to type a _call_, it is easy to formalize the typing of a _call_ assignment. Like all the other assignment rules, the root of the path on the left side of the assignment must be in the context. First of all, the _call_ is typed obtaining a new context $Delta_1$. Then, the annotation of the path on the left side of the assignment is replaced ($|->$) in $Delta_1$ with the annotation of the return value of the method.
 
 #figure(
   caption: "Typing example for assigning a method call",

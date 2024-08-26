@@ -92,7 +92,7 @@ It is important to note that properties with primitive types do not need to be a
 The uniqueness system handles assignments similarly to Alias Burying @boyland2001alias. Specifically, once a unique reference is read, it cannot be accessed again until it has been reassigned. This approach allows for the formulation of the following uniqueness invariant: "A unique reference is either `null` or points to an object as the only accessible reference to that object."
 
 #figure(
-  caption: "Uniqueness behaviour with assignments in Kotlin",
+  caption: "Uniqueness behavior with assignments in Kotlin",
   ```kt
   class T()
   class A(@property:Unique var t: T?)
@@ -163,7 +163,7 @@ fun useSharedA(a: A): Int {
 )<smart-cast-error>
 
 #figure(
-  caption: "Smart cast succed thanks to uniqueness",
+  caption: "Smart cast enabled thanks to uniqueness",
   ```kt
 class A(var varProperty: Int?, val valProperty: Int?)
 
@@ -194,7 +194,7 @@ fun manipulateList(xs: List<Int>): List<Int> {
   ```
 )<manipulate-list>
 
-// TODO: decidere se parlare della possibilita' di deallocare memoria su target non-jvm quando qualcosa di unique va out-of-scope
+// TODO: static garbage collection?
 
 == Stack Example
 
