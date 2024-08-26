@@ -29,4 +29,4 @@
 #counter(heading).update(0)
 
 #include("./appendix/full-rules-set.typ")
-#include("./appendix/stack-proof.typ")
+// #include("./appendix/stack-proof.typ")
