@@ -1,3 +1,35 @@
+#let intro-kt = ```kt
+class A(
+    var n: Int
+)
+
+fun f(x: A, y: A) {
+    x.n = 1
+    y.n = 2
+}
+
+fun use_f(x: A) {
+    f(x, x)
+}
+```
+
+#let intro-vpr = ```java
+field n: Int
+
+method f(x: Ref, y: Ref)
+requires acc(x.n) && acc(y.n)
+{
+  x.n := 1
+  y.n := 2
+}
+
+method use_f(x: Ref)
+requires acc(x.n)
+{
+  f(x, x) // verifcation error
+}
+```
+
 #let classes-kt = ```kt
 open class A(
     val x: Int,
