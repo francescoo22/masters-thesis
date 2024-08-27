@@ -741,24 +741,48 @@ fun f(@Unique a: A, @Borrowed c: C) {
 
 By the construction of the grammar, a return statement is designed to be the final statement executed within a method. As such, there is no need to maintain a resulting context after the return statement has been typed. However, several important conditions must be satisfied when returning.
 
-First, the annotation of the path being returned must be lower than or equal to ($rel$) the annotation of the return value of the method. This ensures that a method cannot return a value with greater aliasing than what was specified in the method’s signature, effectively preventing borrowed values from being returned.
+First, the annotation of the path being returned must be lower than or equal to ($rel$) the annotation of the return value of the method. This ensures that a method cannot return a value with greater aliasing than what was specified in the method’s signature, effectively preventing borrowed values from being returned (@ret-bor).
 
-Second, the path being returned must be in the standard form of the return type.
+Second, the path being returned must be in the standard form of the return type (@ret-std).
 
 Finally, all parameters that are shared or borrowed (or both) must remain in the standard form of their original annotations by the time the method returns.
 
 These conditions are essential for maintaining the modularity, allowing each method to be typed without knowing the implementation of the other methods.
 
-The system does not permit returning a null value or a method call directly since these cases can be easily desugared, as demonstrated in the following examples:
+The system does not permit returning a null value or a method call directly since these cases can be easily desugared, as demonstrated in @ret-desugar.
 
-$ {...; ret null} equiv {...; var "fresh" ; "fresh" = null ; ret "fresh"} $
-$ {...; ret m(...)} equiv {...; var "fresh" ; "fresh" = m(...) ; ret "fresh"} $
+#example[
+  Given the following program:
+  $
+  class C(f: unique) \
+  m(x: unique borrowed): unique {begin_m ; ...; ret_m space x.f }
+  $
+  The following judgment is not derivable: $ x: unique borrowed = Delta tr ret_m space x.f tl dot $
+  This happens because the function returns a borrowed field, which is prohibited by the third precondition of the rule.
+  Specifically: $ mtype(m) = unique borrowed -> unique \ Delta(x.f) = unique borrowed $ 
+  However, the third precondition is not derivable since: $ unique borrowed lt.eq.curly.not unique $
+]<ret-bor>
 
-*TODO: Add examples for return*
+#example[
+  Given the following program:
+  $
+  class C(f: unique) \
+  m(x: unique): unique {begin_m ; ...; ret_m space x }
+  $
+  The following judgment is not derivable: $ x: unique, space x.f: shared = Delta tr ret_m space x tl dot $
+  This occurs because the fourth precondition, $Delta tr std(x, unique)$, is not derivable.
+  
+]<ret-std>
+
+#example[
+  $ {...; ret null} equiv {...; var "fresh" ; "fresh" = null ; ret "fresh"} $
+  $ {...; ret m(...)} equiv {...; var "fresh" ; "fresh" = m(...) ; ret "fresh"} $
+  Where $"fresh"$ refers to a variable that does not exist in the context prior to its declaration.
+]<ret-desugar>
 
 == Stack Example
 
-*TODO: brief introduction*
+@stack-grammar illustrates how the context evolves in the example presented in @cap:kt-stack when it is encoded using the grammar described in this chapter.
 
 #figure(
   caption: "Typing for a Stack implementation",
@@ -798,4 +822,4 @@ $ {...; ret m(...)} equiv {...; var "fresh" ; "fresh" = m(...) ; ret "fresh"} $
     return value;
   }
   ```
-)
+)<stack-grammar>

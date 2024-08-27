@@ -196,7 +196,7 @@ fun manipulateList(xs: List<Int>): List<Int> {
 
 // TODO: static garbage collection?
 
-== Stack Example
+== Stack Example<cap:kt-stack>
 
 To conclude the overview of the uniqueness system, a more complex example is provided in @kt-stack. The example shows the implementation of an alias-free stack, a common illustration in the literature for showcasing uniqueness systems in action @aldrich2002alias @zimmerman2023latte. 
 It is interesting to note that having a unique receiver for the `pop` function allows to safely smart cast `this.root` from `Node?` to `Node` (Lines 19-20); this would not be allowed without uniqueness guarantees since `root` is a mutable property.
