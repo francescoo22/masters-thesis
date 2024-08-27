@@ -55,6 +55,15 @@ Finally, statements and expressions are pretty similar to Kotlin.
 
 Given a program $P$, the rule M-Type defines a function taking a method name and returning its type. Similarly, M-Args defines a function taking a method name and returning its arguments. In order to derive these rules, the method must be contained within $P$.
 
+#example[
+  Given a method: $ m(x: unique borrowed, y: shared): unique {...} $
+  The type and the arguments of $m$ are the following: 
+  $
+  mtype(m) = unique borrowed, #h(.5em) shared -> unique \
+  args(m) = x, y
+  $
+]
+
 == Context
 
 A context is a list of distinct paths associated with their annotations $alpha$ and $beta$. While $beta$ is defined in the same way of the grammar, $alpha$ is slightly different. Other than unique and shared, in a context, an annotation $alpha$ can also be $top$. As will be better explained in the following sections, the annotation $top$ can only be inferred, so it is not possible for the user to write it. A path annotated with $top$ within a context is not accessible, meaning that the path needs to be re-assigned before being read. The formal meaning of the annotation $top$ will be clearer while formalizing the statement typing rules.
@@ -79,7 +88,22 @@ A reference annotated as unique may either be `null` or point to an object, with
   Ctx-Base, Ctx-Rec,
 )
 
-This first set of rules defines how a well-formed context is structured. The judgement $p in.not Delta$ is derivable when $p$ is not present in the context. If the judgement $Delta ctx$ is derivable, the context is well-formed. In order to be well-formed, a context must not contain duplicate paths and must be finite.
+This first set of rules defines how a well-formed context is structured. The judgment $p in.not Delta$ is derivable when $p$ is not present in the context. If the judgment $Delta ctx$ is derivable, the context is well-formed. In order to be well-formed, a context must not contain duplicate paths and must be finite.
+
+#example[
+  Given a context: $ Delta = x: unique, space x.y: shared $
+  The following judgments are derivable: $ y &in.not Delta \ x.f &in.not Delta \ x.y.z &in.not Delta $
+]
+
+#example[
+  Given the following contexts: 
+  $
+  Delta_1 &= x: unique, space x.y: shared \
+  Delta_2 &= x: unique, space x.y: shared, space x: shared \
+  Delta_3 &= x: unique, space x.y: shared, space x.y: top
+  $
+  The judgment "$Delta_1 ctx$" is derivable meaning that $Delta_1$ is a well-formed context. However, the judgments "$Delta_2 ctx$" and "$Delta_3 ctx$" are not derivable meaning that $Delta_2$ and $Delta_3$ are not well-formed contexts. Indeed, they are not well-formed because $x$ appears twice in $Delta_2$ and $x.f$ appears twice in $Delta_3$.
+]
 
 === Lookup<cap:lookup>
 
@@ -94,9 +118,19 @@ $ \_inangle(\_): Delta -> p -> alpha beta $
 
 The function will return the annotations declared in the class declaration in the case in which a path that is not a variable ($p.f$) is not explicitly contained inside the context. This concept, formalized by Lookup-Default, is fundamental because it allows contexts to be finite also when dealing with recursive classes. On the other hand, the lookup for variables ($x$) not contained in a context cannot be derived.
 
-It is also important to note that this function does not necessarily return the correct ownership of a path, but just the annotations contained within the context or those written in the class declaration. 
-Consider an example where the context is given as $ Delta = x : shared, x.f : unique $ In this case, the lookup is the following $ Delta inangle(x.f) = unique $ However, since $x$ is shared, there can be multiple references accessing $x$. This implies there can be multiple references accessing $x.f$, meaning that $x.f$ is also shared.
-This behavior is intended and a function able to provide the correct ownership of a reference will be defined in the next sections.
+It is also important to note that this function does not necessarily return the correct ownership of a path, but just the annotations contained within the context or those written in the class declaration.
+
+#example[
+  Given a context: $ Delta = x : shared, space x.f : unique $ 
+  The result of the lookup for $x.f$ is the following: $ Delta inangle(x.f) = unique $ However, since $x$ is shared, there can be multiple references accessing $x$. This implies there can be multiple references accessing $x.f$, meaning that $x.f$ is also shared.
+  This behavior is intended and a function able to provide the correct ownership of a reference will be defined in the next sections.
+]
+
+#example[
+  Given class $C$, context $Delta$ and variable $x$ such that: $ class C(f: shared) \ Delta = x : unique \ type(x) = C $
+  The result of the lookup for $x.f$ is the following: $ Delta inangle(x.f) = shared $
+  Since $x.f in.not Delta$, the lookup returns the default annotation, which is the one declared in the class signature.
+]
 
 === Remove
 
@@ -111,6 +145,11 @@ $ \_without\_ : Delta -> p -> Delta $
 
 Basically, the function will return the context without the specified path if the path is within the context, and it will return the original context if the path is not contained.
 
+#example[
+  Given a context: $ Delta = x: shared, space x.f: shared $
+  Remove has the following results: $ Delta without x.f = x: shared \ Delta without x = x.f: shared \ Delta without y = x: shared, space x.f: shared $
+]
+
 == Sub-Paths and Sup-Paths
 
 === Definition
@@ -120,10 +159,14 @@ Basically, the function will return the context without the specified path if th
   SubPath-Eq-1, SubPath-Eq-2,
 )
 
-The first set of rules is used to formally define sub-paths and sup-paths. 
-In particular, if $p_1 subset.sq p_2$ is derivable, we say that:
-- $p_1$ is a *sub*-path of $p_2$
-- $p_2$ is a *sup*-path of $p_1$
+This set of rules is used to formally define sub-paths and sup-paths.
+
+#example[
+  Given two paths $x.y$ and $x.y.z$, the following judgment is derivable: $ x.y subset.sq x.y.z $
+  We say that:
+  - $x.y$ is a sub-path of $x.y.z$
+  - $x.y.z$ is a sup-path of $x.y$
+]
 
 === Deep Remove
 
@@ -137,6 +180,11 @@ Deep-Remove rules define a function similar to Remove ($without$) that in addict
 
 $ \_minus.circle\_: Delta -> p -> Delta $
 
+#example[
+  Given a context: $ Delta = x: unique, space x.y: unique, space x.f: unique, space x.y.z: unique $
+  Deep Remove has the following result: $ Delta minus.circle x.y = x: unique, space x.f: unique $
+]
+
 === Replace
 
 #display-rules(
@@ -146,6 +194,11 @@ $ \_minus.circle\_: Delta -> p -> Delta $
 This rule gives the definition of a function that will be fundamental for typing statements. The function takes a context, a path $p$ and a set of annotations $alpha beta$ and returns a context in which all the sup-paths of $p$ have been removed and the annotation of $p$ becomes $alpha beta$.
 
 $ \_[\_|->\_] : Delta -> p -> alpha beta -> Delta $
+
+#example[
+  Given a context: $ Delta = x: unique, space x.y: unique, space x.y.z: unique $
+  Replace has the following result: $ Delta[x.y |-> top] = x: unique, space x.y: top $
+]
 
 === Get Sup-Paths
 
@@ -157,7 +210,12 @@ $ \_[\_|->\_] : Delta -> p -> alpha beta -> Delta $
 
 Finally, Get-Sup-Paths rules are used to define a function that returns all the sup-paths of a give path within a context. Also this function will be used for statements typing rules.
 
-$ \_ tr sp(\_) : Delta -> p -> "List"(p : alpha beta) $
+$ \_ tr sp(\_) : Delta -> p -> overline(p : alpha beta) $
+
+#example[
+  Given a context: $ Delta = x: unique, space x.y: unique, space x.y.z: unique $
+  Getting sup-paths has the following result: $ sp(x.y) = x.y.z: unique $
+]
 
 == Relations between Annotations
 
@@ -183,7 +241,7 @@ This set of rules is used to define a partial order between the annotations. Thi
 )
 
 Pass rules define what happens to the annotations of a reference after passing it to a method.
-If derivable, a judgement $alpha beta ~> alpha' beta' ~> alpha'' beta''$ indicates that after passing a reference annotated with $alpha beta$ to a method expecting an argument annotated with $alpha' beta'$, the reference will be annotated with $alpha'' beta''$ after the call.
+If derivable, a judgment $alpha beta ~> alpha' beta' ~> alpha'' beta''$ indicates that after passing a reference annotated with $alpha beta$ to a method expecting an argument annotated with $alpha' beta'$, the reference will be annotated with $alpha'' beta''$ after the call.
 However, these rules are not sufficient to type a method call statement since passing the same reference more than once to the same method call is a situation that has to be handled carefully. Nonetheless, the rules are fundamental to express the logic of the annotation system and will be used for typing method calls in subsequent sections.
 
 == Paths
@@ -199,6 +257,10 @@ This simple function takes a path and returns its root. The function can simplif
 
 $ root : p -> p $
 
+#example[
+  $ root(x.y.z) = x \ root(y.z) = y \ root(z) = z $
+]
+
 === Get
 
 #display-rules(
@@ -211,35 +273,31 @@ $ \_(\_) : Delta -> p -> alpha beta $
 
 In the case that the given path is a variable, the function will return the same annotation returned by the lookup function. If the given path is not a variable, the function will return the least upper bound ($lub$) between the lookup of the given path and all its sub-paths. The LUB between a set of annotations can be easily obtained by using the partial order described in @cap:PO. 
 
-It is important to note that if $Delta(p) = alpha beta$ is derivable for some $alpha beta$ then the root of $p$ is contained inside $Delta$. This is important because many rules in the subsequent sections will use the judgement $Delta(p) = alpha beta$ as a precondition and it also helps to guarantee that the root of $p$ is contained inside $Delta$.
+It is important to note that if $Delta(p) = alpha beta$ is derivable for some $alpha beta$ then the root of $p$ is contained inside $Delta$. This is important because many rules in the subsequent sections will use the judgment $Delta(p) = alpha beta$ as a precondition and it also helps to guarantee that the root of $p$ is contained inside $Delta$.
 
-The following example makes it easier to understand how this function works.
+#example[
+  Given a context: $ Delta = x: unique, space x.y: top, space x.y.z: shared $
 
-#v(1em)
+  The annotation that is returned for the variable $x$ is the same as the one returned by the lookup.
 
-Given a context
+  $ Delta(x) = Delta inangle(x) = unique $
 
-$ Delta = x: unique, space x.y: top, space x.y.z: shared $
+  The annotation returned for the path $x.y$ is the LUB between the lookup of $x.y$ and that of all its sub-paths.
 
-The annotation that is returned for the variable $x$ is the same as the one returned by the lookup.
+  $
+  Delta(x.y) &= Lub{Delta inangle(x), Delta inangle(x.y)} \
+  &= Lub{unique, top} \
+  &= top
+  $
 
-$ Delta(x) = Delta inangle(x) = unique $
+  Finally, the annotation returned for the path $x.y.z$ is the LUB between the lookup of $x.y.z$ and that of all its sub-paths.
 
-The annotation returned for the path $x.y$ is the LUB between the lookup of $x.y$ and that of all its sub-paths.
-
-$
-Delta(x.y) &= Lub{Delta inangle(x), Delta inangle(x.y)} \
-&= Lub{unique, top} \
-&= top
-$
-
-Finally, the annotation returned for the path $x.y.z$ is the LUB between the lookup of $x.y.z$ and that of all its sub-paths.
-
-$
-Delta(x.y.z) &= Lub{Delta inangle(x), Delta inangle(x.y), Delta inangle(x.y.z)} \
-&= Lub{unique, top, shared} \
-&= top
-$
+  $
+  Delta(x.y.z) &= Lub{Delta inangle(x), Delta inangle(x.y), Delta inangle(x.y.z)} \
+  &= Lub{unique, top, shared} \
+  &= top
+  $
+]
 
 === Standard Form
 
@@ -248,24 +306,24 @@ $
   Std-Rec-2, "",
 )
 
-If the judgement $Delta tr std(p, alpha beta)$ is derivable,  inside the context $Delta$, all the sup-paths of $p$ carry the right annotations when $p$ is passed to a method expecting an argument annotated with $alpha beta$. This type of judgement is necessary verify the correctness of the annotations in a method-modular fashion.
+If the judgment $Delta tr std(p, alpha beta)$ is derivable,  inside the context $Delta$, all the sup-paths of $p$ carry the right annotations when $p$ is passed to a method expecting an argument annotated with $alpha beta$. This type of judgment is necessary verify the correctness of the annotations in a method-modular fashion.
 
 Since a called method does not have information about $Delta$ when verified, all the sup-paths of $p$ must have an annotation in $Delta$ that is lower or equal ($rel$) to the annotation that they have in a context containing just their root annotated with $alpha beta$.
 
-To understand better standard forms, consider the following program and a context $Delta$.
+#example[
+  Given the following program:
+  $
+  class C(y: unique) \
+  m_1(x: unique){...} \
+  m_2(x: shared){...} \
+  $
 
-$
-class C(y: unique) \
-m_1(x: unique){...} \
-m_2(x: shared){...} \ \
-Delta = x: unique, space x.y : shared
-$
+  Within the context $ Delta = x: unique, space x.y : shared $
 
-Within the context $Delta$:
+  - $Delta tr std(x, unique)$ is not derivable, meaning that $x$ cannot be passed to the method $m_1$. The judgment is not derivable because $Delta(x.y) = shared$ while in a context $Delta' = x: unique$, $Delta'(x.y) = unique$, but $shared lt.eq.curly.not unique$.
 
-- $Delta tr std(x, unique)$ is not derivable, meaning that $x$ cannot be passed to the method $m_1$. The judgement is not derivable because $Delta(x.y) = shared$ while in a context $Delta' = x: unique$, $Delta'(x.y) = unique$, but $shared lt.eq.curly.not unique$.
-
-- $Delta tr std(x, shared)$ is derivable, meaning that $x$ might be passed to the method $m_2$ if all the preconditions, which would be formalized by statement's typing rules, are also satisfied.
+  - $Delta tr std(x, shared)$ is derivable, meaning that $x$ can be passed to the method $m_2$ if all the preconditions, which would be formalized by statement's typing rules, are also satisfied.
+]
 
 == Unification
 
@@ -281,15 +339,14 @@ The rules in this section describe a function that takes two contexts and return
 
 $ \_ lub \_ : Delta -> Delta -> Delta $
 
-The following example shows how pointwise LUB works.
-
-$
-Delta_1 &= x: shared, space y: shared \
-Delta_2 &= x: unique \
-Delta_1 lub Delta_2 &= x: Lub {shared, unique}, space y: top \ 
-&= x: shared, space y: top
-$
-
+#example[
+  $
+  Delta_1 &= x: shared, space y: shared \
+  Delta_2 &= x: unique \
+  Delta_1 lub Delta_2 &= x: Lub {shared, unique}, space y: top \ 
+  &= x: shared, space y: top
+  $
+]
 === Removal of Local Declarations
 
 #display-rules(
@@ -303,13 +360,13 @@ The result of the operation is a context where paths rooted in variables that ha
 
 $ \_ triangle.filled.small.l \_ : Delta -> Delta -> Delta $
 
-What follows is an example showing how the removal of local declarations works.
-
-$
-Delta_1 &= x: unique, space y: unique, space x.f: unique, space y.f: shared \
-Delta_2 &= x: shared \
-Delta_1 triangle.filled.small.l Delta_2 &= x: unique, space x.f: unique \
-$
+#example[
+  $
+  Delta_1 &= x: unique, space y: unique, space x.f: unique, space y.f: shared \
+  Delta_2 &= x: shared \
+  Delta_1 triangle.filled.small.l Delta_2 &= x: unique, space x.f: unique \
+  $
+]
 
 === Unify
 
@@ -322,6 +379,21 @@ In particular, $unify(Delta, Delta_1, Delta_2)$ can be used to type an if-statem
 
 $ "unify" : Delta -> Delta -> Delta -> Delta $
 
+#example[
+  Given the following contexts:
+  $
+  Delta &= x: unique \
+  Delta_1 &= x: shared, space x.f : shared, space y: unique \ 
+  Delta_2 &= x: unique, space x.f : top, space y: unique \
+  $
+  Unification has the following result:
+  $
+  unify(Delta, Delta_1, Delta_2) &= (Delta_1 lub Delta_2) triangle.filled.small.l Delta \
+  &= (x: shared, space x.f: top, space y: unique) triangle.filled.small.l Delta \
+  &= x: shared, space x.f: top
+  $
+]
+
 == Normalization
 
 #display-rules(
@@ -333,14 +405,18 @@ Normalize is a function that takes and returns a list of annotated paths. In the
 As already mentioned, rules in @cap:passing are not sufficient to type a method call because the same path might be passed more than once to the same method.
 Normalization is the missing piece that will enable the formalization of typing rules for method calls.
 
-$ "normalize" : "List"(p : alpha beta) -> "List"(p : alpha beta) $
+$ norm : overline(p : alpha beta) -> overline(p : alpha beta) $
+
+#example[
+  $ norm(x\: top, space x\: shared, space y\: unique) &= x: Lub{shared, top}, space y: unique \ &=  x: top, space y: unique $
+]
 
 == Statements Typing
 
 Typing rules are structured as follows: $ Delta tr s tl Delta' $
 This judgment means that executing the statement $s$ within a context $Delta$ will lead to a context $Delta'$.
 
-A program $P$ is well-typed if and only if the following judgement is derivable:
+A program $P$ is well-typed if and only if the following judgment is derivable:
 
 $ forall m(overline(x\: af beta)): af {begin_m; s; ret_m e} in P . space dot tr begin_m; s; ret_m e tl dot $
 

@@ -1,6 +1,6 @@
 #import "../config/constants.typ": chapter
 #import "@preview/codly:1.0.0": *
-
+#import "@preview/ctheorems:1.1.2": *
 
 #let vpr-name = stack(
   dir: ltr,
@@ -27,6 +27,7 @@
   // Set the document's basic properties.
     set document(author: myAuthor, title: myTitle)
     show: codly-init.with()
+    show: thmrules.with(qed-symbol: $square$)
     show math.equation: set text(weight: 400)
     show table.cell.where(y: 0): strong
 

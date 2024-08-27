@@ -1,3 +1,4 @@
+#import "../config/utils.typ": *
 #pagebreak(to:"odd")
 = Background<cap:background>
 
@@ -283,9 +284,11 @@ $
 In particular, `emp` is an assertion used to express that the heap is empty, $e_1 |-> e_2$ states that the heap contains one cell at address $e$ containing $e_2$.
 $a_1 * a_2$ asserts that it is possible to split the heap into two disjoint parts in which $a_1$ and $a_2$ hold respectively.
 Finally, $a_1 "−∗" a_2$ states that, extending the current heap with a disjoint part where $a_1$ holds, will lead to a heap where $a_2$ holds.
-The following example shows a derivable formula in separation logic.
 
-$ {(x |-> -) * ((x |-> 1) "−∗" P)} space x := 1 {P} $
+#example[
+  The following formula is derivable in separation logic:
+  $ {(x |-> -) * ((x |-> 1) "−∗" P)} space x := 1 {P} $
+]
 
 == Viper
 

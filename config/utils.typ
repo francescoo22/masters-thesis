@@ -1,4 +1,5 @@
 #import "proof-tree.typ": *
+#import "@preview/ctheorems:1.1.2": *
 
 // *** NAMES ***
 
@@ -93,20 +94,22 @@
 }
 
 #let code-compare(capt, s, code1, code2, same-row: true) = figure(
-    caption: capt,
-    if(same-row) {
-      grid(
-        columns: (s, 1fr),
-        column-gutter: 2em,
-        row-gutter: .5em,
-        code1, code2
-      )
-    } else {
-      grid(
-        columns: (s),
-        column-gutter: 2em,
-        row-gutter: 2em,
-        code1, code2
-      )
-    }
-  )
+  caption: capt,
+  if(same-row) {
+    grid(
+      columns: (s, 1fr),
+      column-gutter: 2em,
+      row-gutter: .5em,
+      code1, code2
+    )
+  } else {
+    grid(
+      columns: (s),
+      column-gutter: 2em,
+      row-gutter: 2em,
+      code1, code2
+    )
+  }
+)
+
+#let example = thmplain("example", "Example").with(numbering: "1.1")
