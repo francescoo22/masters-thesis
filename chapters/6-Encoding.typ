@@ -106,3 +106,58 @@ For example, passing a unique reference to a function expecting a shared (non-bo
 )<call-graph>
 
 #code-compare("Function call with shared parameter encoding", .8fr, shared-call-kt, shared-call-vpr)
+
+== Stack Example
+
+Finally, @stack-vpr shows how the example from @cap:kt-stack is encoded in Viper. In this example, shared predicates are omitted for readability, as they would be empty. Moreover, the `UniqueAny` predicate does not add additional value to the encoding. However, it can be replaced with any class predicate without affecting the correctness of the encoding.
+
+#figure(
+  caption: "Stack encoding in Viper",
+  ```java
+  field value: Ref, next: Ref, root: Ref
+
+  predicate UniqueAny(this: Ref)
+
+  predicate UniqueNode(this: Ref) {
+      acc(this.value) && (this.value != null ==> UniqueAny(this.value)) &&
+      acc(this.next) && (this.next != null ==> UniqueNode(this.next))
+  }
+
+  predicate UniqueStack(this: Ref) {
+      acc(this.root) && (this.root != null ==> UniqueNode(this.root))
+  }
+
+  method constructorNode(val: Ref, nxt: Ref) returns (res: Ref)
+  requires val != null ==> UniqueAny(val)
+  requires nxt != null ==> UniqueNode(nxt)
+  ensures UniqueNode(res)
+  ensures unfolding UniqueNode(res) in res.value == val && res.next == nxt
+
+  method push(this: Ref, val: Ref)
+  requires UniqueStack(this)
+  requires val != null ==> UniqueAny(val)
+  ensures UniqueStack(this) {
+      var r: Ref
+      unfold UniqueStack(this)
+      r := this.root
+      this.root := constructorNode(val, r)
+      fold UniqueStack(this)
+  }
+
+  method pop(this: Ref) returns (res: Ref)
+  requires UniqueStack(this)
+  ensures UniqueStack(this)
+  ensures res != null ==> UniqueAny(res) {
+      var val: Ref
+      unfold UniqueStack(this)
+      if(this.root == null) { val := null }
+      else {
+          unfold UniqueNode(this.root)
+          val := this.root.value
+          this.root := this.root.next
+      }
+      fold UniqueStack(this)
+      res := val
+  }
+  ```
+)<stack-vpr>
