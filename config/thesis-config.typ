@@ -26,8 +26,8 @@
 ) = {
   // Set the document's basic properties.
     set document(author: myAuthor, title: myTitle)
-    show: codly-init.with()
-    show: thmrules.with(qed-symbol: $square$)
+    show: codly-init
+    show: thmrules
     show math.equation: set text(weight: 400)
     show table.cell.where(y: 0): strong
 

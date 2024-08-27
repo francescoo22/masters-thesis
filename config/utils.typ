@@ -112,4 +112,11 @@
   }
 )
 
-#let example = thmplain("example", "Example").with(numbering: "1.1")
+#let example = thmplain(
+  "example",
+  "Example",
+  titlefmt: strong,
+  bodyfmt: body => [
+    #body #h(1fr) $square$
+  ]
+).with(numbering: "1.1")
