@@ -5,7 +5,7 @@
 #let myTitle = "Verifying Kotlin Code with Viper\nby Controlling Aliasing"
 #let myDegree = "Master's Thesis"
 #let myUni = "Università degli studi di Padova"
-#let myDepartment = "Department of Mathematics ''Tullio Levi-Civita''"
+#let myDepartment = "Department of Mathematics “Tullio Levi-Civita”"
 #let myFaculty = "Master's degree in Computer Science"
 #let profTitle = "Prof. "
 #let myProf = "Francesco Ranzato"
