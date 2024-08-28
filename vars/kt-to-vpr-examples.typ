@@ -30,6 +30,19 @@ requires acc(x.n)
 }
 ```
 
+#let intro-kt-annotated = ```kt
+class A(var n: Int)
+
+fun f(@Unique @Borrowed x: A, @Unique @Borrowed y: A) {
+    x.n = 1
+    y.n = 2
+}
+
+fun use_f(@Unique x: A) {
+    f(x, x) // annotations checking error
+}
+```
+
 #let classes-kt = ```kt
 open class A(
     val x: Int,
