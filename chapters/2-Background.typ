@@ -6,35 +6,13 @@
 
 == Kotlin
 
-Developed by JetBrains, Kotlin @Kotlin @KotlinSpec is an open-source, statically typed programming language that gained popularity in recent years especially in the Android software development field. Kotlin shares many similarities with Java and can fully interoperate with it. Notably, Kotlin also introduces several features that are absent in Java, such as improved type inference, functional programming, null-safety, and smart-casting.
+Developed by JetBrains, Kotlin @KotlinSpec @Kotlin is an open-source, statically typed programming language that gained popularity in recent years, particularly in the field of Android software development. It shares many similarities with Java and it can fully interoperate with it. Additionally, Kotlin introduces a range of modern features, including improved type inference, support for functional programming, null-safety, and smart-casting, making it an attractive option for developers.
 
 The following sections will present the features of the language that are more relevant for this work.
 
-=== Mutable vs Immutable Variables
+=== Mutability vs Immutability
 
-In programming languages, mutability refers to the capability to alter the value of a variable after it has been initialized. Variables in Kotlin are either mutable, defined using the `var` keyword, or immutable, defined using the `val` keyword. Mutable variables, once assigned, can have their value changed during the execution of the program, while immutable variables, once assigned a value, cannot be altered subsequently. For instance, `var x = 5` allows you to change the value of `x` later in the program, while `val y = 5` maintains `y` at a value of 5 throughout the program. Mutability is a fundamental principle in programming, and Kotlin's clear distinction between `val` and `var` improves code readability and helps in maintaining data consistency, especially in a multithreaded environment.
-
-=== Functional Programming
-
-In Kotlin, functions are considered first-class citizens. This implies that, like any other data type, they can be assigned to variables, can be incorporated into data structures, can be passed into other higher-order functions as arguments and can even be returned from such functions. Essentially, functions in Kotlin are as manipulable as any other non-functional values. 
-
-#figure(
-  caption: "Kotlin higher-order function",
-  ```kt
-  fun <T, R> myMap(xs: List<T>, f: (T) -> R): List<R> {
-      val result = mutableListOf<R>()
-      for (item in xs) {
-          result.add(f(item))
-      }
-      return result.toList()
-  }
-
-  fun main() {
-      val xs = listOf(1, 2, 3)
-      val ys = myMap(xs) { y -> y * 2 } // ys = [2, 4, 6]
-  }
-  ```
-)
+In programming languages, mutability refers to the capability to alter the value of a variable after it has been initialized. In Kotlin, variables and fields can be either mutable or immutable. Mutable elements are defined using the `var` keyword, while immutable elements are defined using the `val` keyword. Mutable variables or fields, once assigned, can have their values changed during the execution of the program. In contrast, immutable elements, once assigned a value, cannot be altered subsequently. For instance, `var x = 5` allows to change the value of `x` later in the program, while `val y = 5` keeps `y` consistently at the value of `5` throughout the program's execution. This clear distinction between `val` and `var` is particularly useful in a multithreaded environment since it helps to prevent race conditions and data inconsistencies.
 
 === Smart Casts<cap:smart-cast>
 
@@ -96,7 +74,7 @@ However, there are instances in which a `NullPointerException` can be raised in 
 
 === Contracts
 
-Kotlin contracts are an experimental feature introduced in Kotlin 1.3 designed to provide additional guarantees about code behavior, helping the compiler in performing more precise analysis and optimizations. Contracts are defined using a special contract block within a function, describing the relationship between input parameters and the function's effects. This can include conditions such as whether a lambda is invoked or if a function returns under certain conditions. By specifying these relationships, contracts help the compiler understand the function's logic more deeply, enabling advanced features like smart casting and better null-safety checks.
+Kotlin contracts are an experimental feature introduced in Kotlin 1.3 designed to provide additional guarantees about code behavior, helping the compiler in performing more precise analysis and optimizations. Contracts are defined using a special contract block within a function, describing the relationship between input parameters and the function's effects. This can include conditions such as whether a lambda is invoked or if a function returns under certain conditions. By specifying these relationships, contracts provide guarantees to the caller of a function, offering the compiler additional information that enable more advanced code analysis.
 
 It is important to point out that currently contracts correctness is not statically verified. The compiler trusts contracts unconditionally meaning that the programmer is responsible for writing correct and sound contracts.
 
@@ -145,6 +123,8 @@ In @contract-1 it is possible to see how contracts allow the initialization of i
 Annotations provide a way to associate metadata with the code. To declare annotations, the `annotation` modifier should be placed before a class declaration.
 It is also possible to specify additional attributes by using meta-annotations on the annotation class. For instance, `@Target` specifies the types of elements that can be annotated.
 
+@kt-annotations-example illustrates how to declare and use a custom annotation (Lines 1-13) alongside existing annotations such as `@Deprecated` and `@SinceKotlin`.
+
 #figure(
   caption: "Example of annotations usage",
   ```kt
@@ -161,14 +141,25 @@ It is also possible to specify additional attributes by using meta-annotations o
       fun myFun(@MyAnnotation foo: Int) {
       }
   }
-  ```
-)
 
-== Aliasing<cap:aliasing>
+  @Deprecated(
+      message = "Use newFunction() instead",
+      replaceWith = ReplaceWith("newFunction()"),
+  )
+  fun oldFunction() { /* ... */ }
+
+  @SinceKotlin(version = "1.3")
+  fun newFunction() { /* ... */ }
+  ```
+)<kt-annotations-example>
+
+== Aliasing and Uniqueness<cap:aliasing>
 
 Aliasing refers to the situation where a data location in memory can be accessed through different symbolic names in the program. Thus, changing the data through one name inherently leads to a change when accessed through the other name as well. This can happen due to several reasons such as pointers, references, multiple arrays pointing to the same memory location etc.
 
-In contrast, uniqueness ensures that a particular data location is accessed through only one symbolic name at any point in time. This means that no two variables or references point to the same memory location, thus preventing unintended side effects when data is modified. Uniqueness is particularly important in concurrent programming and in functional programming paradigms, where the goal is often to avoid mutable shared state to ensure predictability and maintainability of the code. By enforcing uniqueness, programmers can guarantee that data modifications are localized and do not inadvertently affect other parts of the program, making reasoning about program behavior and correctness more straightforward.
+In contrast, uniqueness @uniqueness-logic @An-Entente-Cordiale ensures that a particular data location is accessible through only one symbolic name at any point in time. This means that no two variables or references point to the same memory location, thus preventing unintended side effects when data is modified. A data location that is accessible by exactly one reference is said to be unique;  similarly, the reference pointing to that data location is also termed unique.
+
+Uniqueness can be particularly important in concurrent programming paradigms, where the goal is often to avoid mutable shared state to ensure predictability and maintainability of the code @bocchino2013alias. By enforcing uniqueness, programmers can guarantee that data modifications are localized and do not inadvertently affect other parts of the program, making reasoning about program behavior and correctness more straightforward.
 
 @aliasing shows the concept of aliasing and uniqueness practically with a Kotlin example.
 The function starts by declaring and initializing variable `y` with `x`, resulting in `x` and `y` being aliased.
@@ -186,8 +177,6 @@ Following that, variable `z` is initialized with a newly-created object in the f
   ```
 )<aliasing>
 
-=== Problems Caused by Aliasing
-
 Although aliasing is essential in object-oriented programming as it allows programmers to implement designs involving sharing, as described in The Geneva Convention @GenevaConvention, aliasing can be a problem in both formal verification and practical programming.
 
 The example in @alias-verification illustrates how aliasing between references can complicate the formal verification process. In the given example, a class `A` is declared with a boolean field `x`, followed by the function `f` which accepts two arguments `a1` and `a2` of type `A`. The function assigns `true` to `a1.x`, `false` to `a2.x`, and finally returns `a1.x`. Despite the function being straightforward, we cannot assert that the function will always return `true`. The reason for this uncertainty is the potential aliasing of `a1` and `a2`, as the second assignment might change the value of `a1.x` as well.
@@ -196,7 +185,8 @@ Modern programming languages frequently utilize a high degree of concurrency, wh
 
 @alias-bug presents a contrived example to illustrate how aliasing can lead to mysterious bugs. Function `f` takes two lists `xs` and `ys` as arguments. If both lists are not empty, the function removes the last element from each. One might assume this function will never raise an `IndexOutOfBoundsException`. However, if `xs` and `ys` are aliased and have a size of one, this exception will occur.
 
-Moving to a more realistic example, @alias-custom-assign shows a reasonable implementation of the assignment operator overloading for a vector in the C++ language. The assignment operator has to explicitly take care of aliasing between `this` and `&other` (Lines 9-11). If aliasing is not properly managed, it can lead to issues like corrupted data.
+Moving to a more realistic example, @alias-custom-assign shows a reasonable C++ implementation of the assignment operator overloading for a vector. 
+Since C++ does not have built-in mechanisms to control aliasing statically, in this implementation, the assignment operator must explicitly address the possibility of aliasing between the `this` pointer and the `&other` pointer (Lines 9-11). If these two pointers are found to be identical, indicating that the object is being assigned to itself, the operation is immediately terminated to prevent any unnecessary operations. Failing to properly manage this aliasing could lead to significant issues, such as data corruption or unintended behavior, because the operator might inadvertently delete the data before copying, thereby causing the object to lose its original state. 
 
 #figure(
   caption: "Problems caused by aliasing in formal verification",
@@ -269,10 +259,6 @@ Moving to a more realistic example, @alias-custom-assign shows a reasonable impl
 
 == Separation Logic
 
-Separation logic @separationLogic1 @separationLogic2 @separationLogic3 is an extension of Hoare logic that allows to reason about low-level imperative programs that use shared mutable data structure.
-
-Separation logic significantly simplifies reasoning about programs that manipulate pointer data structures. It also helps in managing principles related to the "transfer of ownership," as well as offering a virtual separation that enables modular reasoning between concurrent modules. 
-
 $
 angle.l "assert" angle.r &::= \
 &| "emp" &&& "empty heap" \
@@ -281,36 +267,38 @@ angle.l "assert" angle.r &::= \
 &| angle.l "assert" angle.r "−∗" angle.l "assert" angle.r #h(5em) &&& "separating implication" \
 $
 
-In particular, `emp` is an assertion used to express that the heap is empty, $e_1 |-> e_2$ states that the heap contains one cell at address $e$ containing $e_2$.
-$a_1 * a_2$ asserts that it is possible to split the heap into two disjoint parts in which $a_1$ and $a_2$ hold respectively.
-Finally, $a_1 "−∗" a_2$ states that, extending the current heap with a disjoint part where $a_1$ holds, will lead to a heap where $a_2$ holds.
+Separation logic @separationLogic1 @separationLogic2 @separationLogic3 is an extension of first-order logic that can be used to reason about low-level imperative programs that manipulate pointer data structures by integrating it in Hoare's triples.
+
+The core concept of separation logic is the separating conjunction $P ∗ Q$, which asserts that $P$ and $Q$ hold for different, non-overlapping parts of the heap. For instance, if a change to a single heap cell affects $P$ in $P ∗ Q$, it is guaranteed that it will not impact $Q$. This feature eliminates the need to check for possible aliases in $Q$. On a broader scale, the specification ${P} space C space {Q}$ for a heap modification can be expanded using a rule that allows to derive ${P ∗ R} space C space{Q ∗ R}$, indicating that additional heap cells remain untouched. This enables the initial specification ${P} space C space{Q}$ to focus solely on the cells involved in the program's footprint.
+
+Separation logic also includes other assertions: `emp` indicates that the heap is empty, $e_1 |-> e_2$ specifies that the heap contains a cell at address $e_1$ with the value $e_2$, and $a_1 "−∗" a_2$ asserts that extending the current heap with a disjoint part where $a_1$ holds will result in a heap where $a_2$ holds.
 
 #example[
   The following formula is derivable in separation logic:
-  $ {(x |-> -) * ((x |-> 1) "−∗" P)} space x := 1 {P} $
+  $ {(x |-> -) * ((x |-> 1) "−∗" P)} space x := 1 space {P} $
 ]
 
 == Viper
 
-Viper @ViperWebSite @Viper (Verification Infrastructure for Permission-based Reasoning) is a language and suite of tools developed by ETH Zurich that can be used for developing new verification tools.
+Viper @ViperWebSite @Viper (Verification Infrastructure for Permission-based Reasoning) is a language and suite of tools developed by ETH Zurich designed to aid in the creation of verification tools.
+The Viper infrastructure (@vpr-infrastructure) consists of the Viper intermediate language and two different back-ends: one that uses symbolic execution and another that relies on verification condition generation.
 
-The whole Viper infrastructure is shown in @vpr-infrastructure @ViperWebSite and is made of the Viper intermediate language and two back-ends, the first based on symbolic execution and the second based on verification condition generation.
+The verification process with Viper follows several steps.
+First, a higher-level programming language is translated into Viper's intermediate language, which incorporates permission-based reasoning to manage and express ownership of memory locations, similar to separation logic.
 
-The verification process using the Viper toolchain happens as follows. An higher-level language is first encoded into the Viper intermediate language which provides support to permissions natively and uses them to express ownership of heap locations in a style similar to separation logic. 
-This is convenient for reasoning about programs that manipulate the heap and concurrent thread interactions. 
-Viper conditions are then verified using one of the two back-ends and an SMT Solver (Z3). 
-Viper back-ends aim to achieve extensive automation with the intention to avoid circumstances where tool developers and users need to comprehend the inner behavior of the back-ends to carry out the verification process. 
+After translation, Viper uses one of its back-ends and an SMT solver to verify the conditions expressed in the Viper language @eilers2024verification. The back-ends are designed to automate the verification process as much as possible, allowing tool developers and users to focus on the verification task itself without needing to comprehend the inner behavior of the back-ends
+
 
 #figure(
-  caption: "The Viper verification infrastructure",
+  caption: [The Viper verification infrastructure @ViperWebSite],
   image("../images/viper.png", width: 80%)
 )<vpr-infrastructure>
 
 === Language Overview
 
-The Viper intermediate language is an object-oriented, sequential programming language. Despite being designed as an intermediary language, Viper offers high-level features that are beneficial in manually expressing verification issues, along with potent low-level features useful for automatic encoding of source languages.
+The Viper intermediate language is a sequential, object-based language that provides simple imperative constructs along with specifications and custom statements for managing permission-based reasoning.
 
-In Viper, methods can be seen as an abstraction over an operation sequence, which may involve executing an unlimited number of statements. The caller of a method observes its behavior solely through the method's signature and its preconditions and postconditions. This allows Viper to perform a method-modular verification, avoiding all the complexities associated with interprocedural analysis.
+In Viper, methods can be seen as an abstraction over a sequence of operations. The caller of a method observes its behavior solely through the method's signature and its preconditions and postconditions. This allows Viper to perform a method-modular verification, avoiding all the complexities associated with interprocedural analysis.
 
 #figure(
   caption: "Viper method example",
@@ -345,7 +333,7 @@ Field permissions, which define the heap areas that an expression, a statement, 
   ```java
   field b: Bool
 
-  method negation(this: Ref)
+  method negate(this: Ref)
   requires acc(this.b)
   ensures acc(this.b)
   {
@@ -360,12 +348,14 @@ As well as being declared in preconditions and postconditions, field permissions
 #figure(
   caption: "Viper exclusivity example",
   ```java
-  method conjunction(x: Ref, y: Ref)
+  field b: Bool
+
+  method exclusivity(x: Ref, y: Ref)
   {
     inhale acc(x.b) && acc(y.b)
+    assert x != y
     x.b := true
     y.b := true
-    assert x != y
   }
   ```
 )<vpr-permissions-2>
@@ -377,6 +367,8 @@ The wildcard permission amount provides a convenient way to implement duplicable
 #figure(
   caption: "Viper fractional permissions example",
   ```java
+  field b: Bool
+  
   method fractional(x: Ref, y: Ref, z: Ref)
   requires acc(x.b, 1/2)
   requires acc(y.b, 1/2)
@@ -396,8 +388,7 @@ The wildcard permission amount provides a convenient way to implement duplicable
 
 Predicates can be seen as an abstraction tool over assertions, which can include resources like field permissions. The body of a predicate is an assertion. However, predicates are not automatically inlined. In fact, in order to substitute the predicate resource with the assertions defined by its body, it is necessary to perform an unfold operation. The opposite operation is called a fold: folding a predicate substitutes the resources determined by its core content with an instance of the predicate. Having predicates that are not automatically inlined is fundamental since it allows to represent potentially unbounded data structure as shown in @vpr-predicate (Lines 4-8) where the predicate `List` can represent a linked-list. The same example shows how unfold and fold operations can be performed to access the value of the second element of a list (Lines 22-26).
 
-Similarly to predicates, functions are used to define parametrized and potentially-recursive assertions.
-Functions body must be an immutable expression and differently from methods, Viper reasons about function applications in terms of the function bodies, meaning that it is not always necessary to provide postconditions. In @vpr-predicate (Lines 11-15) a function is used to represent the size of a `List` and due to the immutability of its body, the function can be used in the preconditions of the method `second` (Line 19).
+Similar to predicates, functions in Viper are used to define parameterized and potentially recursive assertions. The body of a function must be an expression, ensuring that the evaluation of a function is side-effect free, just like any other Viper expression. Unlike methods, Viper reasons about functions based on their bodies, so it is not necessary to specify postconditions when the function body is provided. In @vpr-predicate (Lines 11-15), a function is first used to represent the size of a `List`, and then is utilized in the preconditions of the `get_second` method (Line 19).
 
 #figure(
   caption: "Viper predicate example",
@@ -419,7 +410,7 @@ Functions body must be an immutable expression and differently from methods, Vip
   }
 
 
-  method second(xs: Ref) returns(res: Int)
+  method get_second(xs: Ref) returns(res: Int)
   requires List(xs) && size(xs) > 1
   ensures List(xs)
   {
