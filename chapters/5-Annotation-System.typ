@@ -607,11 +607,16 @@ After defining how to type a _call_, it is easy to formalize the typing of a _ca
   get_shared(): shared { ... }
 
   f(): unique {
-    begin_f; // (Δ = ∅)
-    var x; // (Δ = x: T)
-    var y; // (Δ = x: T, y: T)
-    x = get_unique(); // (Δ = x: unique, y: T)
-    y = get_shared(); // (Δ = x: unique, y: shared)
+    begin_f; 
+      ⊣ Δ = ∅
+    var x; 
+      ⊣ Δ = x: T
+    var y; 
+      ⊣ Δ = x: T, y: T
+    x = get_unique(); 
+      ⊣ Δ = x: unique, y: T
+    y = get_shared(); 
+      ⊣ Δ = x: unique, y: shared
     ...
   }
   ```
@@ -793,32 +798,32 @@ The system does not permit returning a null value or a method call directly sinc
 
   fun push(this: unique ♭, value: unique): shared {
     begin_push;
-    // Δ = this: unique ♭, value: unique
+      ⊣ Δ = this: unique ♭, value: unique
     var r;
-    // Δ = this: unique ♭, value: unique, r: T
+      ⊣ Δ = this: unique ♭, value: unique, r: T
     r = this.root;
-    // Δ = this: unique ♭, value: unique, r: unique, this.root: T
+      ⊣ Δ = this: unique ♭, value: unique, r: unique, this.root: T
     this.root = Node(value, r);
-    // Δ = this: unique ♭, value: T, r: T, this.root: unique
+      ⊣ Δ = this: unique ♭, value: T, r: T, this.root: unique
     return Unit();
   }
 
   fun pop(this: unique ♭): unique {
     begin_pop;
-    // Δ = this: unique ♭
+      ⊣ Δ = this: unique ♭
     var value;
-    // Δ = this: unique ♭, value: T
+      ⊣ Δ = this: unique ♭, value: T
     if (this.root == null) {
         value = null;
-        // Δ = this: unique ♭, value: unique
+          ⊣ Δ = this: unique ♭, value: unique
     } else {
         value = this.root.value;
-        // Δ = this: unique ♭, value: unique, this.root.value: T
+          ⊣ Δ = this: unique ♭, value: unique, this.root.value: T
         this.root = this.root.next;
-        // Δ = this: unique ♭, value: unique, this.root: unique
+          ⊣ Δ = this: unique ♭, value: unique, this.root: unique
     }
     // Unification...
-    // Δ = this: unique ♭, value: unique, this.root: unique
+      ⊣ Δ = this: unique ♭, value: unique, this.root: unique
     return value;
   }
   ```

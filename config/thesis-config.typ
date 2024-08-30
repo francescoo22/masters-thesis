@@ -64,7 +64,15 @@
   show regex("//.*"): set text(rgb("#8a8a8a"))
 
   r
-  }
+}
+
+#let grammar-show() = r => {
+  show regex("//.*"): set text(rgb("#9a9a5b"))
+  show regex("⊣.*"): set text(rgb("#8a8a8a"))
+
+  r
+}
+
 
 #let config(
     myAuthor: "Nome cognome",
@@ -103,6 +111,8 @@
     }
 
     show raw.where(lang: "vpr"): vpr-show()
+
+    show raw.where(lang: none): grammar-show()
 
     show par: set block(spacing: 0.55em)
     show heading: set block(above: 1.4em, below: 1em)
