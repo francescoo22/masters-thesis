@@ -1,17 +1,20 @@
 #pagebreak(to:"odd")
 = Related Work<cap:related-work>
 
+This chapter first outlines the foundational principles established in _The Geneva Convention_ @GenevaConvention, which serves as a fundamental reference for any work addressing aliasing issues.
+Then, it provides an overview of existing approaches to managing uniqueness in programming languages, focusing on the design choices that have influenced the development of the uniqueness system proposed in this work.
+Finally, the chapter examines current systems that utilize Viper for verification, providing a critical analysis of their strengths and limitations.
+
 == The Geneva Convention
 
-The Geneva Convention @GenevaConvention examines the issues related to aliasing management in object-oriented programming languages.
-
-The paper has established four primary methods to manage aliasing: Detection, Advertisement, Prevention, and Control. These methods aim to provide systematic approaches to identify, communicate, prevent, and manage aliasing in software systems.
+_The Geneva Convention_ @GenevaConvention examines the issues related to aliasing management in object-oriented programming languages.
+After introducing the aliasing problem, the paper establishes four primary methods to manage aliasing: Detection, Advertisement, Prevention, and Control.
 
 === Detection
 
 Alias detection is a retrospective process that identifies potential or actual alias patterns in a program through static or dynamic techniques. This is beneficial for compilers, static analysis tools, and programmers as they can detect aliasing conflicts in programs, leads to more efficient code generation, helps find cases where aliasing can invalidate predicates, and assists programmers in resolving problematic conflicts.
-
 Alias detection requires complex interprocedural analysis due to its non-local nature, which can make comprehensive analyses too slow to be practical.
+For this reason, this approach is not adopted in this work.
 
 === Advertisement
 
@@ -22,12 +25,14 @@ One example of this concept is to specify that the output of a function is not a
 === Prevention
 
 Alias prevention techniques introduce constructs that ensure aliasing does not occur in specific contexts, in a way that can be statically verified.
+For static checkability, constructs must be conservatively defined. For instance, a checkable version of "uncaptured" might restrict all variable bindings within a method, except when calling other methods that also have uncaptured attributes. This approach would forbid uses that programmers may happen to know as alias-free but cannot be statically checked to be safe.
 
-For static checkability, constructs must be conservatively defined. For instance, a checkable version of "uncaptured" might restrict all variable bindings within a method, except when calling other methods that also have uncaptured attributes. This approach would forbid uses that programmers may happen to know as alias-free but cannot be statically checked to be safe. 
+As will be illustrated in @cap:annotations-kt and in @cap:annotation-system, the uniqueness system developed in this work falls into this category, as it employs conservative annotations to enforce alias prevention in a manner that can be statically verified.
 
 === Control
 
-Aliasing prevention alone is not sufficient because aliasing is unavoidable in conventional object-oriented programming. Aliasing control is necessary to ensure the system does not reach a state with unexpected aliasing, which requires analysis of the runtime state.
+Aliasing prevention alone may not be sufficient because aliasing can be unavoidable in conventional object-oriented programming. Aliasing control is used to ensure that the system does not reach a state with unexpected aliasing, which requires analysis of the runtime state.
+However, since this work focuses on static verification, approaches that rely on runtime analysis are not relevant.
 
 == Systems for Controlling Aliasing 
 
@@ -38,51 +43,32 @@ In recent decades, extensive research has been conducted to address the issue of
 // TODO: decide whether to use quote-unquote or italic for linear logic, uniqueness logic ecc.
 
 A uniqueness type system distinguishes values referenced no more than once from values that can be referenced multiple times in a program. Harrington's _Uniqueness Logic_ @uniqueness-logic provides a formalization of the concept of uniqueness.
+While it may initially appear similar to the more widely known _Linear Logic_ @linear-logic, Marshall et al. @An-Entente-Cordiale clarify the differences between these two approaches and demonstrate how they can coexist.
 
-Uniqueness logic might seem similar to the more well-known _Linear Logic_.
-_Linearity and Uniqueness: An Entente Cordiale_ @An-Entente-Cordiale describes the differences between linearity and uniqueness and shows how they can coexist.
+The common trait of all systems based on uniqueness is that a reference declared as unique points to an object that is not accessible by any other reference, unless such references are explicitly tracked by the system. Moreover, the unique status of a reference can be dropped at any point in the program.
 
-#v(1em)
-
-The common trait of all systems based on uniqueness is that a reference declared as unique points to an object that is not accessible by any other unknown reference. Moreover, the unique status of a reference can be dropped at any point in the program.
-
-#v(1em)
-
-A first approach to ensuring uniqueness consists of using destructive reads. AliasJava @aldrich2002alias is a system for controlling aliasing that uses this approach.
-AliasJava is characterized by a strong uniqueness invariant asserting that "at a particular point in dynamic program execution, if a variable or field that refers to an object `o` is annotated unique, then no other field in the program refers to `o`, and all other local variables that refer to `o` are annotated lent".
+A first approach to ensuring uniqueness consists of using destructive reads. Aldrich et al. @aldrich2002alias have developed a system called _AliasJava_ for controlling aliasing which uses this approach.
+_AliasJava_ is characterized by a strong uniqueness invariant asserting that "at a particular point in dynamic program execution, if a variable or field that refers to an object `o` is annotated unique, then no other field in the program refers to `o`, and all other local variables that refer to `o` are annotated lent".
 This invariant is maintained by the fact that unique references can only be read in a destructive manner, meaning that immediately being read, the value `null` is assigned to the reference.
 
-#v(1em)
+Boyland @boyland2001alias proposes a system for controlling aliasing in Java that does not require to use destructive reads.
+The system utilizes a set of annotations to distinguish between different types of references. Specifically, procedure parameters and return values can be annotated as unique, indicating that they are not aliased elsewhere. Conversely, parameters and return values that are not unique are classified as shared. Within this system, a shared parameter may also be declared as borrowed, meaning that the function will not create further aliases for that parameter. Finally, fields can be marked as unique; if not, they are treated as shared.
+The main contribution of this work is the introduction of the "alias burying" rule: "When a unique field of an object is read, all aliases of the field are made undefined". This means that aliases of a unique field are allowed if they are assigned before being used again. The "alias burying" rule is important because it allows to avoid having destructive reads for unique references.
+On the other hand, having a shared reference does not provide any guarantee on the uniqueness of that reference.
+Finally the object referred to by a borrowed parameter may not be returned from a procedure, assigned to a field or passed as a non-borrowed parameter.
 
-Alias Burying @boyland2001alias proposes a system for controlling aliasing in Java that does not require to use destructive reads.
-The system introduces several annotations:
-- Procedure parameters and return values may be declared *unique*.
-- Parameters and return values that are not *unique* are called *shared*.
-- A parameter that is *shared* may be declared *borrowed*, return values may never be *borrowed*.
-- Fields can be declared as *unique*, otherwise they are considered to be *shared*.
-The main contribution of this work is the introduction of the "alias burying" rule: "When a unique field of an object is read, all aliases of the field are made undefined". This means that aliases of a *unique* field are allowed if they are assigned before being used again. The "alias burying" rule is important because it allows to avoid having destructive reads for *unique* references.
-On the other hand, having a *shared* reference does not provide any guarantee on the uniqueness of that reference.
-Finally the object referred to by a *borrowed* parameter may not be returned from a procedure, assigned to a field or passed as an owned (that is, not borrowed) actual parameter.
-
-#v(1em)
-
-Latte @zimmerman2023latte proposes an approach to reduce both the volume of annotations and the complexity of invariants necessary for reasoning about aliasing in an object-oriented language with mutation.
-
-The system requires few annotations to be provided by the user:
-- *unique* or *shared* for object fields and return types.
-- *unique*, *shared* or *owned* for method parameters.
-- The remaining information for local variables is inferred.
-
+Zimmerman et al. @zimmerman2023latte propose an approach to reduce both the volume of annotations and the complexity of invariants necessary for reasoning about aliasing in an object-oriented language with mutation.
+The system requires minimal annotations from the user: fields and return types can be annotated as unique or shared, while method parameters can be marked as unique, shared, or owned. For local variables, the system automatically infers the necessary information.
 Furthermore, the system provides flexibility for uniqueness by permitting local variable aliasing, as long as this aliasing can be precisely determined.
 A uniqueness invariant is defined as follows: "a unique object is stored at most once on the heap. In addition, all usable references to a unique object from the local environment are precisely inferred".
-
-Latte's analysis produces at each program point an "alias graph", that is an undirected graph whose nodes are syntactic paths and distinct paths $p_1$ and $p_2$ are connected iff $p_1$ and $p_2$ are aliased. Moreover a directed graph whose nodes are syntactic path called "reference graph" is also produced for every program point. Intuitively, having an edge from $p_1$ to $p_2$ in the reference graph means that the annotation of $p_1$ requires to be updated when $p_2$ is updated.
+The system's analysis produces at each program point an "alias graph", that is an undirected graph whose nodes are syntactic paths and distinct paths $p_1$ and $p_2$ are connected iff $p_1$ and $p_2$ are aliased. Moreover a directed graph whose nodes are syntactic path called "reference graph" is also produced for every program point. Intuitively, having an edge from $p_1$ to $p_2$ in the reference graph means that the annotation of $p_1$ requires to be updated when $p_2$ is updated.
 
 === Programming Languages with Aliasing Guarantees
 
 Recently, several programming languages have started to introduce type systems that provide strong guarantees regarding aliasing.
 
-Rust @rustlang is a modern programming language that prioritizes both high performance and static safety. A crucial aspect of Rust is its ownership-based type system, which ensures complete memory safety by preventing issues like dangling pointers, data races, and unintended side effects from aliased references. This type system enforces strict rules, allowing memory to be either mutable or shared, but not both simultaneously, thereby avoiding common memory errors. Additionally, this design choice simplifies the process of formal verification.
+Rust @rustlang is a modern programming language that prioritizes both high performance and static safety.
+A key feature of Rust is its ownership-based type system, which guarantees memory safety by preventing problems such as dangling pointers, data races, and unintended side effects from aliased references. The type system enforces strict rules, allowing memory to be either mutable or shared, but not both at the same time. This approach helps to avoid common memory errors and aligns Rust’s memory model with principles from separation logic, facilitating formal verification @jung2020understanding.
 
 - *TODO: Swift* 
   - https://github.com/swiftlang/swift/blob/main/docs/OwnershipManifesto.md
