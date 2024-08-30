@@ -302,7 +302,7 @@ In Viper, methods can be seen as an abstraction over a sequence of operations. T
 
 #figure(
   caption: "Viper method example",
-  ```java
+  ```vpr
   method multiply(x: Int, y: Int) returns (res: Int)
   requires x >= 0 && y >= 0
   ensures res == x * y
@@ -330,7 +330,7 @@ Field permissions, which define the heap areas that an expression, a statement, 
 
 #figure(
   caption: "Viper permissions example",
-  ```java
+  ```vpr
   field b: Bool
 
   method negate(this: Ref)
@@ -347,7 +347,7 @@ As well as being declared in preconditions and postconditions, field permissions
 
 #figure(
   caption: "Viper exclusivity example",
-  ```java
+  ```vpr
   field b: Bool
 
   method exclusivity(x: Ref, y: Ref)
@@ -366,7 +366,7 @@ The wildcard permission amount provides a convenient way to implement duplicable
 
 #figure(
   caption: "Viper fractional permissions example",
-  ```java
+  ```vpr
   field b: Bool
   
   method fractional(x: Ref, y: Ref, z: Ref)
@@ -392,7 +392,7 @@ Similar to predicates, functions in Viper are used to define parameterized and p
 
 #figure(
   caption: "Viper predicate example",
-  ```java
+  ```vpr
   field value: Int
   field next: Ref
 
@@ -432,7 +432,7 @@ Domain axioms are also global and define properties that are assumed to be true 
 
 #figure(
   caption: "Viper domain example",
-  ```java
+  ```vpr
   domain Fraction {
     function nominator(f: Fraction): Int
     function denominator(f: Fraction): Int

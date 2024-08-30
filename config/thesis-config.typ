@@ -17,6 +17,55 @@
   image("../images/cpp-logo.svg", width: .8em), " C++",
 )
 
+#let vpr-show() = r => {
+  // Types:
+  show regex("\b(Ref)\b"): set text(rgb("#4b69c6"))
+  show regex("\b(Bool)\b"): set text(rgb("#4b69c6"))
+  show regex("\b(Int)\b"): set text(rgb("#4b69c6"))
+
+  // Keywords:
+  show regex("\b(inhale)\b"): set text(rgb("#d73a49"))
+  show regex("\b(exhale)\b"): set text(rgb("#d73a49"))
+  show regex("\b(method)\b"): set text(rgb("#d73a49"))
+  show regex("\b(function)\b"): set text(rgb("#d73a49"))
+  show regex("\b(predicate)\b"): set text(rgb("#d73a49"))
+  show regex("\b(field)\b"): set text(rgb("#d73a49"))
+  show regex("\b(fold)\b"): set text(rgb("#d73a49"))
+  show regex("\b(unfold)\b"): set text(rgb("#d73a49"))
+  show regex("\b(unfolding)\b"): set text(rgb("#d73a49"))
+  show regex("\b(in)\b"): set text(rgb("#d73a49"))
+  show regex("\b(requires)\b"): set text(rgb("#d73a49"))
+  show regex("\b(ensures)\b"): set text(rgb("#d73a49"))
+  show regex("\b(returns)\b"): set text(rgb("#d73a49"))
+  show regex("\b(var)\b"): set text(rgb("#d73a49"))
+  show regex("\b(if)\b"): set text(rgb("#d73a49"))
+  show regex("\b(else)\b"): set text(rgb("#d73a49"))
+  show regex("\b(acc)\b"): set text(rgb("#d73a49"))
+  show regex("\b(while)\b"): set text(rgb("#d73a49"))
+  show regex("\b(forall)\b"): set text(rgb("#d73a49"))
+  show regex("\b(axiom)\b"): set text(rgb("#d73a49"))
+  show regex("\b(invariant)\b"): set text(rgb("#d73a49"))
+  show regex("\b(assert)\b"): set text(rgb("#d73a49"))
+  show regex("\b(wildcard)\b"): set text(rgb("#d73a49"))
+  show regex("\b(null)\b"): set text(rgb("#d73a49"))
+  show regex("\b(true)\b"): set text(rgb("#d73a49"))
+  show regex("\b(false)\b"): set text(rgb("#d73a49"))
+  show regex("\b(domain)\b"): set text(rgb("#d73a49"))
+  show regex("\b(write)\b"): set text(rgb("#d73a49"))
+  show "&&": set text(rgb("#d73a49"))
+  show "||": set text(rgb("#d73a49"))
+  show "=": set text(rgb("#d73a49"))
+  show "<": set text(rgb("#d73a49"))
+  show ">": set text(rgb("#d73a49"))
+  show ":": set text(rgb("#d73a49"))
+  show "!": set text(rgb("#d73a49"))
+  show "*": set text(rgb("#d73a49"))
+
+  show regex("//.*"): set text(rgb("#8a8a8a"))
+
+  r
+  }
+
 #let config(
     myAuthor: "Nome cognome",
     myTitle: "Titolo",
@@ -45,13 +94,16 @@
         enabled: true,
         languages: (
           kt: (name: kt-name, color: purple),
-          java: (name: vpr-name, color: orange),
+          vpr: (name: vpr-name, color: orange),
           cpp: (name: cpp-name, color: blue)
         )
       )
       it
       codly-disable()
     }
+
+    show raw.where(lang: "vpr"): vpr-show()
+
     show par: set block(spacing: 0.55em)
     show heading: set block(above: 1.4em, below: 1em)
 

@@ -113,7 +113,7 @@ Finally, @stack-vpr shows how the example from @cap:kt-stack is encoded in Viper
 
 #figure(
   caption: "Stack encoding in Viper",
-  ```java
+  ```vpr
   field value: Ref, next: Ref, root: Ref
 
   predicate UniqueAny(this: Ref)

@@ -13,7 +13,7 @@ fun use_f(x: A) {
 }
 ```
 
-#let intro-vpr = ```java
+#let intro-vpr = ```vpr
 field n: Int
 
 method f(x: Ref, y: Ref)
@@ -59,7 +59,7 @@ class C(
 ) : A(0, 0)
 ```
 
-#let classes-vpr = ```java
+#let classes-vpr = ```vpr
 field x: Int
 field y: Int
 field a1: Ref
@@ -94,7 +94,7 @@ fun returnShared(): T {
 }
 ```
 
-#let return-vpr = ```java
+#let return-vpr = ```vpr
 method returnUnique()
 returns(ret: Ref)
 ensures acc(SharedT(ret), wildcard)
@@ -127,7 +127,7 @@ fun arg_shared_b(
 }
 ```
 
-#let param-vpr = ```java
+#let param-vpr = ```vpr
 method arg_unique(t: Ref)
 requires acc(UniqueT(t))
 requires acc(SharedT(t), wildcard)
@@ -168,7 +168,7 @@ class C(
 ) : A(0, 0)
 ```
 
-#let classes-unique-vpr = ```java
+#let classes-unique-vpr = ```vpr
 predicate UniqueA(this: Ref) {
   acc(this.x, wildcard) &&
   acc(this.y, write)
@@ -192,7 +192,7 @@ predicate UniqueC(this: Ref) {
 }
 ```
 
-#let full-encoding = ```java
+#let full-encoding = ```vpr
 field bf$a1: Ref
 field bf$a2: Ref
 field bf$b: Ref
@@ -238,7 +238,7 @@ fun @receiver:Unique T.uniqueReceiver() {}
 fun @receiver:Unique @receiver:Borrowed T.uniqueBorrowedReceiver() {}
 ```
 
-#let receiver-vpr = ```java
+#let receiver-vpr = ```vpr
 method uniqueReceiver(this: Ref)
 requires acc(SharedT(this), wildcard)
 requires acc(UniqueT(this), write)
@@ -272,7 +272,7 @@ fun call(
 }
 ```
 
-#let unique-call-vpr = ```java
+#let unique-call-vpr = ```vpr
 method uniqueParam(t: Ref)
 requires acc(UniqueT(t), write) && acc(SharedT(t), wildcard)
 ensures acc(SharedT(t), wildcard)
@@ -310,7 +310,7 @@ fun call(@Unique t: T) {
 }
 ```
 
-#let shared-call-vpr = ```java
+#let shared-call-vpr = ```vpr
 method sharedParam(t: Ref)
 requires acc(SharedT(t), wildcard)
 ensures acc(SharedT(t), wildcard)
@@ -338,7 +338,7 @@ class A(val x: Int, var y: Int)
 class B(@property:Unique var a1: A, var a2: A)
 ```
 
-#let constructor-vpr = ```java
+#let constructor-vpr = ```vpr
 method constructorA(p1: Int, p2: Int) returns (ret: Ref)
   ensures acc(SharedA(ret), wildcard)
   ensures acc(UniqueA(ret), write)
