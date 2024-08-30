@@ -4,7 +4,7 @@
 #include "./preface/copyright.typ"
 #include "./preface/abstract.typ"
 #include "./preface/acknowledgements.typ"
-// #include "./preface/table-of-contents.typ"
+#include "./preface/table-of-contents.typ"
 
 // Mainmatter
 

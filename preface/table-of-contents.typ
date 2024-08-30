@@ -16,25 +16,25 @@
   )
 ]
 
-#v(8em)
+// #v(8em)
 
-#outline(
-  title: figuresList,
-  target: figure.where(kind: image)
-)
+// #outline(
+//   title: figuresList,
+//   target: figure.where(kind: image)
+// )
 
-#v(8em)
+// #v(8em)
 
-#outline(
-    title: tablesList,
-    target: figure.where(kind: table),
-    indent: auto
-)
+// #outline(
+//     title: tablesList,
+//     target: figure.where(kind: table),
+//     indent: auto
+// )
 
-#v(8em)
+// #v(8em)
 
-#outline(
-    title: "List of Listings",
-    target: figure.where(kind: raw),
-    indent: auto
-)
+// #outline(
+//     title: "List of Listings",
+//     target: figure.where(kind: raw),
+//     indent: auto
+// )
