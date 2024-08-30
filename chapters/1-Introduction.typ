@@ -9,7 +9,7 @@ Aliasing is an important characteristic of object-oriented programming languages
 Indeed, when $x$ and $y$ are aliased, the formula is not valid, and most of the time proving that aliasing cannot occur is not straightforward.
 
 On the other hand, ensuring disjointness of the heap enables the verification of such formulas. For instance, in separation logic @separationLogic1 @separationLogic2 @separationLogic3, it is possible to prove the correctness of the following formula. $ {(x |-> "true") * (y |-> -)} space y := "false" {(x |-> "true") * (y |-> "false")} $ 
-This verification is possible because separation logic allows to express that $x$ and $y$ are not aliased by using the separating conjunction operator "$*$". Similarly, programming languages can incorporate annotation systems @aldrich2002alias @boyland2001alias @zimmerman2023latte or built-in constructs @rustlang to provide similar guarantees regarding aliasing, thereby simplifying any verification process.
+This verification is possible because separation logic allows to express that $x$ and $y$ are not aliased by using the separating conjunction operator "$*$". Similarly, programming languages can incorporate annotation systems @aldrich2002alias @boyland2001alias @zimmerman2023latte or built-in constructs @swift-parameter-modifiers @rustlang to provide similar guarantees regarding aliasing, thereby simplifying any verification process.
 
 // TODO: aggiungere altre citazioni a @rustlang se dovessi aggiungere altro per swift, rust, ocaml
 

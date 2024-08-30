@@ -67,16 +67,15 @@ The system's analysis produces at each program point an "alias graph", that is a
 
 Recently, several programming languages have started to introduce type systems that provide strong guarantees regarding aliasing.
 
-Rust @rustlang is a modern programming language that prioritizes both high performance and static safety.
-A key feature of Rust is its ownership-based type system, which guarantees memory safety by preventing problems such as dangling pointers, data races, and unintended side effects from aliased references. The type system enforces strict rules, allowing memory to be either mutable or shared, but not both at the same time. This approach helps to avoid common memory errors and aligns Rust’s memory model with principles from separation logic, facilitating formal verification @jung2020understanding.
+Rust is a modern programming language that prioritizes both high performance and static safety.
+A key feature of Rust is its ownership-based type system @rustlang, which guarantees memory safety by preventing problems such as dangling pointers, data races, and unintended side effects from aliased references. The type system enforces strict rules, allowing memory to be either mutable or shared, but not both at the same time. This approach helps to avoid common memory errors and aligns Rust’s memory model with principles from separation logic, facilitating formal verification @jung2020understanding.
 
-- *TODO: Swift* 
-  - https://github.com/swiftlang/swift/blob/main/docs/OwnershipManifesto.md
-  - https://www.swift.org/migration/documentation/swift-6-concurrency-migration-guide/dataracesafety/
-  - https://docs.swift.org/swift-book/documentation/the-swift-programming-language/declarations#Parameter-Modifiers
-- *TODO: Ocaml???*
-  - https://blog.janestreet.com/oxidizing-ocaml-locality/
-  - https://blog.janestreet.com/oxidizing-ocaml-ownership/
+Swift is another language that has introduced constructs to manage aliasing effectively @swift-parameter-modifiers @swift-ownership-manifesto. By default, function arguments in Swift are passed by value, which means any modifications made within the function do not affect the original argument in the caller. However, parameters marked as `inout` behave differently. When a function is called with an `inout` parameter, the argument's value is copied. The function then works with this copy, and when it returns, the modified copy is assigned back to the original argument. Swift guarantees memory exclusivity, meaning that accessing an `inout` value from two different references simultaneously is prohibited, thereby preventing aliasing issues.
+In addition to `inout`, Swift provides two other parameter modifiers to manage ownership more precisely. The `borrowing` modifier indicates that the function temporarily accesses the parameter's value without taking ownership, leaving the caller responsible for the object's lifetime. This approach minimizes overhead when the function uses the object only transiently. Conversely, the `consuming` modifier indicates that the function takes full ownership of the value, including the responsibility for either storing or destroying it before the function returns.
+
+// - *TODO: Ocaml???*
+//   - https://blog.janestreet.com/oxidizing-ocaml-locality/
+//   - https://blog.janestreet.com/oxidizing-ocaml-ownership/
 
 == Viper Verification Tools
 
