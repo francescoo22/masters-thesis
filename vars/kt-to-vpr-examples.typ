@@ -419,3 +419,110 @@ fun m3(
     )
   )
 )
+
+#let unfold-shared-kt = ```kt
+class A(
+    val n: Int
+)
+
+class B(
+    val a: A
+)
+
+fun f(b: B): Int {
+    return b.a.n
+}
+```
+
+#let unfold-shared-vpr = ```vpr
+field n: Int, a: Ref
+
+predicate SharedA(this: Ref) {
+  acc(this.n, wildcard)
+}
+
+predicate SharedB(this: Ref) {
+  acc(this.a, wildcard) &&
+  acc(SharedA(this.a), wildcard)
+}
+
+method f(b: Ref) returns(res: Int)
+requires acc(SharedB(b), wildcard)
+ensures acc(SharedB(b), wildcard)
+{
+  unfold acc(SharedB(b), wildcard)
+  unfold acc(SharedA(b.a), wildcard)
+  res := b.a.n
+}
+```
+
+#let unfold-unique-kt = ```kt
+class A(
+    var n: Int
+)
+
+class B(
+    @property:Unique
+    var a: A
+)
+
+fun f(
+    @Unique b: B
+): Int {
+    return b.a.n
+}
+```
+
+#let unfold-unique-vpr = ```vpr
+field n: Int, a: Ref
+
+predicate UniqueA(this: Ref) {
+  acc(this.n, write)
+}
+
+predicate UniqueB(this: Ref) {
+  acc(this.a, write) &&
+  acc(UniqueA(this.a), write)
+}
+
+method f(b: Ref) returns(res: Int)
+requires acc(UniqueB(b), write)
+ensures acc(UniqueB(b), write)
+{
+  unfold acc(UniqueB(b), write)
+  unfold acc(UniqueA(b.a), write)
+  res := b.a.n
+  fold acc(UniqueA(b.a), write)
+  fold acc(UniqueB(b), write)
+}
+```
+
+#let inhale-shared-kt = ```kt
+class A(
+    val x: Int,
+    var y: Int
+)
+
+fun f(
+    a: A
+) {
+    a.y = 1
+}
+```
+
+#let inhale-shared-vpr = ```vpr
+field x: Int, y: Int
+
+predicate SharedA(this: Ref) {
+  acc(this.x, wildcard)
+}
+
+method f(a: Ref) returns(res: Int)
+requires acc(SharedA(a), wildcard)
+ensures acc(SharedA(a), wildcard)
+{
+  inhale acc(a.y, write)
+  a.y := 1
+  exhale acc(a.y, write)
+}
+```

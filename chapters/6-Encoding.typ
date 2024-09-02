@@ -74,13 +74,27 @@ Currently, the plugin only supports class properties declared as parameters. Pro
 
 #code-compare("Constructor encoding", .8fr, constructor-kt, constructor-vpr, same-row: false)
 
-== Predicates Unfolding<cap:unfolding>
+== Accessing Properties<cap:unfolding>
 
-TODO:
-- easy for shared
-- inhaling -> only if there are no way to access the predicate
-- design choices for unique
-- EXAMPLES
+While encoding the body of a function using predicates to represent classes, multiple `unfold`, `fold`, `inhale`, and `exhale` statements may be necessary to access the properties of a class. If a property is part of a shared predicate, it is accessed through that predicate. If no shared predicate contains the property, the plugin attempts to access it through a unique predicate, if available. If the property is not even contained within any unique predicate, the access is inhaled.
+
+=== Accessing Properties within Shared Predicate
+
+Accessing properties contained within a shared predicate is straightforward. This is because shared predicates are always accessed with `wildcard` permission, meaning that after unfolding, the predicate remains valid, so there is no need to fold it back. In @unfold-shared-example, it is possible to note that the encoding of the function `f` does not require folding any predicate after accessing `b.a.n` to satisfy its postconditions.
+
+#code-compare("Immutable property access encoding", .7fr, unfold-shared-kt, unfold-shared-vpr)<unfold-shared-example>
+
+=== Accessing Properties within Unique Predicate
+
+When accessing a property through a unique predicate, the predicate must be unfolded with `write` permission. Unlike shared predicates, which remain valid after unfolding with `wildcard` permission, a unique predicate does not hold after it has been unfolded. If the unique predicate is needed again, it must be folded back. This is necessary when satisfying the postconditions of the method or the preconditions of a called method.
+
+#code-compare("Unique mutable property access encoding", .7fr, unfold-unique-kt, unfold-unique-vpr)<unfold-unique-example>
+
+=== Accessing Properties not Contained within a Predicate
+
+When no predicates contain the access to a property that needs to be accessed, it must be inhaled. After the property is used, its access is immediately exhaled. It is important to note that once the access to a property is exhaled, all information about it is lost. This is coherent with the idea that a property not contained within a predicate is mutable and shared, making it impossible to reason about it. In fact, such a property could be accessed and modified by other functions running concurrently.
+
+#code-compare("Shared mutable property access encoding", .7fr, inhale-shared-kt, inhale-shared-vpr)<unfold-unique-example>
 
 == Function Calls Encoding
 
