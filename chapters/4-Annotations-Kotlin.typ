@@ -7,7 +7,7 @@ This chapter introduces a uniqueness system for Kotlin that takes inspiration fr
 
 The uniqueness system introduces two annotations, as shown in @kt-annotations. The `Unique` annotation can be applied to class properties, as well as function receivers, parameters, and return values. In contrast, the `Borrowed` annotation can only be used on function receivers and parameters. These are the only annotations the user needs to write, annotations for local variables are inferred.
 
-Generally, a reference annotated with `Unique` is either `null` or the sole reference to an object. Conversely, if a reference is not unique, there are no guarantees about how many references exist to the object. Such references are referred to as shared.
+Generally, a reference annotated with `Unique` is either `null` or the sole accessible reference to an object. Conversely, if a reference is not unique, there are no guarantees about how many accessible references exist to the object. Such references are referred to as shared.
 
 The `Borrowed` annotation is similar to the one described by Boyland @boyland2001alias and also to the `Owned` annotation discussed by Zimmerman et al. @zimmerman2023latte. In this system, every function must ensure that no additional aliases are created for parameters annotated with `Borrowed`. Moreover, a distinguishing feature of this system is that borrowed parameters can either be unique or shared.
 
@@ -48,9 +48,9 @@ Additionally, function parameters and receivers can be annotated as `Borrowed`. 
   fun borrowUnique(@Unique @Borrowed t: T) { /* ... */ }
 
   @Unique
-  fun @receiver:Unique T.returnUniqueCorrect(): T {
-      borrowUnique(this) // uniqueness is preserved
-      return this // ok
+  fun returnUniqueCorrect(@Unique t: T): T {
+      borrowUnique(t) // uniqueness is preserved
+      return t // ok
   }
 
   fun sharedToUnique(t: T) {
@@ -65,7 +65,9 @@ Classes can have their properties annotated as `Unique`. Annotations on properti
 
 For example, in @kt-uniqueness-class, even though the property `x` of the class `A` is annotated as `Unique`, `a1.x` is shared because `a1`, the owner of property `x`, is shared.
 
-It is important to note that properties with primitive types do not need to be annotated.
+It is important to point out that, properties with custom getters or setters are not currently supported by this system.
+Moreover, properties with primitive types do not need to be annotated.
+This is because, unlike objects, primitive types are copied rather than referenced, meaning that each variable holds its own independent value. Therefore, the concept of uniqueness, which is designed to manage the sharing and mutation of objects in memory, does not apply to primitive types. They are always unique in the sense that each instance operates independently, and there is no risk of aliasing or unintended side effects through shared references.
 
 #figure(
   caption: "Uniqueness annotations usage on Kotlin classes",
@@ -119,21 +121,18 @@ The uniqueness annotations that have been introduced can bring several benefits 
 
 === Formal Verification
 
-The main goal of introducing the concept of uniqueness in Kotlin is to enable the verification of interesting functional properties. For instance, formalists might be interested in proving the absence of `IndexOutOfBound` exception in a function. However, the lack of aliasing guarantees in Kotlin can complicate such proofs, even for relatively simple functions like the one shown in @out-of-bound.  In this example, the following scenario could potentially lead to an `IndexOutOfBound` exception:
+The main goal of introducing the concept of uniqueness in Kotlin is to enable the verification of interesting functional properties. For instance, formalists might be interested in proving the absence of `IndexOutOfBoundsException` in a function. However, the lack of aliasing guarantees within a concurrent context in Kotlin can complicate such proofs @KotlinDocsConcurrency, even for relatively simple functions like the one shown in @out-of-bound.  In this example, the following scenario could potentially lead to an `IndexOutOfBoundsException`:
 - The function executes `xs.add(x)`, adding an element to the list `xs`.
 - Concurrently, another function with access to an alias of `xs` invokes the `clear` method, emptying the list.
-- Subsequently, `xs.first()` is called on the now-empty list, raising an `IndexOutOfBound` exception.
-
-Uniqueness, however, offers a solution by providing stronger guarantees. When a reference is unique, there are no other accessible aliases to the same object, making it easier to prove the absence of `IndexOutOfBound` exceptions.
-
-
+- Subsequently, `xs[0]` is called on the now-empty list, raising an `IndexOutOfBoundsException`.
+Uniqueness, however, offers a solution by providing stronger guarantees. If `xs` is unique, there are no other accessible references to the same object, which simplifies proving the absence of `IndexOutOfBoundsException`.
 
 #figure(
   caption: "Function using a mutable list",
   ```kt
 fun <T> f(xs: MutableList<T>, x: T) : T {
     xs.add(x)
-    return xs.first()
+    return xs[0]
 }
   ```
 )<out-of-bound>
@@ -143,7 +142,8 @@ This characteristic aligns well with Viper's notion of write access. In Viper, w
 
 === Smart Casts
 
-As introduced in @cap:smart-cast, smart casts are an important feature in Kotlin that allow developers to avoid using explicit cast operators under certain conditions. However, the compiler can only perform a smart cast if it can guarantee the cast will always be safe.
+As introduced in @cap:smart-cast, smart casts are an important feature in Kotlin that allow developers to avoid using explicit cast operators under certain conditions. However, the compiler can only perform a smart cast if it can guarantee that the cast will always be safe @KotlinSpec. 
+This guarantee relies on the concept of stability: a variable is considered stable if it cannot change after being checked, allowing the compiler to safely assume its type throughout a block of code.
 Since Kotlin is a concurrent language, the compiler cannot perform smart casts when dealing with mutable properties. The reason is that after checking the type of a mutable property, another function running concurrently may access the same reference and change its value. @smart-cast-error, shows that after checking that `a.valProperty` is not `null`, the compiler can smart cast it from `Int?` to `Int`. However, the same operation is not possible for `a.varProperty` because, immediately after checking that it is not `null`, another function running concurrently might set it to `null`.
 Guarantees on the uniqueness of references can enable the compiler to perform more exhaustive analysis for smart casts. When a reference is unique, the uniqueness system ensures that there are no accessible aliases to that reference, meaning it is impossible for a concurrently running function to modify its value. @smart-cast-unique shows the same example as before, but with the function parameter being unique. Since `a` is unique, it is completely safe to smart cast `a.varProperty` from `Int?` to `Int` after verifying that it is not null.
 
