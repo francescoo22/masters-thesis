@@ -70,7 +70,30 @@ Accessing members of nullable reference or calling a method with a nullable refe
   ```
 )
 
-However, there are instances in which a `NullPointerException` can be raised in Kotlin. These include explicit calls to `throw NullPointerException()`, performing unsafe (non-smart) casts, and during Java interoperation. 
+However, there are instances in which a `NullPointerException` can be raised in Kotlin. These include explicit calls to `throw NullPointerException()`, performing unsafe (non-smart) casts, and during Java interoperation.
+
+=== Properties
+
+As mentioned before, properties in Kotlin can be declared as either mutable or read-only. While the initializer, getter, and setter for a property are optional, the property's type can also be omitted if it can be inferred from the initializer or the getter's return type.
+Kotlin does not allow direct declaration of fields. Instead, fields are implicitly created as part of properties to store their values in memory. When a property requires a backing field, Kotlin automatically provides one. This backing field can be accessed within the property's accessors using the `field` identifier.
+A backing field is generated under two conditions: if the property relies on the default implementation of at least one accessor, or if a custom accessor explicitly references the backing field via the `field` identifier.
+
+#figure(
+  caption: "Kotlin properties",
+  ```kt
+  class Square {
+      var width = 1 // initializer
+          set(value) { // setter
+              if (value > 0) field = value // accessing backing field
+              else throw IllegalArgumentException(
+                  "Square size must be greater than 0"
+              )
+          }
+      val area
+          get() = width * width // getter
+  }
+  ```
+)
 
 === Contracts
 
