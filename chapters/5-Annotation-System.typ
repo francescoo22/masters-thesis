@@ -14,8 +14,7 @@
 
 This chapter formalizes the uniqueness system that was introduced in @cap:annotations-kt.
 The system is inspired from some previous works @aldrich2002alias @boyland2001alias @zimmerman2023latte, but it also introduces significant modifications.
-While the majority of previous works are made for Java, this system is designed exclusively for Kotlin and
-it is also specifically designed for being as lightweight as possible and gradually integrable with already existing Kotlin code.
+This system is designed for being as lightweight as possible and gradually integrable with already existing Kotlin code.
 
 The main goal of the system is to improve the verification process with Viper by establishing a link between separation logic and the absence of aliasing control in Kotlin.
 
@@ -116,38 +115,22 @@ Lookup rules are used to define a (partial) function that returns the annotation
 
 $ \_inangle(\_): Delta -> p -> alpha beta $
 
-The function will return the annotations declared in the class declaration in the case in which a path that is not a variable ($p.f$) is not explicitly contained inside the context. This concept, formalized by Lookup-Default, is fundamental because it allows contexts to be finite also when dealing with recursive classes. On the other hand, the lookup for variables ($x$) not contained in a context cannot be derived.
+The function will return the annotations declared in the class declaration in the case in which a path that is not a variable ($p.f$) is not explicitly contained inside the context. This concept, formalized by Lookup-Default, is fundamental because it allows contexts to be finite also when dealing with recursive classes.
+Conversely, the lookup for variables ($x$) not contained in a context cannot be derived.
+Moreover, Lookup-Default relies on a function that takes a path and returns its class type. Although this function is not explicitly defined here, it is assumed as an axiom, since such information is provided by Kotlin's type system.
 
-It is also important to note that this function does not necessarily return the correct ownership of a path, but just the annotations contained within the context or those written in the class declaration.
+It is important to note that the lookup function returns the annotations associated with a path based on the context or the class declaration, rather than determining the actual ownership status of that path.
 
 #example[
   Given a context: $ Delta = x : shared, space x.f : unique $ 
   The result of the lookup for $x.f$ is the following: $ Delta inangle(x.f) = unique $ However, since $x$ is shared, there can be multiple references accessing $x$. This implies there can be multiple references accessing $x.f$, meaning that $x.f$ is also shared.
-  This behavior is intended and a function able to provide the correct ownership of a reference will be defined in the next sections.
+  This behavior is intended and a function able to provide the actual ownership of a reference will be defined in the next sections.
 ]
 
 #example[
   Given class $C$, context $Delta$ and variable $x$ such that: $ class C(f: shared) \ Delta = x : unique \ type(x) = C $
   The result of the lookup for $x.f$ is the following: $ Delta inangle(x.f) = shared $
   Since $x.f in.not Delta$, the lookup returns the default annotation, which is the one declared in the class signature.
-]
-
-=== Remove
-
-#display-rules(
-  Remove-Empty, Remove-Base,
-  Remove-Rec, "",
-)
-
-Remove rules are used to define a function taking a context and a path and returning a context.
-
-$ \_without\_ : Delta -> p -> Delta $
-
-Basically, the function will return the context without the specified path if the path is within the context, and it will return the original context if the path is not contained.
-
-#example[
-  Given a context: $ Delta = x: shared, space x.f: shared $
-  Remove has the following results: $ Delta without x.f = x: shared \ Delta without x = x.f: shared \ Delta without y = x: shared, space x.f: shared $
 ]
 
 == Sub-Paths and Sup-Paths
@@ -166,6 +149,24 @@ This set of rules is used to formally define sub-paths and sup-paths.
   We say that:
   - $x.y$ is a sub-path of $x.y.z$
   - $x.y.z$ is a sup-path of $x.y$
+]
+
+=== Remove
+
+#display-rules(
+  Remove-Empty, Remove-Base,
+  Remove-Rec, "",
+)
+
+Remove rules are used to define a function taking a context and a path and returning a context.
+
+$ \_without\_ : Delta -> p -> Delta $
+
+Basically, the function will return the context without the specified path if the path is within the context, and it will return the original context if the path is not contained.
+
+#example[
+  Given a context: $ Delta = x: shared, space x.f: shared $
+  Remove has the following results: $ Delta without x.f = x: shared \ Delta without x = x.f: shared \ Delta without y = x: shared, space x.f: shared $
 ]
 
 === Deep Remove
@@ -275,6 +276,8 @@ In the case that the given path is a variable, the function will return the same
 
 It is important to note that if $Delta(p) = alpha beta$ is derivable for some $alpha beta$ then the root of $p$ is contained inside $Delta$. This is important because many rules in the subsequent sections will use the judgment $Delta(p) = alpha beta$ as a precondition and it also helps to guarantee that the root of $p$ is contained inside $Delta$.
 
+Furthermore, in the rule Get-Path, the premise $Delta inangle(p.f) = alpha'$ does not pair a $beta'$ annotation to $alpha'$. This omission is intentional because, by the design of the subsequent typing rules, a field access lookup should never result in a borrowed annotation. Regardless, the $beta$ annotation for a field access should be determined solely by its root.
+
 #example[
   Given a context: $ Delta = x: unique, space x.y: top, space x.y.z: shared $
 
@@ -326,6 +329,8 @@ Since a called method does not have information about $Delta$ when verified, all
 ]
 
 == Unification
+
+This section introduces several functions essential for managing contexts in control flow constructs such as branching and scope transitions.
 
 === Pointwise LUB
 
@@ -465,35 +470,7 @@ f(): unique {
 ```
 )
 
-=== Assign null
-
-#display-rules(Assign-Null, "")
-
-The definition of unique tells us that a reference is unique when it is `null` or is the sole accessible reference pointing to the object that is pointing. Given that, we can safely consider unique a path $p$ after assigning `null` to it. Moreover, all sup-paths of $p$ are removed from the context after the assignment.
-
-It is also important to note the presence of the premise "$Delta(p) = alpha beta$" ensuring that the root of the path $p$ is inside the context $Delta$.
-
-#figure(
-  caption: "Typing example for assigning null",
-```
-class C(t: unique)
-
-f() {
-  begin_f;
-    ⊣ Δ = ∅
-  var b;
-    ⊣ Δ = b: T
-  ...
-    ⊣ Δ = b: shared, b.t: T
-  b = null
-    ⊣ Δ = b: unique
-  ...
-}
-```
-)
-
 === Call
-
 
 #display-rules(Call, "")
 
@@ -594,11 +571,40 @@ Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and 
   ```
 )<call-sup-ok-2>
 
-=== Assign Call
+=== Assignments
+
+All rules for typing assignments have a path $p$ on the left-hand side and vary based on the expression on the right-hand side. The common trait of these rules is that they require the root of $p$ to be contained within the initial context using the premise "$Delta(p) = alpha beta$". Additionally, in the resulting context, the annotation of $p$ is always updated according to the expression on the right-hand side of the assignment.
+
+==== Assign null
+
+#display-rules(Assign-Null, "")
+
+The definition of unique tells us that a reference is unique when it is `null` or is the sole accessible reference pointing to the object that is pointing. Given that, we can safely consider unique a path $p$ after assigning `null` to it. Moreover, all sup-paths of $p$ are removed from the context after the assignment.
+
+#figure(
+  caption: "Typing example for assigning null",
+```
+class C(t: unique)
+
+f() {
+  begin_f;
+    ⊣ Δ = ∅
+  var b;
+    ⊣ Δ = b: T
+  ...
+    ⊣ Δ = b: shared, b.t: T
+  b = null
+    ⊣ Δ = b: unique
+  ...
+}
+```
+)
+
+==== Assign Call
 
 #display-rules(Assign-Call, "")
 
-After defining how to type a _call_, it is easy to formalize the typing of a _call_ assignment. Like all the other assignment rules, the root of the path on the left side of the assignment must be in the context. First of all, the _call_ is typed obtaining a new context $Delta_1$. Then, the annotation of the path on the left side of the assignment is replaced ($|->$) in $Delta_1$ with the annotation of the return value of the method.
+After defining how to type a method call, it is easy to formalize the typing of a call assignment. Like all the other assignment rules, the root of the path on the left side of the assignment must be in the context. First of all, the method call is typed obtaining a new context $Delta_1$. Then, the annotation of the path on the left side of the assignment is replaced ($|->$) in $Delta_1$ with the annotation of the return value of the method.
 
 #figure(
   caption: "Typing example for assigning a method call",
@@ -622,7 +628,7 @@ After defining how to type a _call_, it is easy to formalize the typing of a _ca
   ```
 )
 
-=== Assign Unique
+==== Assign Unique
 
 #display-rules(Assign-Unique, "")
 
@@ -654,7 +660,7 @@ The resulting context is built in the following way:
   ```
 )
 
-=== Assign Shared
+==== Assign Shared
 
 #display-rules(Assign-Shared, "")
 
@@ -679,7 +685,7 @@ Also the resulting context is constructed in a similar way to the previous case.
   ```
 )
 
-=== Assign Borrowed Field
+==== Assign Borrowed Field
 
 #display-rules(Assign-Borrowed-Field, "")
 

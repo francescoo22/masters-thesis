@@ -96,8 +96,8 @@
 )
 
 #let SubPath-Eq-1 = prooftree(
-  axiom($p = p'$),
-  rule(label: "Sub-Path-Eq-1", $p subset.sq.eq p'$),
+  axiom($$),
+  rule(label: "Sub-Path-Eq-1", $p subset.sq.eq p$),
 )
 
 #let SubPath-Eq-2 = prooftree(
