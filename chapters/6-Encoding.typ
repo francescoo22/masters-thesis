@@ -17,8 +17,10 @@ The shared predicate of a class includes read access to all fields that the lang
 As shown in @class-comp-1, the encoding process involves including access to all fields declared as `val`, along with their shared predicate if they have one. Inheritance is encoded by including access to the shared predicates of the supertypes (Line 18). Additionally, the example illustrates how Kotlin's nullable types are encoded by accessing the predicate when the reference is not `null` through a logical implication (Lines 19-21).
 
 All the encoding examples that follow are simplified to improve readability and focus on the aspects pertinent to this work. In the plugin, avoiding name clashes is a crucial concern. As a result, names in the plugin are typically more complex than those shown in the examples.
-Furthermore, the plugin extends the predicate's body by adding Kotlin type information through domain functions. Instead of mapping Kotlin `Int` and other primitive types directly to their corresponding built-in Viper types, the plugin maps them to Viper `Ref` paired with a domain function. Similarly, classes are also paired with domain functions to ensure that their type information is consistently represented. However, this representation is omitted since it is not relevant to the focus of this work.
 
+Furthermore, the plugin extends the predicate's body by incorporating Kotlin type information using domain functions. Unlike other assertions within the predicate, these domain functions are not resource assertions but rather logical assertions about the Kotlin type of a reference.
+For example, instead of directly mapping Kotlin `Int` and other primitive types to their corresponding built-in Viper types, the plugin maps them to Viper `Ref` type, each associated with a domain function that asserts the specific Kotlin type of the reference. This approach ensures that the type information is logically represented within the verification process. Similarly, when dealing with classes, the plugin pairs them with domain functions to maintain consistent type information throughout the verification.
+This representation, while crucial for accurate type tracking, is omitted in the examples provided here, as it is not central to the primary focus of this work.
 For a complete view, @complete-encoding shows how the shared predicate of the classes in @class-comp-1 appears in the plugin. 
 
 #code-compare("Shared predicate encoding", 0.8fr, classes-kt, classes-vpr)<class-comp-1>
@@ -30,7 +32,7 @@ For a complete view, @complete-encoding shows how the shared predicate of the cl
 
 === Unique Predicate
 
-The unique predicate of a class represents all the resources that the annotation system guarantees will not be aliased for a unique object. This includes access to all the fields of a class with `write` or `wildcard` permission, depending on whether the field is `var` or `val`. If a field is declared unique, it also includes access to its unique predicate. Additionally, this predicate contains access assertions to the shared predicate of the fields because, as explained in the previous section, accessing immutable resources is always safe.
+The unique predicate of a class grants access to all its fields with either `write` or `wildcard` permission, depending on whether the field is declared as `var` or `val`. If a field is marked as unique, the unique predicate also includes access to that field’s unique predicate. Additionally, the predicate contains access assertions to the shared predicates of the fields since, as explained in the previous section, accessing immutable resources is always safe.
 
 It is worth mentioning that some overlap might exist between the assertions in the shared predicate and those in the unique predicate. However, this overlap cannot lead to contradictions in Viper, such as requiring access with a total amount greater than 1, because the only assertions that can overlap are accessed with `wildcard` permission.
 
@@ -118,6 +120,8 @@ For example, passing a unique reference to a function expecting a shared (non-bo
   caption: "Extra statements added for functions call encoding",
   image("../images/calls-graph.svg", width: 60%)
 )<call-graph>
+
+#v(1em)
 
 #code-compare("Function call with shared parameter encoding", .8fr, shared-call-kt, shared-call-vpr)
 
