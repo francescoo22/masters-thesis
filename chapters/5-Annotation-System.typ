@@ -50,9 +50,11 @@ Finally, statements and expressions are pretty similar to Kotlin.
 #display-rules(
   M-Type, "",
   M-Args, "",
+  F-Type, ""
 )
 
 Given a program $P$, the rule M-Type defines a function taking a method name and returning its type. Similarly, M-Args defines a function taking a method name and returning its arguments. In order to derive these rules, the method must be contained within $P$.
+For simplicity, it is assumed that in $P$, fields within the same class, as well as across different classes, have distinct names. This assumption simplifies the definition of the F-Type rule, which defines a function that returns the type of a given field access.
 
 #example[
   Given a method: $ m(x: unique borrowed, y: shared): unique {...} $
@@ -111,15 +113,13 @@ This first set of rules defines how a well-formed context is structured. The jud
   Lookup-Default, "",
 )
 
-Lookup rules are used to define a (partial) function that returns the annotations of a path in a well-formed context.
+Lookup rules define a (partial) function that, given a well-formed context, returns the annotations associated with a given path
 
-$ \_inangle(\_): Delta -> p -> alpha beta $
-
-The function will return the annotations declared in the class declaration in the case in which a path that is not a variable ($p.f$) is not explicitly contained inside the context. This concept, formalized by Lookup-Default, is fundamental because it allows contexts to be finite also when dealing with recursive classes.
-Conversely, the lookup for variables ($x$) not contained in a context cannot be derived.
-Moreover, Lookup-Default relies on a function that takes a path and returns its class type. Although this function is not explicitly defined here, it is assumed as an axiom, since such information is provided by Kotlin's type system.
+When the path is explicitly contained within the context, the function returns the corresponding annotation. If a field access ($p.f$) is not explicitly present in the context, the function returns the annotations specified in the class declaration. This concept, formalized by Lookup-Default, is crucial as it ensures that contexts remain finite, even when handling recursive classes. However, if a variable ($x$) is not present in the context, its lookup cannot be derived.
 
 It is important to note that the lookup function returns the annotations associated with a path based on the context or the class declaration, rather than determining the actual ownership status of that path.
+
+$ \_inangle(\_): Delta -> p -> alpha beta $
 
 #example[
   Given a context: $ Delta = x : shared, space x.f : unique $ 
@@ -128,7 +128,7 @@ It is important to note that the lookup function returns the annotations associa
 ]
 
 #example[
-  Given class $C$, context $Delta$ and variable $x$ such that: $ class C(f: shared) \ Delta = x : unique \ type(x) = C $
+  Given class $C$, context $Delta$ and variable $x$ such that: $ class C(f: shared) in P \ Delta = x : unique \ type(x.f) = shared $
   The result of the lookup for $x.f$ is the following: $ Delta inangle(x.f) = shared $
   Since $x.f in.not Delta$, the lookup returns the default annotation, which is the one declared in the class signature.
 ]

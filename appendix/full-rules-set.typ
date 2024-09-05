@@ -8,11 +8,14 @@
 
 = Typing Rules
 
+All the following rules are to be considered for a given program $P$, where fields within the same class, as well as across different classes, must have distinct names.
+
 == General
 
 #display-rules(
   M-Type, "",
   M-Args, "",
+  F-Type, ""
 )
 
 == Context
