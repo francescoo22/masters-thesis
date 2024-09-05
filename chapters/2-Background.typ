@@ -2,7 +2,7 @@
 #pagebreak(to:"odd")
 = Background<cap:background>
 
-// IMPROVE: symbols for code that compiles vs code that doesn't?
+This chapter outlines the background information necessary to understand the concepts discussed in the rest of this work. Specifically, it covers relevant aspects about Kotlin, aliasing, separation logic, and Viper, providing a foundation for understanding how these topics interrelate and support the main contributions of the thesis.
 
 == Kotlin
 
@@ -16,7 +16,7 @@ In programming languages, mutability refers to the capability to alter the value
 
 === Smart Casts<cap:smart-cast>
 
-In Kotlin, smart casts refer to a feature of the language that automatically handles explicit typecasting, reducing the need for manual intervention. A smart cast occurs when the compiler tracks conditions inside conditional expressions and automatically casts types if possible, eliminating the necessity for explicit casting in many scenarios. This considerably simplifies the syntax and increases readability. For example, if we perform a type check on a variable in an `if` condition, we can use that variable in its checked type within the `if` block without the requirement to explicitly cast it. An example of smart cast can be found in @smart-cast.
+In Kotlin, when the compiler can determine that a variable's type is more specific than its declared type, it inserts a smart cast to reflect this. This means that after a type check in a conditional expression, the variable can be used with its more specific type within that block without additional casting. For example, after confirming a variable is of a certain type in an `if` condition, the variable can be used with that type within the `if` block without requiring an explicit cast. An example of smart casting is provided in @smart-cast.
 
 #figure(
   caption: "Example of smart-cast in Kotlin",
@@ -61,7 +61,7 @@ Accessing members of nullable reference or calling a method with a nullable refe
   ```kt
   fun f(nullableString: String?) {
       if (nullableString != null) {
-          // 'nullableString' is smart-casted from 'String?' to 'String'
+          // 'nullableString' is smart-cast from 'String?' to 'String'
           println(nullableString.length) // safe
           println(nullableString.isEmpty()) // safe
       }
@@ -97,7 +97,7 @@ A backing field is generated under two conditions: if the property relies on the
 
 === Contracts
 
-Kotlin contracts are an experimental feature introduced in Kotlin 1.3 designed to provide additional guarantees about code behavior, helping the compiler in performing more precise analysis and optimizations. Contracts are defined using a special contract block within a function, describing the relationship between input parameters and the function's effects. This can include conditions such as whether a lambda is invoked or if a function returns under certain conditions. By specifying these relationships, contracts provide guarantees to the caller of a function, offering the compiler additional information that enable more advanced code analysis.
+Kotlin contracts @KotlinContracts are an experimental feature introduced in Kotlin 1.3 designed to provide additional guarantees about code behavior, helping the compiler in performing more precise analysis and optimizations. Contracts are defined using a special contract block within a function, describing the relationship between input parameters and the function's effects. This can include conditions such as whether a lambda is invoked or if a function returns under certain conditions. By specifying these relationships, contracts provide guarantees to the caller of a function, offering the compiler additional information that enable more advanced code analysis.
 
 It is important to point out that currently contracts correctness is not statically verified. The compiler trusts contracts unconditionally meaning that the programmer is responsible for writing correct and sound contracts.
 
@@ -200,7 +200,7 @@ Following that, variable `z` is initialized with a newly-created object in the f
   ```
 )<aliasing>
 
-Although aliasing is essential in object-oriented programming as it allows programmers to implement designs involving sharing, as described in The Geneva Convention @GenevaConvention, aliasing can be a problem in both formal verification and practical programming.
+Although aliasing is essential in object-oriented programming as it allows programmers to implement designs involving sharing, as described in _the Geneva Convention on the Treatment of Object Aliasing_ @GenevaConvention, aliasing can be a problem in both formal verification and practical programming.
 
 The example in @alias-verification illustrates how aliasing between references can complicate the formal verification process. In the given example, a class `A` is declared with a boolean field `x`, followed by the function `f` which accepts two arguments `a1` and `a2` of type `A`. The function assigns `true` to `a1.x`, `false` to `a2.x`, and finally returns `a1.x`. Despite the function being straightforward, we cannot assert that the function will always return `true`. The reason for this uncertainty is the potential aliasing of `a1` and `a2`, as the second assignment might change the value of `a1.x` as well.
 
@@ -282,23 +282,42 @@ Since C++ does not have built-in mechanisms to control aliasing statically, in t
 
 == Separation Logic
 
+Separation logic @separationLogic1 @separationLogic2 @separationLogic3 is an extension of first-order logic that can be used to reason about low-level imperative programs that manipulate pointer data structures by integrating it in Hoare's triples.
+Unlike a first-order logic formula, which directly represents a truth value, a separation logic formula represents predicates on the heap. This enables separation logic to describe how memory locations are manipulated and how different locations interact with each other
+
+The core concept of separation logic is the separating conjunction $P ∗ Q$, which asserts that $P$ and $Q$ hold for different, non-overlapping parts of the heap. For instance, if a change to a single heap cell affects $P$ in $P ∗ Q$, it is guaranteed that it will not impact $Q$. This feature eliminates the need to check for possible aliases in $Q$. On a broader scale, the specification ${P} space C space {Q}$ for a heap modification can be expanded using a rule that allows to derive ${P ∗ R} space C space{Q ∗ R}$, indicating that additional heap cells remain untouched. This enables the initial specification ${P} space C space{Q}$ to focus solely on the cells involved in the program's footprint.
+
+Separation logic also includes other assertions: `emp` indicates that the heap is empty, $e_1 |-> e_2$ specifies that the heap contains a cell at address $e_1$ with the value $e_2$, and $a_1 mw a_2$ asserts that extending the current heap with a disjoint part where $a_1$ holds will result in a heap where $a_2$ holds.
+
 $
 angle.l "assert" angle.r &::= \
 &| "emp" &&& "empty heap" \
 &| angle.l "exp" angle.r |-> angle.l "exp" angle.r &&& "singleton heap" \
 &| angle.l "assert" angle.r * angle.l "assert" angle.r &&& "separating conjunction" \
-&| angle.l "assert" angle.r "−∗" angle.l "assert" angle.r #h(5em) &&& "separating implication" \
+&| angle.l "assert" angle.r mw angle.l "assert" angle.r #h(5em) &&& "separating implication" \
 $
 
-Separation logic @separationLogic1 @separationLogic2 @separationLogic3 is an extension of first-order logic that can be used to reason about low-level imperative programs that manipulate pointer data structures by integrating it in Hoare's triples.
+#example[
+  In separation logic, this example represents a Hoare triple, which consists of a precondition, a command, and a postcondition.
 
-The core concept of separation logic is the separating conjunction $P ∗ Q$, which asserts that $P$ and $Q$ hold for different, non-overlapping parts of the heap. For instance, if a change to a single heap cell affects $P$ in $P ∗ Q$, it is guaranteed that it will not impact $Q$. This feature eliminates the need to check for possible aliases in $Q$. On a broader scale, the specification ${P} space C space {Q}$ for a heap modification can be expanded using a rule that allows to derive ${P ∗ R} space C space{Q ∗ R}$, indicating that additional heap cells remain untouched. This enables the initial specification ${P} space C space{Q}$ to focus solely on the cells involved in the program's footprint.
+  $ {(x |-> "true") * (y |-> "true")} space x := "false" space {(x |-> "false") * (y |-> "true")} $
 
-Separation logic also includes other assertions: `emp` indicates that the heap is empty, $e_1 |-> e_2$ specifies that the heap contains a cell at address $e_1$ with the value $e_2$, and $a_1 "−∗" a_2$ asserts that extending the current heap with a disjoint part where $a_1$ holds will result in a heap where $a_2$ holds.
+  The triple has the following meaning:
+  - Precondition ${(x |-> "true") * (y |-> "true")}$ describes the state of the memory before the command is executed.
+    - $x |-> "true"$ means that reference $x$ points to the value true.
+    - $y |-> "true"$ means that reference $y$ points to the value true.
+    - Separating conjunction $*$ indicates that $x$ and $y$ point to different locations in memory.
+
+  - Command $x := "false"$ is an assignment operation where the value referenced by $x$ is updated from true to false.
+
+  - Postcondition ${(x |-> "false") * (y |-> "true")}$ describes the state of the memory after the command is executed.
+    - After the assignment, $x$ now points to false, while $y$ continues to point to true, reflecting that $y$ remains unchanged.
+    - Again, the separating conjunction $*$ ensures that $x$ and $y$ still point to distinct memory locations.
+]
 
 #example[
-  The following formula is derivable in separation logic:
-  $ {(x |-> -) * ((x |-> 1) "−∗" P)} space x := 1 space {P} $
+  The following triple is derivable in separation logic:
+  $ {(x |-> -) * ((x |-> 1) mw P)} space x := 1 space {P} $
 ]
 
 == Viper
@@ -385,7 +404,7 @@ As well as being declared in preconditions and postconditions, field permissions
 
 Sometimes, exclusive permissions can be too restrictive. Viper also allows to have fractional permissions for heap locations that can be shared but only read. Fractional permissions are declared with a permission amount between 0 and 1 or with the `wildcard` keyword.
 The value represented by a `wildcard` is not constant, instead it is reselected each time an expression involving a `wildcard` is identified. 
-The wildcard permission amount provides a convenient way to implement duplicable read-only resources, which is often suitable for the representation of immutable data. The example in @vpr-fractional shows how fractional permissions can be combined to gain full permissions (Line 6-7). In the same example it is also possible to see that Viper does not allow to have a permission amount greater than 1, in fact, since `wildcard` is an amount grater than 0, a situation in which `x == y == z` is not possible and so the assertion on Line 9 can be verified.
+The `wildcard` permission amount provides a convenient way to implement duplicable read-only resources, which is often suitable for the representation of immutable data. The example in @vpr-fractional shows how fractional permissions can be combined to gain full permissions (Line 6-7). In the same example it is also possible to see that Viper does not allow to have a permission amount greater than 1, in fact, since `wildcard` is an amount grater than 0, a situation in which `x == y == z` is not possible and so the assertion on Line 11 can be verified.
 
 #figure(
   caption: "Viper fractional permissions example",

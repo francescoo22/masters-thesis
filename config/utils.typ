@@ -35,6 +35,7 @@
 #let rel = $lt.eq.curly$
 #let Lub = $union.sq.big$
 #let lub = $union.sq$
+#let mw = $-#h(-.3em)*$
 
 // *** UTILS ***
 
