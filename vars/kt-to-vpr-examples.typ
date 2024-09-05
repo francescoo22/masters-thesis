@@ -8,8 +8,8 @@ fun f(x: A, y: A) {
     y.n = 2
 }
 
-fun use_f(x: A) {
-    f(x, x)
+fun use_f(a: A) {
+    f(a, a)
 }
 ```
 
@@ -23,10 +23,10 @@ requires acc(x.n) && acc(y.n)
   y.n := 2
 }
 
-method use_f(x: Ref)
-requires acc(x.n)
+method use_f(a: Ref)
+requires acc(a.n)
 {
-  f(x, x) // verification error
+  f(a, a) // verification error
 }
 ```
 
@@ -38,8 +38,8 @@ fun f(@Unique @Borrowed x: A, @Unique @Borrowed y: A) {
     y.n = 2
 }
 
-fun use_f(@Unique x: A) {
-    f(x, x) // annotations checking error
+fun use_f(@Unique a: A) {
+    f(a, a) // annotations checking error
 }
 ```
 

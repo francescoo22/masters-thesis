@@ -4,8 +4,8 @@
 
 = Introduction
 
-Aliasing is a topic that has been studied for decades  @Aliasing-OOP @beyondGenevaConvention @GenevaConvention in Computer Science and it refers to the situation where two or more references point to the same object.
-Aliasing is an important characteristic of object-oriented programming languages allowing the programmers to develope complex designs involving sharing. However, reasoning about programs written with languages that allow aliasing without any kind of control is a hard task for programmers, compilers and formal verification tools. In fact, as reported in the Geneva Convention @GenevaConvention, without having guarantees about aliasing it can be difficult to prove the correctness of a simple Hoare formula like the following. $ {x = "true"} space y := "false" {x = "true"} $ 
+Aliasing is a topic that has been studied for decades  @Aliasing-OOP @beyondGenevaConvention @GenevaConvention in computer science and it refers to the situation where two or more references point to the same object.
+Aliasing is an important characteristic of object-oriented programming languages allowing the programmers to develope complex designs involving sharing. However, reasoning about programs written with languages that allow aliasing without any kind of control is a hard task for programmers, compilers and formal verification tools. In fact, as reported in _the Geneva Convention on the Treatment of Object Aliasing_ @GenevaConvention, without having guarantees about aliasing it can be difficult to prove the correctness of a simple Hoare formula like the following. $ {x = "true"} space y := "false" {x = "true"} $ 
 Indeed, when $x$ and $y$ are aliased, the formula is not valid, and most of the time proving that aliasing cannot occur is not straightforward.
 
 On the other hand, ensuring disjointness of the heap enables the verification of such formulas. For instance, in separation logic @separationLogic1 @separationLogic2 @separationLogic3, it is possible to prove the correctness of the following formula. $ {(x |-> "true") * (y |-> -)} space y := "false" {(x |-> "true") * (y |-> "false")} $ 
@@ -15,7 +15,7 @@ This verification is possible because separation logic allows to express that $x
 
 == Contributions
 
-This work demonstrates how controlling aliasing through an annotation system can enhance the formal verification process performed by an existing plugin @FormVerPlugin for the Kotlin language @KotlinSpec @Kotlin. The plugin verifies Kotlin using Viper @ViperWebSite @Viper, an intermediate verification language developed by ETH Zurich. Viper is designed to verify programs by enabling the specification of functions with preconditions and postconditions, which are then checked for correctness. This verification is performed using one of two back-ends: symbolic execution or verification condition generation, both of which rely on an SMT solver to validate the specified conditions.
+This work demonstrates how controlling aliasing through an annotation system can enhance the formal verification process performed by an existing plugin @FormVerPlugin for the Kotlin language @KotlinSpec @Kotlin. The plugin verifies Kotlin using Viper @ViperWebSite @Viper, an intermediate verification language developed by ETH Zurich. Viper is designed to verify programs by enabling the specification of functions with preconditions and postconditions, which are then checked for correctness. This verification is performed using one of two back-ends: symbolic execution @MuellerSchwerhoffSummers16b or verification condition generation @HeuleKassiosMuellerSummers13, both of which rely on an SMT solver to validate the specified conditions.
 
 In order to verify to Kotlin with Viper, it is necessary to translate the former language into the latter. However, this translation presents challenges due to fundamental differences between the two languages. Specifically, Viper's memory model is based on separation logic, which disallows shared mutable references. In contrast, Kotlin does not restrict aliasing, meaning that references in Kotlin can be both shared and mutable, posing a significant challenge when trying to encode Kotlin code into Viper.
 
@@ -29,7 +29,7 @@ The proposed annotation system introduces a way for developers to specify and en
 This helps to clearly distinguish between references that might be shared and those that are unique. Additionally, the system differentiates between functions that create new aliases for their parameters and those that do not.
 This level of control is important for preventing common programming errors related to mutable shared state, such as race conditions or unintended side effects.
 
-@kt-ann-intro provides an overview of the annotation system. Specifically, the `@Unique` annotation ensures that a reference is not aliased, while the `@Borrowed` annotation guarantees that a function does not create new aliases for a reference. The example also demonstrates how the problematic function call presented in @intro-comp is disallowed by the annotation system.
+@kt-ann-intro provides an overview of the annotation system. Specifically, the `@Unique` annotation ensures that a reference is not aliased, while the `@Borrowed` annotation guarantees that a function does not create new aliases for a reference. The example also demonstrates how the problematic function call presented in @intro-comp is disallowed by the annotation system, as `x` and `y` would be aliased when the function `f` requires them to be unique.
 
 The thesis finally shows how aligning Kotlin’s memory model with Viper’s, using the proposed annotation system, enhances the encoding process performed by the plugin.
 
