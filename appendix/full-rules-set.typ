@@ -18,27 +18,11 @@ All the following rules are to be considered for a given program $P$, where fiel
   F-Type, ""
 )
 
-== Context
-
-=== Well-Formed Contexts
+== Well-Formed Contexts
 
 #display-rules(
   Not-In-Base, Not-In-Rec,
   Ctx-Base, Ctx-Rec,
-)
-
-=== Lookup
-
-#display-rules(
-  Lookup-Base, Lookup-Rec,
-  Lookup-Default, "",
-)
-
-=== Remove
-
-#display-rules(
-  Remove-Empty, Remove-Base,
-  Remove-Rec, "",
 )
 
 == Sub-Paths and Sup-Paths
@@ -48,6 +32,13 @@ All the following rules are to be considered for a given program $P$, where fiel
 #display-rules(
   SubPath-Base, SubPath-Rec,
   SubPath-Eq-1, SubPath-Eq-2,
+)
+
+=== Remove
+
+#display-rules(
+  Remove-Empty, Remove-Base,
+  Remove-Rec, "",
 )
 
 === Deep Remove
@@ -98,6 +89,13 @@ All the following rules are to be considered for a given program $P$, where fiel
   Root-Base, Root-Rec,
 )
 
+=== Lookup
+
+#display-rules(
+  Lookup-Base, Lookup-Rec,
+  Lookup-Default, "",
+)
+
 === Get
 
 #display-rules(
@@ -146,13 +144,13 @@ All the following rules are to be considered for a given program $P$, where fiel
 
 #display-rules(
   Begin, "",
-  Decl, Assign-Null,
-  Seq-New, "",
+  Seq-New, Decl,
+  Call, "",
+  Assign-Null, "",
+  Assign-Call, "",
   Assign-Unique, "",
   Assign-Shared, "",
   Assign-Borrowed-Field, "",
-  Assign-Call, "",
-  Call, "",
   If, "",
   Return-p, "",
 )

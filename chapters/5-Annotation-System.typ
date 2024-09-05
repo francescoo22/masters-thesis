@@ -82,7 +82,7 @@ A context is a list of distinct paths associated with their annotations $alpha$ 
 Apart from $top$, the rest of the annotations are similar to the annotations in the previous section.
 A reference annotated as unique may either be `null` or point to an object, with no other accessible references to that object. In contrast, a reference marked as shared can point to an object without being the only reference to it. The annotation borrowed indicates that the method receiving the reference will not create additional aliases to it, and upon returning, the fields of the object will have at least the permissions specified in the class declaration. Finally, annotations on fields only indicate the default permissions; to determine the actual permissions of a field, the context must be considered, a concept that will be formalized in the upcoming sections.
 
-=== Well-Formed Context
+== Well-Formed Context
 
 #display-rules(
   Not-In-Base, Not-In-Rec,
@@ -104,33 +104,6 @@ This first set of rules defines how a well-formed context is structured. The jud
   Delta_3 &= x: unique, space x.y: shared, space x.y: top
   $
   The judgment "$Delta_1 ctx$" is derivable meaning that $Delta_1$ is a well-formed context. However, the judgments "$Delta_2 ctx$" and "$Delta_3 ctx$" are not derivable meaning that $Delta_2$ and $Delta_3$ are not well-formed contexts. Indeed, they are not well-formed because $x$ appears twice in $Delta_2$ and $x.f$ appears twice in $Delta_3$.
-]
-
-=== Lookup<cap:lookup>
-
-#display-rules(
-  Lookup-Base, Lookup-Rec,
-  Lookup-Default, "",
-)
-
-Lookup rules define a (partial) function that, given a well-formed context, returns the annotations associated with a given path
-
-When the path is explicitly contained within the context, the function returns the corresponding annotation. If a field access ($p.f$) is not explicitly present in the context, the function returns the annotations specified in the class declaration. This concept, formalized by Lookup-Default, is crucial as it ensures that contexts remain finite, even when handling recursive classes. However, if a variable ($x$) is not present in the context, its lookup cannot be derived.
-
-It is important to note that the lookup function returns the annotations associated with a path based on the context or the class declaration, rather than determining the actual ownership status of that path.
-
-$ \_inangle(\_): Delta -> p -> alpha beta $
-
-#example[
-  Given a context: $ Delta = x : shared, space x.f : unique $ 
-  The result of the lookup for $x.f$ is the following: $ Delta inangle(x.f) = unique $ However, since $x$ is shared, there can be multiple references accessing $x$. This implies there can be multiple references accessing $x.f$, meaning that $x.f$ is also shared.
-  This behavior is intended and a function able to provide the actual ownership of a reference will be defined in the next sections.
-]
-
-#example[
-  Given class $C$, context $Delta$ and variable $x$ such that: $ class C(f: shared) in P \ Delta = x : unique \ type(x.f) = shared $
-  The result of the lookup for $x.f$ is the following: $ Delta inangle(x.f) = shared $
-  Since $x.f in.not Delta$, the lookup returns the default annotation, which is the one declared in the class signature.
 ]
 
 == Sub-Paths and Sup-Paths
@@ -260,6 +233,33 @@ $ root : p -> p $
 
 #example[
   $ root(x.y.z) = x \ root(y.z) = y \ root(z) = z $
+]
+
+=== Lookup<cap:lookup>
+
+#display-rules(
+  Lookup-Base, Lookup-Rec,
+  Lookup-Default, "",
+)
+
+Lookup rules define a (partial) function that, given a well-formed context, returns the annotations associated with a given path
+
+When the path is explicitly contained within the context, the function returns the corresponding annotation. If a field access ($p.f$) is not explicitly present in the context, the function returns the annotations specified in the class declaration. This concept, formalized by Lookup-Default, is crucial as it ensures that contexts remain finite, even when handling recursive classes. However, if a variable ($x$) is not present in the context, its lookup cannot be derived.
+
+It is important to note that the lookup function returns the annotations associated with a path based on the context or the class declaration, rather than determining the actual ownership status of that path.
+
+$ \_inangle(\_): Delta -> p -> alpha beta $
+
+#example[
+  Given a context: $ Delta = x : shared, space x.f : unique $ 
+  The result of the lookup for $x.f$ is the following: $ Delta inangle(x.f) = unique $ However, since $x$ is shared, there can be multiple references accessing $x$. This implies there can be multiple references accessing $x.f$, meaning that $x.f$ is also shared.
+  This behavior is intentional, and a function that determines the actual ownership of a path is defined in the subsequent section.
+]
+
+#example[
+  Given class $C$, context $Delta$ and variable $x$ such that: $ class C(f: shared) in P \ Delta = x : unique \ type(x.f) = shared $
+  The result of the lookup for $x.f$ is the following: $ Delta inangle(x.f) = shared $
+  Since $x.f in.not Delta$, the lookup returns the default annotation, which is the one declared in the class signature.
 ]
 
 === Get
