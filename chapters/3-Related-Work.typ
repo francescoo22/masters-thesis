@@ -1,13 +1,13 @@
 #pagebreak(to:"odd")
 = Related Work<cap:related-work>
 
-This chapter first outlines the foundational principles established in _The Geneva Convention_ @GenevaConvention, which serves as a fundamental reference for any work addressing aliasing issues.
+This chapter first outlines the foundational principles established in _the Geneva Convention on the Treatment of Object Aliasing_ @GenevaConvention, which serves as a fundamental reference for any work addressing aliasing issues.
 Then, it provides an overview of existing approaches to managing uniqueness in programming languages, focusing on the design choices that have influenced the development of the uniqueness system proposed in this work.
 Finally, the chapter examines current systems that utilize Viper for verification, providing a critical analysis of their strengths and limitations.
 
 == The Geneva Convention
 
-_The Geneva Convention_ @GenevaConvention examines the issues related to aliasing management in object-oriented programming languages.
+The Geneva Convention @GenevaConvention examines the issues related to aliasing management in object-oriented programming languages.
 After introducing the aliasing problem, the paper establishes four primary methods to manage aliasing: Detection, Advertisement, Prevention, and Control.
 
 === Detection
@@ -25,14 +25,15 @@ One example of this concept is to specify that the output of a function is not a
 === Prevention
 
 Alias prevention techniques introduce constructs that ensure aliasing does not occur in specific contexts, in a way that can be statically verified.
+This differs from alias advertisement, where annotations enable a modular analysis but are not checked.
 For static checkability, constructs must be conservatively defined. For instance, a checkable version of "uncaptured" might restrict all variable bindings within a method, except when calling other methods that also have uncaptured attributes. This approach would forbid uses that programmers may happen to know as alias-free but cannot be statically checked to be safe.
 
 As will be illustrated in @cap:annotations-kt and in @cap:annotation-system, the uniqueness system developed in this work falls into this category, as it employs conservative annotations to enforce alias prevention in a manner that can be statically verified.
 
 === Control
 
-Aliasing prevention alone may not be sufficient because aliasing can be unavoidable in conventional object-oriented programming. Aliasing control is used to ensure that the system does not reach a state with unexpected aliasing, which requires analysis of the runtime state.
-However, since this work focuses on static verification, approaches that rely on runtime analysis are not relevant.
+Aliasing prevention alone may not be sufficient because aliasing can be unavoidable in conventional object-oriented programming.
+In aliasing control, the programmer determines that the system will never reach a state where unexpected aliasing occurs, even though this possibility cannot be ruled out when examining code components individually. This is verified through an analysis of state reachability.
 
 == Systems for Controlling Aliasing 
 
