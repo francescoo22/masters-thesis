@@ -17,7 +17,7 @@ All the following rules are to be considered for a given program $P$, where fiel
   M-Type-2, "",
   M-Args, "",
   M-Args-2, "",
-  F-Type, ""
+  F-Default, ""
 )
 
 == Well-Formed Contexts

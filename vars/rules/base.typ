@@ -23,9 +23,9 @@
   rule(label: "M-Args-2", $args(m) = x_0, ..., x_n$),
 )
 
-#let F-Type = prooftree(
+#let F-Default = prooftree(
   axiom($class C(overline(f': alpha'_f), f: alpha_f, overline(f'': alpha''_f)) in P$),
-  rule(label: "F-Type", $type(p.f) = alpha_f$),
+  rule(label: "F-Default", $default(f) = alpha_f$),
 )
 
 // ****************** Context ******************
@@ -79,9 +79,7 @@
 
 
 #let Lookup-Default = prooftree(
-  // axiom($type(p) = C$),
-  // axiom($class C(overline(f': alpha'_f), f: alpha, overline(f'': alpha''_f)) in P$),
-  axiom($type(p.f) = alpha$),
+  axiom($default(f) = alpha$),
   rule(label: "Lookup-Default", $dot inangle(p.f) = alpha$),
 )
 

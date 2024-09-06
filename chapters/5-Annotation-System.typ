@@ -53,11 +53,11 @@ Finally, statements and expressions are pretty similar to Kotlin.
   M-Type-2, "",
   M-Args, "",
   M-Args-2, "",
-  F-Type, ""
+  F-Default, ""
 )
 
 Given a program $P$, M-Type rules define a function taking a method name and returning its type. Similarly, M-Args rules define a function taking a method name and returning its arguments. In order to derive these rules, the method must be contained within $P$.
-For simplicity, it is assumed that in $P$, fields within the same class, as well as across different classes, have distinct names. This assumption simplifies the definition of the F-Type rule, which defines a function that returns the type of a given field access.
+For simplicity, it is assumed that in $P$, fields within the same class, as well as across different classes, have distinct names. This assumption simplifies the definition of the F-Default rule, which defines a function that returns the type of a given field.
 
 #example[
   Given a method: $ m(x: unique borrowed, y: shared): unique $
@@ -247,7 +247,7 @@ $ root : p -> p $
 
 Lookup rules define a (partial) function that, given a well-formed context, returns the annotations associated with a given path
 
-When the path is explicitly contained within the context, the function returns the corresponding annotation. If a field access ($p.f$) is not explicitly present in the context, the function returns the annotations specified in the class declaration. This concept, formalized by Lookup-Default, is crucial as it ensures that contexts remain finite, even when handling recursive classes. However, if a variable ($x$) is not present in the context, its lookup cannot be derived.
+When the path is explicitly contained within the context, the function returns the corresponding annotation. If a field access ($p.f$) is not explicitly present in the context, the function returns the annotations specified in the class declaration containing $f$. This concept, formalized by Lookup-Default, is crucial as it ensures that contexts remain finite, even when handling recursive classes. However, if a variable ($x$) is not present in the context, its lookup cannot be derived.
 
 It is important to note that the lookup function returns the annotations associated with a path based on the context or the class declaration, rather than determining the actual ownership status of that path.
 
@@ -517,9 +517,9 @@ Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and 
   use_g_h(x: unique) {
     begin_use_g_h;
         ⊣ Δ = x: unique
-      g(x, x); // ok, uniqueness is also preserved since both the args are borrowed
+    g(x, x); // ok, uniqueness is also preserved since both the args are borrowed
         ⊣ Δ = x: unique
-      h(x, x); // ok, but uniqueness is lost after normalization
+    h(x, x); // ok, but uniqueness is lost after normalization
         ⊣ Δ = x: shared
   }
   ```

@@ -20,6 +20,7 @@
 #let alias = "alias"
 #let root = "root"
 #let type = "type"
+#let default = "default"
 #let mtype = "m-type"
 #let ctx = "ctx"
 #let norm = "normalize"
