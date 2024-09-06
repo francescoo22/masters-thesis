@@ -255,8 +255,11 @@ $ \_inangle(\_): Delta -> p -> alpha beta $
 
 #example[
   Given a context: $ Delta = x : shared, space x.f : unique $ 
-  The result of the lookup for $x.f$ is the following: $ Delta inangle(x.f) = unique $ However, since $x$ is shared, there can be multiple references accessing $x$. This implies there can be multiple references accessing $x.f$, meaning that $x.f$ is also shared.
-  This behavior is intentional, and a function that determines the actual ownership of a path is defined in the subsequent section.
+  The result of the lookup for $x.f$ is the following: $ Delta inangle(x.f) = unique $
+  However, since $x$ is shared, there can be multiple references accessing $x$. This implies there can be multiple references accessing $x.f$, meaning that $x.f$ is also shared.
+  A scenario like this can occur when, starting from a context containing only $x : shared$, a unique value is assigned to the field $x.f$.
+  A function able to determine the actual ownership of a path is defined in the subsequent section.
+  
 ]
 
 #example[

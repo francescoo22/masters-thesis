@@ -56,6 +56,8 @@ In addition, a Kotlin function annotated to return a unique object will also ens
 
 Annotations on parameters are encoded by adding preconditions and postconditions to the method. Access to the shared predicate of any parameter can always be required in preconditions and ensured in postconditions. Conversely, access to the unique predicate can be required in preconditions only for parameters annotated as unique, and it can be ensured in postconditions only for parameters annotated as both unique and borrowed. @param-comp shows how function parameters are encoded, while @param-table summarizes the assertions contained within preconditions and postconditions based on the parameter annotations.
 
+In Kotlin, when passing a unique reference to a function that expects a shared borrowed argument, fields included in the unique predicate can still be modified. The current encoding does not fully capture this behavior. However, as shown in @cap:vpr-calls-enc, this limitation can be addressed by adding additional statements when such functions are called.
+
 #code-compare("Function parameters encoding", 0.8fr, param-kt, param-vpr)<param-comp>
 
 #figure(
@@ -98,7 +100,7 @@ When no predicates contain the access to a property that needs to be accessed, i
 
 #code-compare("Shared mutable property access encoding", .7fr, inhale-shared-kt, inhale-shared-vpr)<unfold-unique-example>
 
-== Function Calls Encoding
+== Function Calls Encoding<cap:vpr-calls-enc>
 
 Encoding method calls is straightforward for some cases, but requires attention for some others.
 

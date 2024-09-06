@@ -324,8 +324,8 @@ requires acc(UniqueT(t), write) && acc(SharedT(t), wildcard)
 ensures acc(SharedT(t), wildcard)
 {
   exhale acc(UniqueT(t), write)
-  inhale acc(UniqueT(t), write)
   sharedBorrowedParam(t)
+  inhale acc(UniqueT(t), write)
 
   exhale acc(UniqueT(t), write)
   sharedParam(t)
