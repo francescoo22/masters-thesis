@@ -14,7 +14,9 @@ All the following rules are to be considered for a given program $P$, where fiel
 
 #display-rules(
   M-Type, "",
+  M-Type-2, "",
   M-Args, "",
+  M-Args-2, "",
   F-Type, ""
 )
 

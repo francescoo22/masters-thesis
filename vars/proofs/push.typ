@@ -8,7 +8,7 @@
 
 #let push-1 = prooftree(
   axiom($push(this\: unique borrowed, value: unique): shared {...}$),
-  rule(label: "M-type", $mtype(push) = unique borrowed, unique -> shared$),
+  rule(label: "M-type-1", $mtype(push) = unique borrowed, unique -> shared$),
   axiom($push(this\: unique borrowed, value: unique): shared {...}$),
   rule(label: "M-args", $args(push) = this, value$),
   rule(n:2, label: "Begin", $dot tr begin_push tl this: unique borrowed, value: unique$),

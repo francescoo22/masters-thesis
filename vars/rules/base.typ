@@ -5,12 +5,22 @@
 
 #let M-Type = prooftree(
   axiom($m(x_0: alpha_0 beta_0, ..., x_n: alpha_n beta_n): alpha {begin_m; s; ret_m e} in P$),
-  rule(label: "M-Type", $mtype(m) = alpha_0 beta_0, ..., alpha_n beta_n -> alpha$),
+  rule(label: "M-Type-1", $mtype(m) = alpha_0 beta_0, ..., alpha_n beta_n -> alpha$),
+)
+
+#let M-Type-2 = prooftree(
+  axiom($m(x_0: alpha_0 beta_0, ..., x_n: alpha_n beta_n): alpha in P$),
+  rule(label: "M-Type-2", $mtype(m) = alpha_0 beta_0, ..., alpha_n beta_n -> alpha$),
 )
   
 #let M-Args = prooftree(
   axiom($m(x_0: alpha_0 beta_0, ..., x_n: alpha_n beta_n): alpha {begin_m; s; ret_m e} in P$),
-  rule(label: "M-Args", $args(m) = x_0, ..., x_n$),
+  rule(label: "M-Args-1", $args(m) = x_0, ..., x_n$),
+)
+
+#let M-Args-2 = prooftree(
+  axiom($m(x_0: alpha_0 beta_0, ..., x_n: alpha_n beta_n): alpha in P$),
+  rule(label: "M-Args-2", $args(m) = x_0, ..., x_n$),
 )
 
 #let F-Type = prooftree(

@@ -27,7 +27,7 @@ syntactic sugar.
   $
     P &::= overline(CL) times overline(M) \
     CL &::= class C(overline(f\: alpha_f)) \
-    M &::= m(overline(x\: af beta)): af {begin_m; s ; ret_m e} \
+    M &::= m(overline(x\: af beta)): af {begin_m; s ; ret_m e} | m(overline(x\: af beta)): af \
     af &::= unique | shared \
     beta &::= dot | borrowed \
     p &::= x | p.f \
@@ -38,7 +38,8 @@ syntactic sugar.
 
 #v(1em)
 
-Classes are made of fields, each associated with an annotation $alpha_f$. Methods have parameters that are also associated with an annotation $alpha_f$ as well as an additional annotation $beta$, and they are further annotated with $alpha_f$ for the returned value. The receiver of a method is not explicitly included in the grammar, as it can be treated as a parameter. Similarly, constructors are excluded from the grammar since they can be viewed as methods that return a unique value. Overall, a program is simply made of a set of classes and a set of methods.
+Classes are made of fields, each associated with an annotation $alpha_f$. Methods have parameters that are also associated with an annotation $alpha_f$ as well as an additional annotation $beta$, and they are further annotated with $alpha_f$ for the returned value.
+The receiver of a method is not explicitly included in the grammar, as it can be treated as a parameter. Similarly, constructors are excluded from the grammar since they can be viewed as methods without a body returning a unique value. Overall, a program is simply made of a set of classes and a set of methods.
 
 The annotations are the same that have been introduced in the previous chapter, the only difference is that `Borrowed` is represented using the symbol $borrowed$.
 Finally, statements and expressions are pretty similar to Kotlin.
@@ -49,15 +50,17 @@ Finally, statements and expressions are pretty similar to Kotlin.
 
 #display-rules(
   M-Type, "",
+  M-Type-2, "",
   M-Args, "",
+  M-Args-2, "",
   F-Type, ""
 )
 
-Given a program $P$, the rule M-Type defines a function taking a method name and returning its type. Similarly, M-Args defines a function taking a method name and returning its arguments. In order to derive these rules, the method must be contained within $P$.
+Given a program $P$, M-Type rules define a function taking a method name and returning its type. Similarly, M-Args rules define a function taking a method name and returning its arguments. In order to derive these rules, the method must be contained within $P$.
 For simplicity, it is assumed that in $P$, fields within the same class, as well as across different classes, have distinct names. This assumption simplifies the definition of the F-Type rule, which defines a function that returns the type of a given field access.
 
 #example[
-  Given a method: $ m(x: unique borrowed, y: shared): unique {...} $
+  Given a method: $ m(x: unique borrowed, y: shared): unique $
   The type and the arguments of $m$ are the following: 
   $
   mtype(m) = unique borrowed, #h(.5em) shared -> unique \
@@ -317,8 +320,8 @@ Since a called method does not have information about $Delta$ when verified, all
   Given the following program:
   $
   class C(y: unique) \
-  m_1(x: unique){...} \
-  m_2(x: shared){...} \
+  m_1(x: unique) : shared \
+  m_2(x: shared) : shared \
   $
 
   Within the context $ Delta = x: unique, space x.y : shared $
@@ -425,7 +428,7 @@ A program $P$ is well-typed if and only if the following judgment is derivable:
 
 $ forall m(overline(x\: af beta)): af {begin_m; s; ret_m e} in P . space dot tr begin_m; s; ret_m e tl dot $
 
-This means that a program is well-typed if and only if, for every method in that program, executing the body of the method within an empty context leads to an empty context.
+This means that a program is well-typed if and only if, for every method in that program, executing the body of the method within an empty context leads to an empty context. Methods without a body are excluded from this judgment, as they can be safely assumed to be well-typed without further analysis.
 
 === Begin
 
@@ -494,11 +497,11 @@ Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and 
 #figure(
   caption: "Typing example for method call with same reference",
   ```
-  f(x: unique, y: shared ♭): unique { ... }
+  f(x: unique, y: shared ♭): unique
 
-  g(x: shared ♭, y: shared ♭): unique { ... }
+  g(x: shared ♭, y: shared ♭): unique
 
-  h(x: shared, y: shared ♭): unique { ... }
+  h(x: shared, y: shared ♭): unique
 
   use_f(x: unique) {
     begin_use_f;
@@ -524,7 +527,7 @@ Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and 
   ```
   class A(f: shared)
 
-  f(x: unique, y: shared): unique { ... }
+  f(x: unique, y: shared): unique
 
   fun use_f(x: unique) {
     begin_use_f;
@@ -542,7 +545,7 @@ Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and 
   ```
   class B(f: unique)
 
-  g(x: unique, y: shared): unique { ... }
+  g(x: unique, y: shared): unique
 
   use_g(b: unique) {
     begin_use_g;
@@ -609,8 +612,8 @@ After defining how to type a method call, it is easy to formalize the typing of 
 #figure(
   caption: "Typing example for assigning a method call",
   ```
-  get_unique(): unique { ... }
-  get_shared(): shared { ... }
+  get_unique(): unique
+  get_shared(): shared
 
   f(): unique {
     begin_f; 
@@ -725,9 +728,9 @@ $ fi (p == m(...)) ... equiv var "fresh" ; "fresh" = m(...) ; fi(p == "fresh") .
 ```
 class A(c: unique)
 
-consume_unique(c: unique) { ... }
+consume_unique(c: unique): shared
 
-consume_shared(a: shared) { ... }
+consume_shared(a: shared): shared
 
 fun f(@Unique a: A, @Borrowed c: C) {
   begin_f;
@@ -801,6 +804,8 @@ The system does not permit returning a null value or a method call directly sinc
   class Node(value: unique, next: unique)
 
   class Stack(root: unique)
+
+  fun Node(value: unique, next: unique): unique
 
   fun push(this: unique ♭, value: unique): shared {
     begin_push;
