@@ -3,7 +3,10 @@
 
 == Results
 
-This thesis has introduced a novel uniqueness system for the Kotlin language, bringing several important improvements to existing approaches. The system offers greater flexibility in managing paths, making it easier to handle nested properties in Kotlin programs. Additionally, it clearly distinguishes between borrowed-shared and borrowed-unique references, facilitating the integration of uniqueness annotations into existing codebases. Indeed, one of the key advantages of this system is its ability to be gradually integrated into existing Kotlin code, allowing developers to adopt it without requiring major changes to their current code.
+This thesis has introduced a novel uniqueness system for the Kotlin language, bringing several important improvements over existing approaches @aldrich2002alias @boyland2001alias @zimmerman2023latte.
+The system provides improved flexibility in managing field accesses, particularly in handling nested properties within Kotlin programs. It allows the correct permissions for nested field accesses to be determined at any point of the program, without imposing any restrictions based on whether properties are unique, shared, or inaccessible. Furthermore, the uniqueness of properties can evolve during program execution, similarly to variables.
+The system also introduces a clear distinction between borrowed-shared and borrowed-unique references, making it easier to integrate uniqueness annotations into existing codebases. 
+Indeed, one of its key benefits is the ability to be adopted incrementally, enabling developers to incorporate it into their Kotlin code without the need for significant changes.
 
 The uniqueness system has been rigorously formalized, detailing the rules and constraints necessary to ensure that unique references are properly maintained within a program.
 
@@ -11,11 +14,19 @@ Finally, this work has demonstrated how the uniqueness system can be used to enc
 
 == Future Work
 
-=== Improving Annotations Inference
+=== Extending the Language
 
-The annotation system requires the user to write annotations only for methods and classes. The rest of the annotations can be inferred automatically. Although the current number of annotations that a user needs to write is reasonable, it would be better to infer even more annotations automatically.
-Specifically, the `Borrowed` annotation could be inferred for certain functions. It might be possible to perform static analysis to check that a function does not create new aliases for a given parameter and only passes it to functions that do not consume its uniqueness. In this way, the user would not need to write the `Borrowed` annotation for parameters that can be guaranteed as borrowed by static analysis.
-Moreover, manually annotating functions in the standard library, can improve this kind of analysis.
+Extending the range of Kotlin features supported by the annotation system is a natural next step for this work.
+
+One area for extension is support for `while` loops. Currently, loops are not well supported by the formal verification plugin due to the lack of support for inferring invariants. As a result, handling loops was not a primary focus for the uniqueness system.
+
+Lambdas are another important feature in Kotlin that the uniqueness system must support. Lambdas often capture references through closures, which presents challenges for maintaining uniqueness. Handling these references correctly requires careful tracking to ensure that the captured variables do not lead to unintended aliasing.
+Bao et al. @reachability-types have proposed a system for tracking aliasing in higher-order functional programs, which could provide valuable insights for addressing these challenges.
+
+=== Improving Borrowed Fields Flexibility
+
+Currently, fields of borrowed parameters are subject to restrictions necessary for ensuring system soundness when unique references are passed to functions expecting shared borrowed parameters.
+Specifically, borrowed fields can only be reassigned using a unique reference. However, in some cases, allowing reassignment with shared references would also be safe. Similarly, borrowed fields become inaccessible after being read, even though there are situations where they could safely remain shared. Introducing rules to manage these scenarios would enhance the system's flexibility in handling borrowed fields, representing a significant improvement.
 
 === Tracking of Local Aliases
 
@@ -31,11 +42,7 @@ This work presents a uniqueness system and shows how it can be used to verify Ko
 
 To improve the system, a static checker is under development. This checker will use Kotlin's control flow graph to ensure that the annotations satisfy the typing rules of the uniqueness system. By integrating this static analysis, the formal verification plugin will start to encode Kotlin into Viper only if the program is well-typed, reducing the need for manual validation and increasing the reliability of the verification process.
 
-=== Extending the Language
+=== Proving the Soundness of the Annotation System
 
-Extending the range of Kotlin features supported by the annotation system is a natural next step for this work.
-
-One area for extension is support for `while` loops. Currently, loops are not well supported by the formal verification plugin due to the lack of support for inferring invariants. As a result, handling loops was not a primary focus for the uniqueness system.
-
-Lambdas are another important feature in Kotlin that the uniqueness system must support. Lambdas often capture references through closures, which presents challenges for maintaining uniqueness. Handling these references correctly requires careful tracking to ensure that the captured variables do not lead to unintended aliasing.
-Bao et al. @reachability-types have proposed a system for tracking aliasing in higher-order functional programs, which could provide valuable insights for addressing these challenges.
+Another area for future work is proving the soundness of the proposed annotation system. Establishing soundness would involve formally demonstrating that the system's rules and annotations prevent illegal aliasing and correctly track ownership throughout program execution.
+For instance, it would be important to prove that when a path is unique at any given point in the program, no other accessible paths point to the same object as that path. Additionally, it would be valuable to demonstrate that borrowed parameters are not further aliased by any function, ensuring that the borrowing mechanism preserves the integrity of reference uniqueness and prevents unintended aliasing.
