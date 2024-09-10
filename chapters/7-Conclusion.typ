@@ -18,7 +18,7 @@ Finally, this work has demonstrated how the uniqueness system can be used to enc
 
 Extending the range of Kotlin features supported by the annotation system is a natural next step for this work.
 
-One area for extension is support for `while` loops. Currently, loops are not well supported by the formal verification plugin due to the lack of support for inferring invariants. As a result, handling loops was not a primary focus for the uniqueness system.
+One area for extension is support for `while` loops. Currently, loops are not well supported by SnaKt due to the lack of support for inferring invariants. As a result, handling loops was not a primary focus for the uniqueness system.
 
 Lambdas are another important feature in Kotlin that the uniqueness system must support. Lambdas often capture references through closures, which presents challenges for maintaining uniqueness. Handling these references correctly requires careful tracking to ensure that the captured variables do not lead to unintended aliasing.
 Bao et al. @reachability-types have proposed a system for tracking aliasing in higher-order functional programs, which could provide valuable insights for addressing these challenges.
@@ -38,9 +38,9 @@ However, there is potential for future improvements to the system. By refining t
 
 === Checking Annotations
 
-This work presents a uniqueness system and shows how it can be used to verify Kotlin code by encoding it into Viper. Currently, the plugin assumes that any annotated Kotlin program is well-typed according to the typing rules presented in @cap:annotation-system.
+This work presents a uniqueness system and shows how it can be used to verify Kotlin code by encoding it into Viper. Currently, SnaKt assumes that any annotated Kotlin program is well-typed according to the typing rules presented in @cap:annotation-system.
 
-To improve the system, a static checker is under development. This checker will use Kotlin's control flow graph to ensure that the annotations satisfy the typing rules of the uniqueness system. By integrating this static analysis, the formal verification plugin will start to encode Kotlin into Viper only if the program is well-typed, reducing the need for manual validation and increasing the reliability of the verification process.
+To improve the system, a static checker is under development. This checker will use Kotlin's control flow graph to ensure that the annotations satisfy the typing rules of the uniqueness system. By integrating this static analysis, SnaKt will start to encode Kotlin into Viper only if the program is well-typed, reducing the need for manual validation and increasing the reliability of the verification process.
 
 === Proving the Soundness of the Annotation System
 

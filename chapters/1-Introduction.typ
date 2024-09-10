@@ -15,7 +15,7 @@ This verification is possible because separation logic allows to express that $x
 
 == Contributions
 
-This work demonstrates how controlling aliasing through an annotation system can enhance the formal verification process performed by an existing plugin @FormVerPlugin for the Kotlin language @KotlinSpec @Kotlin. The plugin verifies Kotlin using Viper @ViperWebSite @Viper, an intermediate verification language developed by ETH Zurich. Viper is designed to verify programs by enabling the specification of functions with preconditions and postconditions, which are then checked for correctness. This verification is performed using one of two back-ends: symbolic execution @MuellerSchwerhoffSummers16b or verification condition generation @HeuleKassiosMuellerSummers13, both of which rely on an SMT solver to validate the specified conditions.
+This work demonstrates how controlling aliasing through an annotation system can enhance the formal verification process performed by SnaKt @FormVerPlugin, an existing plugin for the Kotlin language @KotlinSpec @Kotlin. SnaKt verifies Kotlin using Viper @ViperWebSite @Viper, an intermediate verification language developed by ETH Zurich. Viper is designed to verify programs by enabling the specification of functions with preconditions and postconditions, which are then checked for correctness. This verification is performed using one of two back-ends: symbolic execution @MuellerSchwerhoffSummers16b or verification condition generation @HeuleKassiosMuellerSummers13, both of which rely on an SMT solver to validate the specified conditions.
 
 In order to verify to Kotlin with Viper, it is necessary to translate the former language into the latter. However, this translation presents challenges due to fundamental differences between the two languages. Specifically, Viper's memory model is based on separation logic, which disallows shared mutable references. In contrast, Kotlin does not restrict aliasing, meaning that references in Kotlin can be both shared and mutable, posing a significant challenge when trying to encode Kotlin code into Viper.
 
@@ -31,7 +31,7 @@ This level of control is important for preventing common programming errors rela
 
 @kt-ann-intro provides an overview of the annotation system. Specifically, the `@Unique` annotation ensures that a reference is not aliased, while the `@Borrowed` annotation guarantees that a function does not create new aliases for a reference. The example also demonstrates how the problematic function call presented in @intro-comp is disallowed by the annotation system, as `x` and `y` would be aliased when the function `f` requires them to be unique.
 
-The thesis finally shows how aligning Kotlin’s memory model with Viper’s, using the proposed annotation system, enhances the encoding process performed by the plugin.
+The thesis finally shows how aligning Kotlin’s memory model with Viper’s, using the proposed annotation system, enhances the encoding process performed by SnaKt.
 
 #figure(
   caption: "Kotlin code with annotations for aliasing control",
