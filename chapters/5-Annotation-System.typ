@@ -7,9 +7,6 @@
 
 #pagebreak(to:"odd")
 
-// TODO: decide whether to put call, if ecc. in italic
-// TODO: decide whether to put rule names in italic
-
 = Annotation System<cap:annotation-system>
 
 This chapter formalizes the uniqueness system that was introduced in @cap:annotations-kt.
@@ -386,8 +383,8 @@ $ \_ triangle.filled.small.l \_ : Delta -> Delta -> Delta $
   Unify, ""
 )
 
-Finally, the unify function groups the two functions described before. This function will be fundamental to type if-statements.
-In particular, $unify(Delta, Delta_1, Delta_2)$ can be used to type an if-statement: when $Delta$ is the context at the beginning of the statement while $Delta_1$ and $Delta_2$ are the resulting contexts of the two branches of the statement.
+Finally, the unify function groups the two functions described before. This function will be fundamental to type `if` statements.
+In particular, $unify(Delta, Delta_1, Delta_2)$ can be used to type an `if` statement: when $Delta$ is the context at the beginning of the statement while $Delta_1$ and $Delta_2$ are the resulting contexts of the two branches of the statement.
 
 $ "unify" : Delta -> Delta -> Delta -> Delta $
 
@@ -722,12 +719,12 @@ Ensuring inaccessibility after reading borrowed fields and restricting their rea
 
 #display-rules(If, "")
 
-Once the unification function is defined, typing an _if_ statement is straightforward. First it is necessary to be sure that paths appearing in the guard are accessible in the initial context. The _then_ and the _else_ branches are typed separately and their resulting contexts are unified to get the resulting context of the whole statement.
+Once the unification function is defined, typing an `if` statement is straightforward. First it is necessary to be sure that paths appearing in the guard are accessible in the initial context. The `then` and the `else` branches are typed separately and their resulting contexts are unified to get the resulting context of the whole statement.
 
-The system does not allow to have _null_ or a _method call_ in the guard of an _if_ statement, as these constructs can be easily desugared.
+The system does not allow to have `null` or a method call in the guard of an `if` statement, as these constructs can be easily desugared.
 
 #example[
-  Desugaring for _if_ statements containing expressions different from paths within the guard.
+  Desugaring for `if` statements containing expressions different from paths within the guard.
   $ fi (p == null) ... equiv var "fresh" ; "fresh" = null ; fi(p == "fresh") ... $
   $ fi (p == m(...)) ... equiv var "fresh" ; "fresh" = m(...) ; fi(p == "fresh") ... $
 ]
@@ -762,7 +759,7 @@ fun f(@Unique a: A, @Borrowed c: C) {
 
 #display-rules(Return-p, "")
 
-By the construction of the grammar, a return statement is designed to be the final statement executed within a method. As such, there is no need to maintain a resulting context after the return statement has been typed. However, several important conditions must be satisfied when returning.
+By the construction of the grammar, a `return` statement is designed to be the final statement executed within a method. As such, there is no need to maintain a resulting context after the return statement has been typed. However, several important conditions must be satisfied when returning.
 
 First, the annotation of the path being returned must be lower than or equal to ($rel$) the annotation of the return value of the method. This ensures that a method cannot return a value with greater aliasing than what was specified in the method’s signature, effectively preventing borrowed values from being returned (@ret-bor).
 
@@ -772,7 +769,7 @@ Finally, all parameters that are shared or borrowed (or both) must remain in the
 
 These conditions are essential for maintaining the modularity, allowing each method to be typed without knowing the implementation of the other methods.
 
-The system does not allow returning a null value or a method call, since these cases can be easily desugared, as shown in @ret-desugar. Similarly, functions that do not return a value can be represented by having them return a call to the `Unit` constructor.
+The system does not allow returning `null` or a method call, since these cases can be easily desugared, as shown in @ret-desugar. Similarly, functions that do not return a value can be represented by having them return a call to the `Unit` constructor.
 
 #example[
   Given the following program:

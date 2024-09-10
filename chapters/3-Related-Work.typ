@@ -41,15 +41,13 @@ In recent decades, extensive research has been conducted to address the issue of
 
 === Controlling Aliasing through Uniqueness<cap:control-alias-unique>
 
-// TODO: decide whether to use quote-unquote or italic for linear logic, uniqueness logic ecc.
-
 A uniqueness type system distinguishes values referenced no more than once from values that can be referenced multiple times in a program. Harrington's _Uniqueness Logic_ @uniqueness-logic provides a formalization of the concept of uniqueness.
 While it may initially appear similar to the more widely known _Linear Logic_ @linear-logic, Marshall et al. @An-Entente-Cordiale clarify the differences between these two approaches and demonstrate how they can coexist.
 
 The common trait of all systems based on uniqueness is that a reference declared as unique points to an object that is not accessible by any other reference, unless such references are explicitly tracked by the system. Moreover, the unique status of a reference can be dropped at any point in the program.
 
-A first approach to ensuring uniqueness consists of using destructive reads. Aldrich et al. @aldrich2002alias have developed a system called _AliasJava_ for controlling aliasing which uses this approach.
-_AliasJava_ is characterized by a strong uniqueness invariant asserting that "at a particular point in dynamic program execution, if a variable or field that refers to an object `o` is annotated unique, then no other field in the program refers to `o`, and all other local variables that refer to `o` are annotated lent".
+A first approach to ensuring uniqueness consists of using destructive reads. Aldrich et al. @aldrich2002alias have developed a system called AliasJava for controlling aliasing which uses this approach.
+AliasJava is characterized by a strong uniqueness invariant asserting that "at a particular point in dynamic program execution, if a variable or field that refers to an object `o` is annotated unique, then no other field in the program refers to `o`, and all other local variables that refer to `o` are annotated lent".
 This invariant is maintained by the fact that unique references can only be read in a destructive manner, meaning that immediately being read, the value `null` is assigned to the reference.
 
 Boyland @boyland2001alias proposes a system for controlling aliasing in Java that does not require to use destructive reads.
@@ -73,10 +71,6 @@ A key feature of Rust is its ownership-based type system @rustlang, which guaran
 
 Swift is another language that has introduced constructs to manage aliasing effectively @swift-parameter-modifiers @swift-ownership-manifesto. By default, function arguments in Swift are passed by value, which means any modifications made within the function do not affect the original argument in the caller. However, parameters marked as `inout` behave differently. When a function is called with an `inout` parameter, the argument's value is copied. The function then works with this copy, and when it returns, the modified copy is assigned back to the original argument. Swift guarantees memory exclusivity, meaning that accessing an `inout` value from two different references simultaneously is prohibited, thereby preventing aliasing issues.
 In addition to `inout`, Swift provides two other parameter modifiers to manage ownership more precisely. The `borrowing` modifier indicates that the function temporarily accesses the parameter's value without taking ownership, leaving the caller responsible for the object's lifetime. This approach minimizes overhead when the function uses the object only transiently. Conversely, the `consuming` modifier indicates that the function takes full ownership of the value, including the responsibility for either storing or destroying it before the function returns.
-
-// - *TODO: Ocaml???*
-//   - https://blog.janestreet.com/oxidizing-ocaml-locality/
-//   - https://blog.janestreet.com/oxidizing-ocaml-ownership/
 
 == Viper Verification Tools
 

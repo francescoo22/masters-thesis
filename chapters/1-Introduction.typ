@@ -11,8 +11,6 @@ Indeed, when $x$ and $y$ are aliased, the formula is not valid, and most of the 
 On the other hand, ensuring disjointness of the heap enables the verification of such formulas. For instance, in separation logic @separationLogic1 @separationLogic2 @separationLogic3, it is possible to prove the correctness of the following formula. $ {(x |-> "true") * (y |-> -)} space y := "false" {(x |-> "true") * (y |-> "false")} $ 
 This verification is possible because separation logic allows to express that $x$ and $y$ are not aliased by using the separating conjunction operator "$*$". Similarly, programming languages can incorporate annotation systems @aldrich2002alias @boyland2001alias @zimmerman2023latte or built-in constructs @swift-parameter-modifiers @rustlang to provide similar guarantees regarding aliasing, thereby simplifying any verification process.
 
-// TODO: aggiungere altre citazioni a @rustlang se dovessi aggiungere altro per swift, rust, ocaml
-
 == Contributions
 
 This work demonstrates how controlling aliasing through an annotation system can enhance the formal verification process performed by SnaKt @FormVerPlugin, an existing plugin for the Kotlin language @KotlinSpec @Kotlin. SnaKt verifies Kotlin using Viper @ViperWebSite @Viper, an intermediate verification language developed by ETH Zurich. Viper is designed to verify programs by enabling the specification of functions with preconditions and postconditions, which are then checked for correctness. This verification is performed using one of two back-ends: symbolic execution @MuellerSchwerhoffSummers16b or verification condition generation @HeuleKassiosMuellerSummers13, both of which rely on an SMT solver to validate the specified conditions.
