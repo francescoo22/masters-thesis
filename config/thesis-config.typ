@@ -117,6 +117,8 @@
     show par: set block(spacing: 0.55em)
     show heading: set block(above: 1.4em, below: 1em)
 
+    show heading.where(level: 2): set heading(supplement: [Section])
+    show heading.where(level: 3): set heading(supplement: [Subsection])
 
     show heading.where(level: 1): it => {
         stack(

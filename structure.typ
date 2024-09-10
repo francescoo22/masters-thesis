@@ -9,7 +9,7 @@
 // Mainmatter
 
 #counter(page).update(1)
-#set heading(numbering: "1.1", supplement: "Chapter")
+#set heading(numbering: "1.1", supplement: [Chapter])
 
 #include "./chapters/1-Introduction.typ"
 #include "./chapters/2-Background.typ"
