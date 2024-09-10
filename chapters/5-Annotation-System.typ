@@ -13,15 +13,14 @@
 = Annotation System<cap:annotation-system>
 
 This chapter formalizes the uniqueness system that was introduced in @cap:annotations-kt.
-The system is inspired from some previous works @aldrich2002alias @boyland2001alias @zimmerman2023latte, but it also introduces significant modifications.
+While inspired by prior works @aldrich2002alias @boyland2001alias @zimmerman2023latte, it introduces several significant improvements.
 This system is designed for being as lightweight as possible and gradually integrable with already existing Kotlin code.
 
 The main goal of the system is to improve the verification process with Viper by establishing a link between separation logic and the absence of aliasing control in Kotlin.
 
 == Grammar
 
-In order to define the rules of this annotation system, a grammar representing a subset of the Kotlin language is used. This grammar captures the specific syntax and features that the system needs to handle. By focusing on a subset, the rules can be more clearly defined and easier to manage, while many complex features of the language can be supported through 
-syntactic sugar.
+In order to define the rules of this annotation system, a grammar representing a subset of the Kotlin language is used. This grammar captures the specific syntax and features that the system needs to handle. By focusing on a subset, the rules can be more clearly defined and easier to manage, while many complex features of the language can be supported through syntactic sugar.
 
 #frame-box(
   $
@@ -43,6 +42,8 @@ The receiver of a method is not explicitly included in the grammar, as it can be
 
 The annotations are the same that have been introduced in the previous chapter, the only difference is that `Borrowed` is represented using the symbol $borrowed$.
 Finally, statements and expressions are pretty similar to Kotlin.
+
+The runtime semantics of this grammar is not formalized in this work, as it corresponds to the expected semantics for an imperative language. Moreover, annotations do not impact the runtime behavior of the program.
 
 #compare-grammar-kt
 
@@ -274,7 +275,7 @@ $ \_inangle(\_): Delta -> p -> alpha beta $
   Get-Var, Get-Path,
 )
 
-As described in @cap:lookup, the lookup function might not return the correct annotation for a given path. The task of returning the right annotation for a path within a context is left to the (partial) function described in this chapter.
+As described in the previous subsection, the lookup function might not return the correct annotation for a given path. The task of returning the right annotation for a path within a context is left to the (partial) function described in this chapter.
 
 $ \_(\_) : Delta -> p -> alpha beta $
 
@@ -425,7 +426,8 @@ $ norm : overline(p : alpha beta) -> overline(p : alpha beta) $
 == Statements Typing
 
 Typing rules are structured as follows: $ Delta tr s tl Delta' $
-This judgment means that executing the statement $s$ within a context $Delta$ will lead to a context $Delta'$.
+This judgment means that typing a statement $s$ in a context $Delta$ leads to a context $Delta'$.
+It is important to note that this refers only to the types involved and is not related to the operational semantics of the program.
 
 A program $P$ is well-typed if and only if the following judgment is derivable:
 
@@ -722,9 +724,13 @@ Ensuring inaccessibility after reading borrowed fields and restricting their rea
 
 Once the unification function is defined, typing an _if_ statement is straightforward. First it is necessary to be sure that paths appearing in the guard are accessible in the initial context. The _then_ and the _else_ branches are typed separately and their resulting contexts are unified to get the resulting context of the whole statement.
 
-Note that the system does not allow to have _null_ or a _method call_ in the guard of an _if_ statement because they are easy to be desugared, as it is shown in the following examples:
-$ fi (p == null) ... equiv var "fresh" ; "fresh" = null ; fi(p == "fresh") ... $
-$ fi (p == m(...)) ... equiv var "fresh" ; "fresh" = m(...) ; fi(p == "fresh") ... $
+The system does not allow to have _null_ or a _method call_ in the guard of an _if_ statement, as these constructs can be easily desugared.
+
+#example[
+  Desugaring for _if_ statements containing expressions different from paths within the guard.
+  $ fi (p == null) ... equiv var "fresh" ; "fresh" = null ; fi(p == "fresh") ... $
+  $ fi (p == m(...)) ... equiv var "fresh" ; "fresh" = m(...) ; fi(p == "fresh") ... $
+]
 
 #figure(
   caption: "Typing example for if statement",
@@ -766,7 +772,7 @@ Finally, all parameters that are shared or borrowed (or both) must remain in the
 
 These conditions are essential for maintaining the modularity, allowing each method to be typed without knowing the implementation of the other methods.
 
-The system does not permit returning a null value or a method call directly since these cases can be easily desugared, as demonstrated in @ret-desugar.
+The system does not allow returning a null value or a method call, since these cases can be easily desugared, as shown in @ret-desugar. Similarly, functions that do not return a value can be represented by having them return a call to the `Unit` constructor.
 
 #example[
   Given the following program:
@@ -792,6 +798,7 @@ The system does not permit returning a null value or a method call directly sinc
 ]<ret-std>
 
 #example[
+  Desugaring for return statements that do not return a path.
   $ {...; ret null} equiv {...; var "fresh" ; "fresh" = null ; ret "fresh"} $
   $ {...; ret m(...)} equiv {...; var "fresh" ; "fresh" = m(...) ; ret "fresh"} $
   Where $"fresh"$ refers to a variable that does not exist in the context prior to its declaration.
