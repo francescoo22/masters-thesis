@@ -156,5 +156,3 @@ All the following rules are to be considered for a given program $P$, where fiel
   If, "",
   Return-p, "",
 )
-
-// IMPROVE: derivation tree for the examples in chapter 5?

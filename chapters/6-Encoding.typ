@@ -120,7 +120,7 @@ For example, passing a unique reference to a function expecting a shared (non-bo
 
 #figure(
   caption: "Extra statements added for functions call encoding",
-  image("../images/calls-graph.svg", width: 60%)
+  image("../images/calls-graph.svg", width: 50%)
 )<call-graph>
 
 #v(1em)

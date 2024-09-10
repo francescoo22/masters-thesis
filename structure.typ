@@ -11,6 +11,9 @@
 #counter(page).update(1)
 #set heading(numbering: "1.1", supplement: [Chapter])
 
+// TODO: decide whether to have this or not
+// #set par(first-line-indent: 1em)
+
 #include "./chapters/1-Introduction.typ"
 #include "./chapters/2-Background.typ"
 #include "./chapters/3-Related-Work.typ"
