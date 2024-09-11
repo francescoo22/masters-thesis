@@ -119,18 +119,18 @@
   rule(label: "Sub-Path-Eq-2", $p subset.sq.eq p'$),
 )
 
-#let Remove-SupPathsEq-Empty = prooftree(
+#let Remove-SuperPathsEq-Empty = prooftree(
   axiom(""),
   rule(label: "Deep-Remove-Empty", $dot minus.circle p = dot$),
 )
 
-#let Remove-SupPathsEq-Discard = prooftree(
+#let Remove-SuperPathsEq-Discard = prooftree(
   axiom($p subset.sq.eq p'$),
   axiom($Delta minus.circle p = Delta'$),
   rule(n:2, label: "Deep-Remove-Discard", $(p': alpha beta, Delta) minus.circle p = Delta'$),
 )
 
-#let Remove-SupPathsEq-Keep = prooftree(
+#let Remove-SuperPathsEq-Keep = prooftree(
   axiom($p subset.not.sq.eq p'$),
   axiom($Delta minus.circle p = Delta'$),
   rule(n:2, label: "Deep-Remove-Keep", $(p': alpha beta, Delta) minus.circle p = (p': alpha beta, Delta')$),
@@ -141,21 +141,21 @@
   rule(label: "Replace", $Delta[p |-> alpha beta] = Delta', p: alpha beta$),
 )
 
-#let Get-SupPaths-Empty = prooftree(
+#let Get-SuperPaths-Empty = prooftree(
   axiom(""),
-  rule(label: "Get-Sup-Paths-Empty", $dot tr sp(p) = dot$),
+  rule(label: "Get-Super-Paths-Empty", $dot tr sp(p) = dot$),
 )
 
-#let Get-SupPaths-Discard = prooftree(
+#let Get-SuperPaths-Discard = prooftree(
   axiom($not (p subset.sq p')$),
   axiom($Delta tr sp(p) = p_0 : alpha_0 beta_0, ..., p_n : alpha_n beta_n$),
-  rule(n: 2, label: "Get-Sup-Paths-Discard", $p': alpha beta, Delta tr sp(p) = p_0 : alpha_0 beta_0, ..., p_n : alpha_n beta_n$),
+  rule(n: 2, label: "Get-Super-Paths-Discard", $p': alpha beta, Delta tr sp(p) = p_0 : alpha_0 beta_0, ..., p_n : alpha_n beta_n$),
 )
 
-#let Get-SupPaths-Keep = prooftree(
+#let Get-SuperPaths-Keep = prooftree(
   axiom($p subset.sq p'$),
   axiom($Delta tr sp(p) = p_0 : alpha_0 beta_0, ..., p_n : alpha_n beta_n$),
-  rule(n: 2, label: "Get-Sup-Paths-Keep", $p': alpha beta, Delta tr sp(p) = p': alpha beta, p_0 : alpha_0 beta_0, ..., p_n : alpha_n beta_n$),
+  rule(n: 2, label: "Get-Super-Paths-Keep", $p': alpha beta, Delta tr sp(p) = p': alpha beta, p_0 : alpha_0 beta_0, ..., p_n : alpha_n beta_n$),
 )
 
 // ************ Get ************

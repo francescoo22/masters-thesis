@@ -39,7 +39,7 @@ In Kotlin, when the compiler can determine that a variable's type is more specif
 
 === Null Safety
 
-Kotlin's type system has been designed with the goal of eliminating the danger of null references. In many programming languages, including Java, accessing a member of a null reference results in a null reference exception. This is more difficult to happen in Kotlin since the type system distinguishes between references that can hold `null` and those that cannot, the former are called nullable references while the latter are called non-nullable reference. @kt-null-safety shows how nullable references are declared by appending a question mark to the type name and it shows that trying to assign `null` to a non-nullable reference leads to a compilation error.
+Kotlin's type system has been designed with the goal of eliminating the danger of null references. In many programming languages, including Java, accessing a member of a null reference results in a null reference exception. Kotlin avoids most of these situations because the type system distinguishes between references that can hold `null` and those that cannot, the former are called nullable references while the latter are called non-nullable references. @kt-null-safety shows how nullable references are declared by appending a question mark to the type name and it shows that trying to assign `null` to a non-nullable reference leads to a compilation error.
 
 #figure(
   caption: "Kotlin null safety example",
@@ -86,7 +86,7 @@ A backing field is generated under two conditions: if the property relies on the
           set(value) { // setter
               if (value > 0) field = value // accessing backing field
               else throw IllegalArgumentException(
-                  "Square size must be greater than 0"
+                  "Square width must be greater than 0"
               )
           }
       val area
@@ -99,7 +99,7 @@ A backing field is generated under two conditions: if the property relies on the
 
 Kotlin contracts @KotlinContracts are an experimental feature introduced in Kotlin 1.3 designed to provide additional guarantees about code behavior, helping the compiler in performing more precise analysis and optimizations. Contracts are defined using a special contract block within a function, describing the relationship between input parameters and the function's effects. This can include conditions such as whether a lambda is invoked or if a function returns under certain conditions. By specifying these relationships, contracts provide guarantees to the caller of a function, offering the compiler additional information that enable more advanced code analysis.
 
-It is important to point out that currently contracts correctness is not statically verified. The compiler trusts contracts unconditionally meaning that the programmer is responsible for writing correct and sound contracts.
+It is important to point out that currently contracts are only partially verified by the compiler. In certain cases, the compiler trusts the contracts without verification, placing the responsibility on the programmer to ensure that the contracts are correct.
 
 In @contract-1 it is possible to see how contracts allow the initialization of immutable variables within the body of a lambda, doing this is not possible without using a contract (@contract-2).
 
@@ -404,7 +404,7 @@ As well as being declared in preconditions and postconditions, field permissions
 
 Sometimes, exclusive permissions can be too restrictive. Viper also allows to have fractional permissions for heap locations that can be shared but only read. Fractional permissions are declared with a permission amount between 0 and 1 or with the `wildcard` keyword.
 The value represented by a `wildcard` is not constant, instead it is reselected each time an expression involving a `wildcard` is identified. 
-The `wildcard` permission amount provides a convenient way to implement duplicable read-only resources, which is often suitable for the representation of immutable data. The example in @vpr-fractional shows how fractional permissions can be combined to gain full permissions (Line 6-7). In the same example it is also possible to see that Viper does not allow to have a permission amount greater than 1, in fact, since `wildcard` is an amount grater than 0, a situation in which `x == y == z` is not possible and so the assertion on Line 11 can be verified.
+The `wildcard` permission amount provides a convenient way to implement duplicable read-only resources, which is often suitable for the representation of immutable data. The example in @vpr-fractional shows how fractional permissions can be combined to gain full permissions (Line 6-7). In the same example it is also possible to see that Viper does not allow to have a permission amount greater than 1, in fact, since `wildcard` is an amount greater than 0, a situation in which `x == y == z` is not possible and so the assertion on Line 11 can be verified.
 
 #figure(
   caption: "Viper fractional permissions example",

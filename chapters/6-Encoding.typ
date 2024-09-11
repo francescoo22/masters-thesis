@@ -5,6 +5,7 @@
 = Encoding in Viper<cap:encoding>
 
 The annotation system for aliasing control introduced in @cap:annotations-kt and formalized in @cap:annotation-system aims to improve the verification process performed by SnaKt @FormVerPlugin, an existing plugin for the Kotlin compiler. SnaKt verifies Kotlin code by encoding it to Viper and supports a substantial subset of the Kotlin language. However, as described in @cap:aliasing, the lack of guarantees about aliasing presents a significant limitation for the plugin.
+This chapter illustrates how uniqueness annotations can be used to improve the encoding of Kotlin into Viper.
 
 == Classes Encoding<cap:class-encoding>
 

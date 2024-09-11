@@ -51,8 +51,8 @@ AliasJava is characterized by a strong uniqueness invariant asserting that "at a
 This invariant is maintained by the fact that unique references can only be read in a destructive manner, meaning that immediately being read, the value `null` is assigned to the reference.
 
 Boyland @boyland2001alias proposes a system for controlling aliasing in Java that does not require to use destructive reads.
-The system utilizes a set of annotations to distinguish between different types of references. Specifically, procedure parameters and return values can be annotated as unique, indicating that they are not aliased elsewhere. Conversely, parameters and return values that are not unique are classified as shared. Within this system, a shared parameter may also be declared as borrowed, meaning that the function will not create further aliases for that parameter. Finally, fields can be marked as unique; if not, they are treated as shared.
-The main contribution of this work is the introduction of the "alias burying" rule: "When a unique field of an object is read, all aliases of the field are made undefined". This means that aliases of a unique field are allowed if they are assigned before being used again. The "alias burying" rule is important because it allows to avoid having destructive reads for unique references.
+The system utilizes a set of annotations to distinguish between different types of references. Specifically, procedure parameters and return values can be annotated as unique, indicating that they are not aliased elsewhere. Conversely, parameters and return values that are not unique are classified as shared. Within the system, a shared parameter may also be declared as borrowed, meaning that the function will not create further aliases for that parameter. Finally, fields can be marked as unique; if not, they are treated as shared.
+The main contribution of Boyland's work is the introduction of the "alias burying" rule: "When a unique field of an object is read, all aliases of the field are made undefined". This means that aliases of a unique field are allowed if they are assigned before being used again. The "alias burying" rule is important because it allows to avoid having destructive reads for unique references.
 On the other hand, having a shared reference does not provide any guarantee on the uniqueness of that reference.
 Finally the object referred to by a borrowed parameter may not be returned from a procedure, assigned to a field or passed as a non-borrowed parameter.
 
@@ -88,7 +88,7 @@ By default, Prusti ensures that a Rust program will not encounter an unrecoverab
 
 In addition to use Prusti to ensure that programs are free from runtime panics, developers can gradually add annotations to their code, thereby achieving increasingly robust correctness guarantees and improving the overall reliability and safety of their software. 
 
-In terms of Viper encoding, Rust structs are represented as potentially nested and recursive predicates representing unique access to a type instance. Furthermore, moves and straightforward usages of Rust's shared and mutable borrows are akin to ownership transfers within the permission semantics of separation logic assertions. Reborrowing is directly modeled using magic wands: when a reborrowed reference is returned to the caller, it includes a magic wand denoting the ownership of all locations from which borrowing occurred, except those currently in the proof. 
+In terms of Viper encoding, Rust structs are represented as potentially nested and recursive predicates representing unique access to a type instance. Furthermore, moves and straightforward usages of Rust's shared and mutable borrows are akin to ownership transfers within the permission semantics of separation logic assertions. Reborrowing is directly modeled using magic wands, Viper's counterpart to the separating implication in separation logic. When a reborrowed reference is returned to the caller, it includes a magic wand denoting the ownership of all locations from which borrowing occurred, except those currently in the proof. 
 
 === Gobra
 
@@ -96,7 +96,7 @@ Go is a programming language that combines typical characteristics of imperative
 
 Gobra @gobra is a tool designed for Go that allows modular verification of programs. It can ensure memory safety, crash resistance, absence of data races, and compliance with user-defined specifications.
 
-Compared to Prusti, Gobra generally requires more user-provided annotations. Benchmarks indicate that the annotation overhead varies from 0.3 to 3.1 lines of annotations per line of code.
+Compared to Prusti, Gobra generally requires more user-provided annotations. Benchmarks by Wolf et al. @gobra indicate that the annotation overhead varies from 0.3 to 3.1 lines of annotations per line of code.
 
 === Nagini
 

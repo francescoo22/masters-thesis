@@ -375,9 +375,9 @@ m2(this: unique) : shared {
 
 m3(
   x1: unique,
-  x2: unique borrowed,
+  x2: unique ♭,
   x3: shared,
-  x4: shared borrowed
+  x4: shared ♭
 ) {
   ...
 }

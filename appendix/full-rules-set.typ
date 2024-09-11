@@ -27,7 +27,7 @@ All the following rules are to be considered for a given program $P$, where fiel
   Ctx-Base, Ctx-Rec,
 )
 
-== Sub-Paths and Sup-Paths
+== Sub-Paths and Super-Paths
 
 === Definition
 
@@ -46,9 +46,9 @@ All the following rules are to be considered for a given program $P$, where fiel
 === Deep Remove
 
 #display-rules(
-  Remove-SupPathsEq-Empty, "",
-  Remove-SupPathsEq-Discard, "",
-  Remove-SupPathsEq-Keep, "",
+  Remove-SuperPathsEq-Empty, "",
+  Remove-SuperPathsEq-Discard, "",
+  Remove-SuperPathsEq-Keep, "",
 )
 
 === Replace
@@ -57,12 +57,12 @@ All the following rules are to be considered for a given program $P$, where fiel
   Replace, "",
 )
 
-=== Get Sup-Paths
+=== Get Super-Paths
 
 #display-rules(
-  Get-SupPaths-Empty, "",
-  Get-SupPaths-Discard, "",
-  Get-SupPaths-Keep, "",
+  Get-SuperPaths-Empty, "",
+  Get-SuperPaths-Discard, "",
+  Get-SuperPaths-Keep, "",
 )
 
 == Relations between Annotations

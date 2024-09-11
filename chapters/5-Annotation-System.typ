@@ -13,7 +13,7 @@ This chapter formalizes the uniqueness system that was introduced in @cap:annota
 While inspired by prior works @aldrich2002alias @boyland2001alias @zimmerman2023latte, it introduces several significant improvements.
 This system is designed for being as lightweight as possible and gradually integrable with already existing Kotlin code.
 
-The main goal of the system is to improve the verification process with Viper by establishing a link between separation logic and the absence of aliasing control in Kotlin.
+The main goal of the system is to improve SnaKt's verification process by adding aliasing control to Kotlin, thereby establishing a connection to separation logic in Viper.
 
 == Grammar
 
@@ -81,7 +81,7 @@ A context is a list of distinct paths associated with their annotations $alpha$ 
 #v(1em)
 
 Apart from $top$, the rest of the annotations are similar to the annotations in the previous section.
-A reference annotated as unique may either be `null` or point to an object, with no other accessible references to that object. In contrast, a reference marked as shared can point to an object without being the only reference to it. The annotation borrowed indicates that the method receiving the reference will not create additional aliases to it, and upon returning, the fields of the object will have at least the permissions specified in the class declaration. Finally, annotations on fields only indicate the default permissions; to determine the actual permissions of a field, the context must be considered, a concept that will be formalized in the upcoming sections.
+A reference annotated as unique may either be `null` or point to an object, with no other accessible references to that object. In contrast, a reference marked as shared can point to an object without being the only reference to it. The annotation $borrowed$ (borrowed) indicates that the method receiving the reference will not create additional aliases to it, and upon returning, the fields of the object will have at least the permissions specified in the class declaration. Finally, annotations on fields only indicate the default permissions; to determine the actual permissions of a field, the context must be considered, a concept that will be formalized in the upcoming sections.
 
 == Well-Formed Context
 
@@ -107,7 +107,7 @@ This first set of rules defines how a well-formed context is structured. The jud
   The judgment "$Delta_1 ctx$" is derivable meaning that $Delta_1$ is a well-formed context. However, the judgments "$Delta_2 ctx$" and "$Delta_3 ctx$" are not derivable meaning that $Delta_2$ and $Delta_3$ are not well-formed contexts. Indeed, they are not well-formed because $x$ appears twice in $Delta_2$ and $x.f$ appears twice in $Delta_3$.
 ]
 
-== Sub-Paths and Sup-Paths
+== Sub-Paths and Super-Paths
 
 === Definition
 
@@ -116,13 +116,13 @@ This first set of rules defines how a well-formed context is structured. The jud
   SubPath-Eq-1, SubPath-Eq-2,
 )
 
-This set of rules is used to formally define sub-paths and sup-paths.
+This set of rules is used to formally define sub-paths and super-paths.
 
 #example[
   Given two paths $x.y$ and $x.y.z$, the following judgment is derivable: $ x.y subset.sq x.y.z $
   We say that:
   - $x.y$ is a sub-path of $x.y.z$
-  - $x.y.z$ is a sup-path of $x.y$
+  - $x.y.z$ is a super-path of $x.y$
 ]
 
 === Remove
@@ -146,12 +146,12 @@ Basically, the function will return the context without the specified path if th
 === Deep Remove
 
 #display-rules(
-  Remove-SupPathsEq-Empty, "",
-  Remove-SupPathsEq-Discard, "",
-  Remove-SupPathsEq-Keep, "",
+  Remove-SuperPathsEq-Empty, "",
+  Remove-SuperPathsEq-Discard, "",
+  Remove-SuperPathsEq-Keep, "",
 )
 
-Deep-Remove rules define a function similar to Remove ($without$) that in addiction to removing the given path from the context, also removes all the sup-paths of that path.
+Deep-Remove rules define a function similar to Remove ($without$) that in addiction to removing the given path from the context, also removes all the super-paths of that path.
 
 $ \_minus.circle\_: Delta -> p -> Delta $
 
@@ -166,7 +166,7 @@ $ \_minus.circle\_: Delta -> p -> Delta $
   Replace, "",
 )
 
-This rule gives the definition of a function that will be fundamental for typing statements. The function takes a context, a path $p$ and a set of annotations $alpha beta$ and returns a context in which all the sup-paths of $p$ have been removed and the annotation of $p$ becomes $alpha beta$.
+This rule gives the definition of a function that will be fundamental for typing statements. The function takes a context, a path $p$ and a set of annotations $alpha beta$ and returns a context in which all the super-paths of $p$ have been removed and the annotation of $p$ becomes $alpha beta$.
 
 $ \_[\_|->\_] : Delta -> p -> alpha beta -> Delta $
 
@@ -175,21 +175,21 @@ $ \_[\_|->\_] : Delta -> p -> alpha beta -> Delta $
   Replace has the following result: $ Delta[x.y |-> top] = x: unique, space x.y: top $
 ]
 
-=== Get Sup-Paths
+=== Get Super-Paths
 
 #display-rules(
-  Get-SupPaths-Empty, "",
-  Get-SupPaths-Discard, "",
-  Get-SupPaths-Keep, "",
+  Get-SuperPaths-Empty, "",
+  Get-SuperPaths-Discard, "",
+  Get-SuperPaths-Keep, "",
 )
 
-Finally, Get-Sup-Paths rules are used to define a function that returns all the sup-paths of a give path within a context. Also this function will be used for statements typing rules.
+Finally, Get-Super-Paths rules are used to define a function that returns all the super-paths of a give path within a context. Also this function will be used for statements typing rules.
 
 $ \_ tr sp(\_) : Delta -> p -> overline(p : alpha beta) $
 
 #example[
   Given a context: $ Delta = x: unique, space x.y: unique, space x.y.z: unique $
-  Getting sup-paths has the following result: $ sp(x.y) = x.y.z: unique $
+  Getting super-paths has the following result: $ sp(x.y) = x.y.z: unique $
 ]
 
 == Relations between Annotations
@@ -313,9 +313,9 @@ Furthermore, in the rule Get-Path, the premise $Delta inangle(p.f) = alpha'$ doe
   Std-Rec-2, "",
 )
 
-If the judgment $Delta tr std(p, alpha beta)$ is derivable,  inside the context $Delta$, all the sup-paths of $p$ carry the right annotations when $p$ is passed to a method expecting an argument annotated with $alpha beta$. This type of judgment is necessary verify the correctness of the annotations in a method-modular fashion.
+If the judgment $Delta tr std(p, alpha beta)$ is derivable,  inside the context $Delta$, all the super-paths of $p$ carry the right annotations when $p$ is passed to a method expecting an argument annotated with $alpha beta$. This type of judgment is necessary verify the correctness of the annotations in a method-modular fashion.
 
-Since a called method does not have information about $Delta$ when verified, all the sup-paths of $p$ must have an annotation in $Delta$ that is lower or equal ($rel$) to the annotation that they have in a context containing just their root annotated with $alpha beta$.
+Since a called method does not have information about $Delta$ when verified, all the super-paths of $p$ must have an annotation in $Delta$ that is lower or equal ($rel$) to the annotation that they have in a context containing just their root annotated with $alpha beta$.
 
 #example[
   Given the following program:
@@ -487,7 +487,7 @@ Typing a method call follows the logic presented in the rules of @cap:passing ($
   - $p_j$ is shared.
   - The method that has been called expects shared (possibly borrowed) arguments in positions $i$ and $j$.
 - The resulting context is constructed in the following way:
-  - Paths passed to the method and their sup-paths are removed from the initial context.
+  - Paths passed to the method and their super-paths are removed from the initial context.
   - A list of annotated paths (in which a the same path may appear twice) in constructed by mapping passed paths according to the "passing" ($~>$) rules.
   - The obtained list is normalized and added to the context.
 
@@ -525,7 +525,7 @@ Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and 
 )<call-arg-twice>
 
 #figure(
-  caption: "Typing example for correct method call with sup-references",
+  caption: "Typing example for correct method call with super-paths",
   ```
   class A(f: shared)
 
@@ -543,7 +543,7 @@ Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and 
 )<call-sup-ok-1>
 
 #figure(
-  caption: "Typing example for incorrect method call with sup-references",
+  caption: "Typing example for incorrect method call with super-paths",
   ```
   class B(f: unique)
 
@@ -560,7 +560,7 @@ Finally @call-sup-ok-2 shows that it is possible to call `h` by passing `x` and 
 )<call-sup-wrong>
 
 #figure(
-  caption: "Typing example for correct method call with sup-references",
+  caption: "Typing example for correct method call with super-paths",
   ```
   class B(f: unique)
 
@@ -584,7 +584,7 @@ All rules for typing assignments have a path $p$ on the left-hand side and vary 
 
 #display-rules(Assign-Null, "")
 
-The definition of unique tells us that a reference is unique when it is `null` or is the sole accessible reference pointing to the object that is pointing. Given that, we can safely consider unique a path $p$ after assigning `null` to it. Moreover, all sup-paths of $p$ are removed from the context after the assignment.
+The definition of unique tells us that a reference is unique when it is `null` or is the sole accessible reference pointing to the object that is pointing. Given that, we can safely consider unique a path $p$ after assigning `null` to it. Moreover, all super-paths of $p$ are removed from the context after the assignment.
 
 #figure(
   caption: "Typing example for assigning null",
@@ -738,7 +738,7 @@ consume_unique(c: unique): shared
 
 consume_shared(a: shared): shared
 
-fun f(@Unique a: A, @Borrowed c: C) {
+fun f(a: unique, c: shared ♭) {
   begin_f;
     ⊣ Δ = a: unique, t: shared ♭
   if (a.c == c) {

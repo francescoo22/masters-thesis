@@ -4,7 +4,7 @@
 
 = Introduction
 
-Aliasing is a topic that has been studied for decades  @Aliasing-OOP @beyondGenevaConvention @GenevaConvention in computer science and it refers to the situation where two or more references point to the same object.
+Aliasing is a topic that has been studied for decades in computer science @Aliasing-OOP @beyondGenevaConvention @GenevaConvention and it refers to the situation where two or more references point to the same object.
 Aliasing is an important characteristic of object-oriented programming languages allowing the programmers to develope complex designs involving sharing. However, reasoning about programs written with languages that allow aliasing without any kind of control is a hard task for programmers, compilers and formal verification tools. In fact, as reported in _the Geneva Convention on the Treatment of Object Aliasing_ @GenevaConvention, without having guarantees about aliasing it can be difficult to prove the correctness of a simple Hoare formula like the following. $ {x = "true"} space y := "false" {x = "true"} $ 
 Indeed, when $x$ and $y$ are aliased, the formula is not valid, and most of the time proving that aliasing cannot occur is not straightforward.
 
@@ -15,7 +15,7 @@ This verification is possible because separation logic allows to express that $x
 
 This work demonstrates how controlling aliasing through an annotation system can enhance the formal verification process performed by SnaKt @FormVerPlugin, an existing plugin for the Kotlin language @KotlinSpec @Kotlin. SnaKt verifies Kotlin using Viper @ViperWebSite @Viper, an intermediate verification language developed by ETH Zurich. Viper is designed to verify programs by enabling the specification of functions with preconditions and postconditions, which are then checked for correctness. This verification is performed using one of two back-ends: symbolic execution @MuellerSchwerhoffSummers16b or verification condition generation @HeuleKassiosMuellerSummers13, both of which rely on an SMT solver to validate the specified conditions.
 
-In order to verify to Kotlin with Viper, it is necessary to translate the former language into the latter. However, this translation presents challenges due to fundamental differences between the two languages. Specifically, Viper's memory model is based on separation logic, which disallows shared mutable references. In contrast, Kotlin does not restrict aliasing, meaning that references in Kotlin can be both shared and mutable, posing a significant challenge when trying to encode Kotlin code into Viper.
+In order to verify to Kotlin with Viper, it is necessary to translate the former language into the latter. However, this translation presents several challenges due to fundamental differences between the two languages. Specifically, Viper's memory model is based on separation logic, which disallows shared mutable references. In contrast, Kotlin does not restrict aliasing, meaning that references in Kotlin can be both shared and mutable, posing a significant challenge when trying to encode Kotlin code into Viper.
 
 This issue is clearly illustrated in the Kotlin code example provided in @intro-comp. In that example, the language allows the same reference to be passed multiple times when calling function `f`, thereby creating aliasing. Additionally, @intro-comp presents a naive approach for encoding that Kotlin code into Viper. Despite the Viper code closely resembling the original Kotlin code, it fails verification when `f(x, x)` is called. This failure occurs because `f` requires write access to the field `n` of its arguments, but as previously mentioned, Viper’s separation logic disallows references from being both shared and mutable simultaneously.
 
@@ -42,12 +42,12 @@ The rest of the thesis is organized as follows:
 
 / @cap:background : provides a description of the background information needed to understand the concepts presented by this work. In particular, this chapter presents the Kotlin programming language and its feature of interest for the thesis. Following this, the chapter provides an overview of the "Aliasing" topic in Computer Science and presents an introduction to the Viper language and its set of verification tools.
 
-/ @cap:related-work : analyzes works that has been fundamental for the development of this thesis. The chapter is divided in two parts, the former describing existing works about aliasing and systems for controlling it; the latter gives an overview of the already existing tools that perform formal verification using Viper.
+/ @cap:related-work : analyzes works that have been fundamental for the development of this thesis. The chapter is divided in two parts, the former describing existing works about aliasing and systems for controlling it; the latter giving an overview of the already existing tools that perform formal verification using Viper.
 
-/ @cap:annotation-system : presents a novel annotation system for controlling aliasing on a language that can represent a significant subset of the Kotlin language. After introducing the language and several auxiliary rules and functions, the typing rules for the system are formalized.
+/ @cap:annotations-kt : introduces a uniqueness system for the Kotlin language. It shows several examples of Kotlin code extended with uniqueness annotations and explores how the annotations can be used for bringing improvements to the language.
 
-/ @cap:annotations-kt : discusses the application of the proposed annotation system in the Kotlin language. It shows several examples of Kotlin code extended with these annotations and explores how the annotations can be used for bringing improvements to the language.
+/ @cap:annotation-system : formalizes the annotation system introduced before on a language that can represent a significant subset of the Kotlin language. After introducing the language and several auxiliary rules and functions, the typing rules for the system are formalized.
 
-/ @cap:encoding : shows how the annotation system presented before can be used to obtain a better encoding of Kotlin into Viper, thus improving the quality of verification.
+/ @cap:encoding : shows how the annotation system presented before can be used to obtain a better encoding of Kotlin into Viper, thus improving the quality of verification performed by SnaKt.
 
 / @cap:conclusion : summarizes the contributions of this research and points out reasonable extensions to this work as well as potential new areas for future research.

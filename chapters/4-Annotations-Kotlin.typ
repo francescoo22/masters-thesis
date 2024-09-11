@@ -107,6 +107,7 @@ The uniqueness system handles assignments similarly to Alias Burying @boyland200
   }
 
   fun correctAssignment(@Unique a: A) {
+      borrowUnique(a.t) // ok, 'a.t' remains accessible
       val temp = a.t // 'temp' becomes unique, but 'a.t' becomes inaccessible
       borrowUnique(temp) // ok
       a.t = null // 'a.t' is unique again
@@ -121,7 +122,7 @@ The uniqueness annotations that have been introduced can bring several benefits 
 
 === Formal Verification
 
-The main goal of introducing the concept of uniqueness in Kotlin is to enable the verification of interesting functional properties. For instance, formalists might be interested in proving the absence of `IndexOutOfBoundsException` in a function. However, the lack of aliasing guarantees within a concurrent context in Kotlin can complicate such proofs @KotlinDocsConcurrency, even for relatively simple functions like the one shown in @out-of-bound.  In this example, the following scenario could potentially lead to an `IndexOutOfBoundsException`:
+The main goal of introducing the concept of uniqueness in Kotlin is to enable the verification of interesting functional properties. For example, it might be interesting to prove the absence of `IndexOutOfBoundsException` in a function. However, the lack of aliasing guarantees within a concurrent context in Kotlin can complicate such proofs @KotlinDocsConcurrency, even for relatively simple functions like the one shown in @out-of-bound.  In this example, the following scenario could potentially lead to an `IndexOutOfBoundsException`:
 - The function executes `xs.add(x)`, adding an element to the list `xs`.
 - Concurrently, another function with access to an alias of `xs` invokes the `clear` method, emptying the list.
 - Subsequently, `xs[0]` is called on the now-empty list, raising an `IndexOutOfBoundsException`.
@@ -144,7 +145,7 @@ This characteristic aligns well with Viper's notion of write access. In Viper, w
 
 As introduced in @cap:smart-cast, smart casts are an important feature in Kotlin that allow developers to avoid using explicit cast operators under certain conditions. However, the compiler can only perform a smart cast if it can guarantee that the cast will always be safe @KotlinSpec. 
 This guarantee relies on the concept of stability: a variable is considered stable if it cannot change after being checked, allowing the compiler to safely assume its type throughout a block of code.
-Since Kotlin is a concurrent language, the compiler cannot perform smart casts when dealing with mutable properties. The reason is that after checking the type of a mutable property, another function running concurrently may access the same reference and change its value. @smart-cast-error, shows that after checking that `a.valProperty` is not `null`, the compiler can smart cast it from `Int?` to `Int`. However, the same operation is not possible for `a.varProperty` because, immediately after checking that it is not `null`, another function running concurrently might set it to `null`.
+Since Kotlin allows for concurrent execution, the compiler cannot perform smart casts when dealing with mutable properties. The reason is that after checking the type of a mutable property, another function running concurrently may access the same reference and change its value. @smart-cast-error, shows that after checking that `a.valProperty` is not `null`, the compiler can smart cast it from `Int?` to `Int`. However, the same operation is not possible for `a.varProperty` because, immediately after checking that it is not `null`, another function running concurrently might set it to `null`.
 Guarantees on the uniqueness of references can enable the compiler to perform more exhaustive analysis for smart casts. When a reference is unique, the uniqueness system ensures that there are no accessible aliases to that reference, meaning it is impossible for a concurrently running function to modify its value. @smart-cast-unique shows the same example as before, but with the function parameter being unique. Since `a` is unique, it is completely safe to smart cast `a.varProperty` from `Int?` to `Int` after verifying that it is not null.
 
 #figure(
