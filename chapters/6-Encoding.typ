@@ -105,13 +105,13 @@ When no predicates contain the access to a property that needs to be accessed, i
 
 Encoding method calls is straightforward for some cases, but requires attention for some others.
 
-=== Functions with unique parameters
+=== Functions with Unique Parameters
 
 Functions with a unique parameter, when called, do not need the inclusion of additional statements for their encoding, except for folding or unfolding statements, as detailed in @cap:unfolding.
 
 #code-compare("Function call with unique parameter encoding", .8fr, unique-call-kt, unique-call-vpr)
 
-=== Functions with shared parameters
+=== Functions with Shared Parameters
 
 When functions with a shared parameter are called, their encoding may require the addition of `inhale` and `exhale` statements. The annotation system allows functions with shared parameters to be called by passing unique references. However, the function's conditions alone are not sufficient to properly encode these calls.
 

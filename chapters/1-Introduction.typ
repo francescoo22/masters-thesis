@@ -36,7 +36,7 @@ The thesis finally shows how aligning Kotlin’s memory model with Viper’s, us
   intro-kt-annotated
 )<kt-ann-intro>
 
-== Structure of the thesis
+== Structure of the Thesis
 
 The rest of the thesis is organized as follows:
 
