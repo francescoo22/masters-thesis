@@ -11,6 +11,6 @@
 #let myProf = "Francesco Ranzato"
 #let myCompany = "Nome azienda"
 #let myTutor = "Nome Cognome"
-#let myLocation = "Padova"
+#let myLocation = "Padua"
 #let myAA = "2023-2024"
 #let myTime = "September 2024"
