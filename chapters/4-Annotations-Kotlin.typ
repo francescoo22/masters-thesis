@@ -64,7 +64,7 @@ Additionally, function parameters and receivers can be annotated as `Borrowed`. 
 === Class Annotations
 
 Classes can have their properties annotated as `Unique`. Annotations on properties define their uniqueness at the beginning of a method. However, despite the annotation, a property marked as `Unique` may still be accessible through multiple paths. For a property to be accessible through a single path, both the property and the object owning it must be annotated as `Unique`. This principle also applies recursively to nested properties, where the uniqueness of the entire chain of ownership is necessary to ensure single-path access.
-For example, in @kt-uniqueness-class, even though the property `x` of the class `A` is annotated as `Unique`, `a1.x` is shared because `a1`, the owner of property `x`, is shared.
+For example, in @kt-uniqueness-class, even though the property `x` of the class `A` is annotated as `Unique`, `sharedA.x` is shared because `sharedA`, the owner of property `x`, is shared.
 
 Moreover, properties with primitive types do not need to be annotated.
 This is because, unlike objects, primitive types are copied rather than referenced, meaning that each variable holds its own independent value. Therefore, the concept of uniqueness, which is designed to manage the sharing and mutation of objects in memory, does not apply to primitive types. They are always unique in the sense that each instance operates independently, and there is no risk of aliasing or unintended side effects through shared references.
@@ -91,7 +91,7 @@ This is because, unlike objects, primitive types are copied rather than referenc
 
 === Uniqueness and Assignments
 
-The uniqueness system handles assignments similarly to Alias Burying @boyland2001alias. Specifically, once a unique reference is read, it cannot be accessed again until it has been reassigned. However, passing a reference to a function expecting a `Borrowed` argument does not count as reading, since borrowing ensures that no further aliases are created during the function's execution. This approach allows for the formulation of the following uniqueness invariant: "A unique reference is either `null` or points to an object as the only accessible reference to that object."
+The uniqueness system handles assignments similarly to Boyland's system @boyland2001alias. Specifically, once a unique reference is read, it cannot be accessed again until it has been reassigned. However, passing a reference to a function expecting a `Borrowed` argument does not count as reading, since borrowing ensures that no further aliases are created during the function's execution. This approach allows for the formulation of the following uniqueness invariant: "A unique reference is either `null` or points to an object as the only accessible reference to that object."
 
 #figure(
   caption: "Uniqueness behavior with assignments in Kotlin",
@@ -199,8 +199,6 @@ fun manipulateList(xs: List<Int>): List<Int> {
 
 To conclude the overview of the uniqueness system, a more complex example is provided in @kt-stack. The example shows the implementation of an alias-free stack, a common illustration in the literature for showcasing uniqueness systems in action @aldrich2002alias @zimmerman2023latte. 
 It is interesting to note that having a unique receiver for the `pop` function allows to safely smart cast `this.root` from `Node?` to `Node` (Lines 19-20); this would not be allowed without uniqueness guarantees since `root` is a mutable property.
-
-The next chapter will formally prove the correctness of this example.
 
 #figure(
   caption: "Stack implementation with uniqueness annotations",
