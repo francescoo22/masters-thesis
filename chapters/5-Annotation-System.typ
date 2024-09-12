@@ -12,7 +12,6 @@
 This chapter formalizes the uniqueness system that was introduced in @cap:annotations-kt.
 While inspired by prior works @aldrich2002alias @boyland2001alias @zimmerman2023latte, it introduces several significant improvements.
 This system is designed for being as lightweight as possible and gradually integrable with already existing Kotlin code.
-
 The main goal of the system is to improve SnaKt's verification process by adding aliasing control to Kotlin, thereby establishing a connection to separation logic in Viper.
 
 == Grammar
@@ -261,7 +260,7 @@ $ \_inangle(\_): Delta -> p -> alpha beta $
 ]
 
 #example[
-  Given class $C$, context $Delta$ and variable $x$ such that: $ class C(f: shared) in P \ Delta = x : unique \ type(x.f) = shared $
+  Given class $C$, context $Delta$ and variable $x$ such that: $ class C(f: shared) in P \ Delta = x : unique $
   The result of the lookup for $x.f$ is the following: $ Delta inangle(x.f) = shared $
   Since $x.f in.not Delta$, the lookup returns the default annotation, which is the one declared in the class signature.
 ]
@@ -272,7 +271,7 @@ $ \_inangle(\_): Delta -> p -> alpha beta $
   Get-Var, Get-Path,
 )
 
-As described in the previous subsection, the lookup function might not return the correct annotation for a given path. The task of returning the right annotation for a path within a context is left to the (partial) function described in this chapter.
+As described in the previous subsection, the lookup function might not return the correct annotation for a given path. The task of returning the right annotation for a path within a context is left to the (partial) function described in this section.
 
 $ \_(\_) : Delta -> p -> alpha beta $
 
@@ -655,9 +654,9 @@ The resulting context is built in the following way:
 
   f(x: unique, y: unique): unique {
     begin_f; 
-      ⊣ (Δ = x: unique, y: unique)
+      ⊣ Δ = x: unique, y: unique
     y.t = x.b.t;
-      ⊣ (Δ = x: unique, y: unique, x.b.t: T, y.t: unique)
+      ⊣ Δ = x: unique, y: unique, x.b.t: T, y.t: unique
     x.b = y;
       ⊣ Δ = x: unique, y: T, x.b: unique
     ...
