@@ -283,7 +283,7 @@ Since C++ does not have built-in mechanisms to control aliasing statically, in t
 == Separation Logic
 
 Separation logic @separationLogic1 @separationLogic2 @separationLogic3 is an extension of first-order logic that can be used to reason about low-level imperative programs that manipulate pointer data structures by integrating it in Hoare's triples.
-Unlike a first-order logic formula, which directly represents a truth value, a separation logic formula represents predicates on the heap. This enables separation logic to describe how memory locations are manipulated and how different locations interact with each other
+Unlike a first-order logic formula, which directly represents a truth value, a separation logic formula represents predicates on the heap. This enables separation logic to describe how memory locations are manipulated and how different locations interact with each other.
 
 The core concept of separation logic is the separating conjunction $P ∗ Q$, which asserts that $P$ and $Q$ hold for different, non-overlapping parts of the heap. For instance, if a change to a single heap cell affects $P$ in $P ∗ Q$, it is guaranteed that it will not impact $Q$. This feature eliminates the need to check for possible aliases in $Q$. On a broader scale, the specification ${P} space C space {Q}$ for a heap modification can be expanded using a rule that allows to derive ${P ∗ R} space C space{Q ∗ R}$, indicating that additional heap cells remain untouched. This enables the initial specification ${P} space C space{Q}$ to focus solely on the cells involved in the program's footprint.
 
@@ -323,7 +323,7 @@ $
 == Viper
 
 Viper @ViperWebSite @Viper (Verification Infrastructure for Permission-based Reasoning) is a language and suite of tools developed by ETH Zurich designed to aid in the creation of verification tools.
-The Viper infrastructure (@vpr-infrastructure) consists of the Viper intermediate language and two different back-ends: one that uses symbolic execution and another that relies on verification condition generation.
+The Viper infrastructure (@vpr-infrastructure) consists of the Viper intermediate language and two different back-ends: one that uses symbolic execution @MuellerSchwerhoffSummers16b and another that relies on verification condition generation @HeuleKassiosMuellerSummers13.
 
 The verification process with Viper follows several steps.
 First, a higher-level programming language is translated into Viper's intermediate language, which incorporates permission-based reasoning to manage and express ownership of memory locations, similar to separation logic.
@@ -428,12 +428,12 @@ The `wildcard` permission amount provides a convenient way to implement duplicab
 
 === Predicates and Functions
 
-Predicates can be seen as an abstraction tool over assertions, which can include resources like field permissions. The body of a predicate is an assertion. However, predicates are not automatically inlined. In fact, in order to substitute the predicate resource with the assertions defined by its body, it is necessary to perform an unfold operation. The opposite operation is called a fold: folding a predicate substitutes the resources determined by its core content with an instance of the predicate. Having predicates that are not automatically inlined is fundamental since it allows to represent potentially unbounded data structure as shown in @vpr-predicate (Lines 4-8) where the predicate `List` can represent a linked-list. The same example shows how unfold and fold operations can be performed to access the value of the second element of a list (Lines 22-26).
+Predicates can be seen as an abstraction tool over assertions, which can include resources like field permissions. The body of a predicate is an assertion. However, predicates are not automatically inlined. In fact, in order to substitute the predicate resource with the assertions defined by its body, it is necessary to perform an unfold operation. The opposite operation is called a fold: folding a predicate substitutes the resources determined by its core content with an instance of the predicate. Having predicates that are not automatically inlined is fundamental since it allows to represent potentially unbounded data structures as shown in @vpr-predicate (Lines 4-8) where the predicate `List` can represent a linked-list. The same example shows how unfold and fold operations can be performed to access the value of the second element of a list (Lines 22-26).
 
 Similar to predicates, functions in Viper are used to define parameterized and potentially recursive assertions. The body of a function must be an expression, ensuring that the evaluation of a function is side-effect free, just like any other Viper expression. Unlike methods, Viper reasons about functions based on their bodies, so it is not necessary to specify postconditions when the function body is provided. In @vpr-predicate (Lines 11-15), a function is first used to represent the size of a `List`, and then is utilized in the preconditions of the `get_second` method (Line 19).
 
 #figure(
-  caption: "Viper predicate example",
+  caption: "Viper predicate and function example",
   ```vpr
   field value: Int
   field next: Ref
@@ -466,10 +466,9 @@ Similar to predicates, functions in Viper are used to define parameterized and p
 )<vpr-predicate>
 
 === Domains
+
 Domains allow the creation of custom types, mathematical functions, and axioms that define their properties.
-
 The functions defined within a domain are accessible globally across the Viper program. These are known as domain functions, and they have more limitations compared to standard Viper functions. Domain functions cannot have preconditions and can be used in any program state. They are also always abstract, meaning that they cannot have an implemented body. To give meaning to these abstract functions, domain axioms are used.
-
 Domain axioms are also global and define properties that are assumed to be true in all states. Typically, they are expressed as standard first-order logic assertions.
 
 #figure(
