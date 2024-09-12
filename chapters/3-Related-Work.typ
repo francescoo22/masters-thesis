@@ -12,8 +12,7 @@ After introducing the aliasing problem, the paper establishes four primary metho
 
 === Detection
 
-Alias detection is a retrospective process that identifies potential or actual alias patterns in a program through static or dynamic techniques. This is beneficial for compilers, static analysis tools, and programmers as they can detect aliasing conflicts in programs, leads to more efficient code generation, helps find cases where aliasing can invalidate predicates, and assists programmers in resolving problematic conflicts.
-Alias detection requires complex interprocedural analysis due to its non-local nature, which can make comprehensive analyses too slow to be practical.
+Alias detection is a retrospective process that identifies potential or actual alias patterns in a program using static or dynamic techniques. This is beneficial for compilers, static analysis tools, and programmers, as it helps detect aliasing conflicts, enables more efficient code generation, identifies cases where aliasing may invalidate predicates, and assists in resolving problematic conflicts. However, alias detection requires complex interprocedural analysis due to its non-local nature, which can make comprehensive analyses too slow to be practical.
 For this reason, this approach is not adopted in this work.
 
 === Advertisement
@@ -48,7 +47,7 @@ The common trait of all systems based on uniqueness is that a reference declared
 
 A first approach to ensuring uniqueness consists of using destructive reads. Aldrich et al. @aldrich2002alias have developed a system called AliasJava for controlling aliasing which uses this approach.
 AliasJava is characterized by a strong uniqueness invariant asserting that "at a particular point in dynamic program execution, if a variable or field that refers to an object `o` is annotated unique, then no other field in the program refers to `o`, and all other local variables that refer to `o` are annotated lent".
-This invariant is maintained by the fact that unique references can only be read in a destructive manner, meaning that immediately being read, the value `null` is assigned to the reference.
+This invariant is maintained by the fact that unique references can only be read in a destructive manner, meaning that immediately after being read, the value `null` is assigned to the reference.
 
 Boyland @boyland2001alias proposes a system for controlling aliasing in Java that does not require to use destructive reads.
 The system utilizes a set of annotations to distinguish between different types of references. Specifically, procedure parameters and return values can be annotated as unique, indicating that they are not aliased elsewhere. Conversely, parameters and return values that are not unique are classified as shared. Within the system, a shared parameter may also be declared as borrowed, meaning that the function will not create further aliases for that parameter. Finally, fields can be marked as unique; if not, they are treated as shared.
